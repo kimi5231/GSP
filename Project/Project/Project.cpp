@@ -130,6 +130,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_KEYDOWN:
+        gameFramework->Update(hWnd, wParam);
+        break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);

@@ -1,4 +1,6 @@
 #pragma once
+class GameObject;
+
 class GameFramework
 {
 public:
@@ -6,9 +8,12 @@ public:
 	~GameFramework();
 
 public:
-	void Update();
+	void Update(HWND hwnd, WPARAM wParam);
 	void Render(HDC hdc);
 
 private:
-	HBITMAP _board;
+	HBITMAP _boardBmp;
+	std::array<std::array<short, 8>, 8> _board;
+	
+	GameObject* _pawn;
 };

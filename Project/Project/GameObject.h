@@ -2,11 +2,11 @@
 class GameObject
 {
 public:
-	GameObject();
+	GameObject(std::array<std::array<char, 8>, 8>& board);
 	~GameObject();
 
 public:
-	void Update(WPARAM wParam, std::array<std::array<short, 8>, 8>& board);
+	void Update(WPARAM wParam, std::array<std::array<char, 8>, 8>& board);
 	void Render(HDC hdc, HDC backHDC);
 
 public:

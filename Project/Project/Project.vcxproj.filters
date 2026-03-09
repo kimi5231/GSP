@@ -15,6 +15,9 @@
     <Filter Include="소스 파일\Default">
       <UniqueIdentifier>{3b5a41e3-cf9f-4457-a325-e42de3f5c2a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Game">
+      <UniqueIdentifier>{5ae6e791-4349-4349-85fb-d01df473a411}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -27,7 +30,7 @@
       <Filter>소스 파일\Main</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
-      <Filter>소스 파일\Main</Filter>
+      <Filter>소스 파일\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -41,7 +44,7 @@
       <Filter>소스 파일\Main</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
-      <Filter>소스 파일\Main</Filter>
+      <Filter>소스 파일\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

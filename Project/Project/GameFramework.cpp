@@ -7,11 +7,7 @@ GameFramework::GameFramework()
 	_boardBmp = (HBITMAP)LoadImage(NULL, L"Resource\\ChessBoard.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	// 폰 생성
-	_pawn = new GameObject();
-
-	// 보드에 기록
-	POINT pos = _pawn->GetPos();
-	_board[pos.x / 100][pos.y / 100] = 1;
+	_pawn = new GameObject(_board);
 }
 
 GameFramework::~GameFramework()

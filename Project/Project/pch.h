@@ -6,3 +6,4 @@
 #pragma comment(lib, "Msimg32.lib")
 
 #define WinSize 800
+#define TileSize 100

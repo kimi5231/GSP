@@ -13,7 +13,7 @@ public:
 
 private:
 	HBITMAP _boardBmp;
-	std::array<std::array<short, 8>, 8> _board;
+	std::array<std::array<char, 8>, 8> _board;
 	
 	GameObject* _pawn;
 };

@@ -6,11 +6,12 @@ public:
 	~GameObject();
 
 public:
-	void Update(WPARAM wParam, std::array<std::array<char, 8>, 8>& board);
+	void Update();
 	void Render(HDC hdc, HDC backHDC);
 
 public:
 	POINT GetPos() { return _pos; }
+	void SetPos(POINT pos) { _pos = pos; }
 
 private:
 	HBITMAP _pawnBmp;

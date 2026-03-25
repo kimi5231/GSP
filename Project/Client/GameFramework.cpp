@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "GameFramework.h"
 #include "GameObject.h"
+#include "GameNetwork.h"
 
 GameFramework::GameFramework()
 {
+	_gameNetwork = new GameNetwork();
+
 	_boardBmp = (HBITMAP)LoadImage(NULL, L"Resource\\ChessBoard.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	// 폰 생성
@@ -16,7 +19,9 @@ GameFramework::~GameFramework()
 
 void GameFramework::Update(HWND hwnd, WPARAM wParam)
 {
-	_pawn->Update(wParam, _board);
+	POINT pos = _gameNetwork->SendMove(wParam);
+	if (0 <= pos.x && pos.x < _board.size() && 0 <= pos.y && pos.y < _board.size())
+		_pawn->SetPos(pos);
 
 	InvalidateRect(hwnd, NULL, false);
 }

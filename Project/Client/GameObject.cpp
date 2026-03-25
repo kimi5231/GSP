@@ -15,32 +15,9 @@ GameObject::~GameObject()
 {
 }
 
-void GameObject::Update(WPARAM wParam, std::array<std::array<char, 8>, 8>& board)
+void GameObject::Update()
 {
-	POINT pos = _pos;
-
-	switch (wParam)
-	{
-	case VK_UP:
-		pos.y--;
-		break;
-	case VK_RIGHT:
-		pos.x++;
-		break;
-	case VK_DOWN:
-		pos.y++;
-		break;
-	case VK_LEFT:
-		pos.x--;
-		break;
-	}
-
-	if (0 <= pos.x && pos.x < board.size() && 0 <= pos.y && pos.y < board.size())
-	{
-		board[_pos.x][_pos.y] = 0;
-		_pos = pos;
-		board[_pos.x][_pos.y] = 1;
-	}
+	
 }
 
 void GameObject::Render(HDC hdc, HDC backHDC)

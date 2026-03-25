@@ -1,5 +1,6 @@
 #pragma once
 class GameObject;
+class GameNetwork;
 
 class GameFramework
 {
@@ -16,4 +17,6 @@ private:
 	std::array<std::array<char, 8>, 8> _board;
 	
 	GameObject* _pawn;
+
+	GameNetwork* _gameNetwork;
 };

@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "resource.h"
+#include "Global.h"
 #include "GameFramework.h"
+#include "GameNetwork.h"
 
 #define MAX_LOADSTRING 100
 
@@ -12,8 +14,6 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-
-GameFramework* gameFramework;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
@@ -43,6 +43,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+
+        g_gameNetwork->Update();
     }
 
     return (int)msg.wParam;
@@ -84,7 +86,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         return FALSE;
     }
 
-    gameFramework = new GameFramework();
+    g_gameFramework = new GameFramework(hWnd);
+    g_gameNetwork = new GameNetwork();
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
@@ -97,7 +100,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_KEYDOWN:
-        gameFramework->Update(hWnd, wParam);
+        g_gameFramework->Update(wParam);
         break;
     case WM_COMMAND:
     {
@@ -120,7 +123,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
 
-        gameFramework->Render(hdc);
+        g_gameFramework->Render(hdc);
 
         EndPaint(hWnd, &ps);
     }

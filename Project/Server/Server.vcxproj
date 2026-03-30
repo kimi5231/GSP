@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Global.cpp" />
     <ClCompile Include="ServerObject.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">
@@ -137,6 +138,7 @@
     <ClCompile Include="ServerFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Global.h" />
     <ClInclude Include="ServerObject.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ServerFramework.h" />

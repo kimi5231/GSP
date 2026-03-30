@@ -2,10 +2,11 @@
 #include "GameFramework.h"
 #include "GameObject.h"
 #include "GameNetwork.h"
+#include "Global.h"
 
-GameFramework::GameFramework()
+GameFramework::GameFramework(HWND hwnd)
 {
-	_gameNetwork = new GameNetwork();
+	_hwnd = hwnd;
 
 	_boardBmp = (HBITMAP)LoadImage(NULL, L"Resource\\ChessBoard.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
@@ -17,13 +18,9 @@ GameFramework::~GameFramework()
 {
 }
 
-void GameFramework::Update(HWND hwnd, WPARAM wParam)
+void GameFramework::Update(WPARAM wParam)
 {
-	POINT pos = _gameNetwork->SendMove(wParam);
-	if (0 <= pos.x && pos.x < _board.size() && 0 <= pos.y && pos.y < _board.size())
-		_pawn->SetPos(pos);
-
-	InvalidateRect(hwnd, NULL, false);
+	g_gameNetwork->SendMove(wParam);
 }
 
 void GameFramework::Render(HDC hdc)
@@ -44,4 +41,11 @@ void GameFramework::Render(HDC hdc)
 	DeleteObject(bmp);
 	DeleteDC(backHDC);
 	DeleteDC(srcHDC);
+}
+
+void GameFramework::ProcessMove(POINT pos)
+{
+	_pawn->SetPos(pos);
+
+	InvalidateRect(_hwnd, NULL, false);
 }

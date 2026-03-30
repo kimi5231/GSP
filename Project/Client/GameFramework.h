@@ -1,22 +1,24 @@
 #pragma once
 class GameObject;
-class GameNetwork;
 
 class GameFramework
 {
 public:
-	GameFramework();
+	GameFramework(HWND hwnd);
 	~GameFramework();
 
 public:
-	void Update(HWND hwnd, WPARAM wParam);
+	void Update(WPARAM wParam);
 	void Render(HDC hdc);
 
+public:
+	void ProcessMove(POINT pos);
+
 private:
+	HWND _hwnd;
+
 	HBITMAP _boardBmp;
 	std::array<std::array<char, 8>, 8> _board;
 	
 	GameObject* _pawn;
-
-	GameNetwork* _gameNetwork;
 };

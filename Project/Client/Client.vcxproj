@@ -132,6 +132,7 @@
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameNetwork.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Global.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
   </ItemGroup>
@@ -139,6 +140,7 @@
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameNetwork.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Global.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

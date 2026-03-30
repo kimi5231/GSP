@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GameNetwork.h"
+#include "Global.h"
 
 GameNetwork::GameNetwork()
 {
@@ -15,7 +16,7 @@ GameNetwork::GameNetwork()
 	WSAStartup(MAKEWORD(2, 0), &wsa);
 	
 	// socket 생성
-	_clientSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, 0);
+	_clientSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
 
 	// connect
 	SOCKADDR_IN addr;
@@ -23,15 +24,56 @@ GameNetwork::GameNetwork()
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(7777);
 	inet_pton(AF_INET, _serverIP.c_str(), &addr.sin_addr);
-	connect(_clientSocket, (sockaddr*)&addr, sizeof(addr));
+	WSAConnect(_clientSocket, reinterpret_cast<sockaddr*>(&addr), sizeof(addr), 0, 0, 0, 0);
+
+	// Recv 걸어두기
+	Recv();
 }
 
 GameNetwork::~GameNetwork()
 {
+	closesocket(_clientSocket);
 	WSACleanup();
 }
 
-POINT GameNetwork::SendMove(WPARAM wParam)
+void GameNetwork::Update()
+{
+	SleepEx(10, true);
+}
+
+void GameNetwork::Recv()
+{
+	_wsaRecvBuffer.buf = _recvBuffer;
+	_wsaRecvBuffer.len = BuffSize;
+	DWORD recvFlag = 0;
+	ZeroMemory(&_recvOver, sizeof(_recvOver));
+	WSARecv(_clientSocket, &_wsaRecvBuffer, 1, 0, &recvFlag, &_recvOver, RecvCallback);
+}
+
+void GameNetwork::Send()
+{
+	_wsaSendBuffer.buf = _sendBuffer;
+	_wsaSendBuffer.len = sizeof(Dir);
+	ZeroMemory(&_sendOver, sizeof(_sendOver));
+	WSASend(_clientSocket, &_wsaSendBuffer, 1, 0, 0, &_sendOver, SendCallback);
+}
+
+void GameNetwork::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)
+{
+	// 이동 처리
+	POINT pos;
+	memcpy(&pos, g_gameNetwork->GetRecvBuffer(), sizeof(pos));
+	g_gameFramework->ProcessMove(pos);
+
+	// Recv 다시 걸기
+	g_gameNetwork->Recv();
+}
+
+void GameNetwork::SendCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)
+{
+}
+
+void GameNetwork::SendMove(WPARAM wParam)
 {
 	Dir dir;
 
@@ -51,21 +93,6 @@ POINT GameNetwork::SendMove(WPARAM wParam)
 		break;
 	}
 
-	WSABUF buffer_send;
-	buffer_send.buf = reinterpret_cast<char*>(&dir);
-	buffer_send.len = sizeof(dir);
-	DWORD send_byte;
-	WSASend(_clientSocket, &buffer_send, 1, &send_byte, 0, 0, 0);
-
-	char recvbuffer[BuffSize];
-	WSABUF buffer_recv;
-	buffer_recv.buf = recvbuffer;
-	buffer_recv.len = BuffSize;
-	DWORD recv_byte;
-	DWORD recv_flag = 0;
-	WSARecv(_clientSocket, &buffer_recv, 1, &recv_byte, &recv_flag, 0, 0);
-
-	POINT pos;
-	memcpy(&pos, recvbuffer, sizeof(pos));
-	return pos;
+	_sendBuffer = reinterpret_cast<char*>(&dir);
+	Send();
 }

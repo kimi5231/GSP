@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ServerFramework.h"
+#include "Global.h"
 #include "ServerObject.h"
 
 ServerFramework::ServerFramework()
@@ -9,7 +10,7 @@ ServerFramework::ServerFramework()
 	WSAStartup(MAKEWORD(2, 0), &wsa);
 
 	// listenSocket 생성
-	_listenSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, 0);
+	_listenSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, WSA_FLAG_OVERLAPPED);
 	
 	// bind
 	SOCKADDR_IN addr;
@@ -29,30 +30,56 @@ ServerFramework::ServerFramework()
 	std::cout << "Client Connect" << std::endl;
 
 	_pawn = new ServerObject();
+
+	Recv();
 }
 
 ServerFramework::~ServerFramework()
 {
+	closesocket(_listenSocket);
 	WSACleanup();
 }
 
 void ServerFramework::Update()
 {
-	char recvbuffer[BuffSize];
-	WSABUF buffer_recv;
-	buffer_recv.buf = recvbuffer;
-	buffer_recv.len = BuffSize;
-	DWORD recv_byte;
-	DWORD recv_flag = 0;
-	WSARecv(_clientSocket, &buffer_recv, 1, &recv_byte, &recv_flag, 0, 0);
+	SleepEx(100, true);
+}
 
+Vector ServerFramework::ProcessMove(Dir dir)
+{
+	return _pawn->Move(dir);
+}
+
+void ServerFramework::Recv()
+{
+	_wsaRecvBuffer.buf = _recvBuffer;
+	_wsaRecvBuffer.len = BuffSize;
+	DWORD recvFlag = 0;
+	ZeroMemory(&_over, sizeof(_over));
+	WSARecv(_clientSocket, &_wsaRecvBuffer, 1, 0, &recvFlag, &_over, RecvCallback);
+}
+
+void ServerFramework::Send()
+{
+	_wsaSendBuffer.buf = _sendBuffer;
+	_wsaSendBuffer.len = sizeof(Vector);
+	ZeroMemory(&_over, sizeof(_over));
+	WSASend(_clientSocket, &_wsaSendBuffer, 1, 0, 0, &_over, SendCallback);
+}
+
+void ServerFramework::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)
+{
 	Dir dir;
-	memcpy(&dir, recvbuffer, sizeof(Dir));
-	Vector pos = _pawn->Move(dir);
+	memcpy(&dir, g_serverFramework->GetRecvBuffer(), sizeof(Dir));
+	Vector pos = g_serverFramework->ProcessMove(dir);
 
-	WSABUF buffer_send;
-	buffer_send.buf = reinterpret_cast<char*>(&pos);
-	buffer_send.len = sizeof(Vector);
-	DWORD send_byte;
-	WSASend(_clientSocket, &buffer_send, 1, &send_byte, 0, 0, 0);
+	g_serverFramework->SetSendBuffer(reinterpret_cast<char*>(&pos));
+	g_serverFramework->Send();
+
+	// Recv 다시 걸기
+	g_serverFramework->Recv();
+}
+
+void ServerFramework::SendCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)
+{
 }

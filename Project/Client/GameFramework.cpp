@@ -32,8 +32,13 @@ void GameFramework::Render(HDC hdc)
 	TransparentBlt(backHDC, 0, 0, WinSize, WinSize, srcHDC, 0, 0, WinSize, WinSize, RGB(0, 255, 0));
 	
 	for (auto& item : _players)
-		item.second.Render(hdc, backHDC);
-
+	{
+		if(item.second.GetID() == _myID)
+			item.second.Render(hdc, backHDC, true);
+		else
+			item.second.Render(hdc, backHDC, false);
+	}
+		
 	BitBlt(hdc, 0, 0, WinSize, WinSize, backHDC, 0, 0, SRCCOPY);
 
 	DeleteObject(bmp);

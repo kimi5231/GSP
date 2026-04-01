@@ -84,6 +84,11 @@ void GameFramework::ProcessAddObjectPacket(S_AddObject_Packet packet)
 	_players.try_emplace(packet.id, packet.id, POINT{ packet.pos.x, packet.pos.y });
 }
 
+void GameFramework::ProcessRemoveObjectPacket(S_RemoveObject_Packet packet)
+{
+	_players.erase(packet.id);
+}
+
 void GameFramework::ProcessMovePacket(S_Move_Packet packet)
 {
 	_players[packet.id].SetPos(POINT{ packet.pos.x, packet.pos.y });

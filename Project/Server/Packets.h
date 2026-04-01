@@ -4,6 +4,7 @@
 enum PacketID
 {
 	S_AddObject,
+	S_RemoveObject,
 	S_Move,
 
 	C_Move,
@@ -19,6 +20,11 @@ struct S_AddObject_Packet
 {
 	int id;
 	Vector pos;
+};
+
+struct S_RemoveObject_Packet
+{
+	int id;
 };
 
 struct S_Move_Packet

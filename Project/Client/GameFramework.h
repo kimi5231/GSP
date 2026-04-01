@@ -17,6 +17,7 @@ public:
 
 public:
 	void ProcessAddObjectPacket(S_AddObject_Packet packet);
+	void ProcessRemoveObjectPacket(S_RemoveObject_Packet packet);
 	void ProcessMovePacket(S_Move_Packet packet);
 
 private:

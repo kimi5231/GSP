@@ -73,6 +73,13 @@ void GameNetwork::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, D
 		g_gameFramework->ProcessAddObjectPacket(packet);
 		break;
 	}
+	case S_RemoveObject:
+	{
+		S_RemoveObject_Packet packet;
+		memcpy(&packet, g_gameNetwork->GetRecvBuffer() + sizeof(header), sizeof(S_RemoveObject_Packet));
+		g_gameFramework->ProcessRemoveObjectPacket(packet);
+		break;
+	}
 	case S_Move:
 	{
 		S_Move_Packet packet;

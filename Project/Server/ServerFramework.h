@@ -14,7 +14,8 @@ public:
 	void Update();
 
 public:
-	void ProcessMove(C_Move_Packet packet, int clientID);
+	void ProcessDisconnect(int clientID);
+	void ProcessMovePacket(C_Move_Packet packet, int clientID);
 
 public:
 	static void CALLBACK RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags);

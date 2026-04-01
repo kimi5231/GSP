@@ -72,7 +72,23 @@ void ServerFramework::Update()
 	SleepEx(10, true);
 }
 
-void ServerFramework::ProcessMove(C_Move_Packet packet, int clientID)
+void ServerFramework::ProcessDisconnect(int clientID)
+{
+	// 퇴장한 Client 제거
+	_clients.erase(clientID);
+
+	// 현재 접속되어 있는 모든 Client에게 퇴장 알림
+	Header header{ S_RemoveObject, sizeof(S_RemoveObject_Packet) };
+	S_Move_Packet packetData{ clientID };
+	std::vector<char> sendBuffer(sizeof(Header) + header.dataSize);
+	memcpy(sendBuffer.data(), &header, sizeof(Header));
+	memcpy(sendBuffer.data() + sizeof(Header), &packetData, header.dataSize);
+
+	for (auto& item : _clients)
+		item.second.Send(sendBuffer);
+}
+
+void ServerFramework::ProcessMovePacket(C_Move_Packet packet, int clientID)
 {
 	Vector pos = _players[clientID - 1].Move(packet.dir);
 
@@ -93,7 +109,7 @@ void ServerFramework::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED ove
 {
 	int id = reinterpret_cast<int>(over->hEvent);
 	std::unordered_map<int, Session>& clients = g_serverFramework->GetClients();
-	
+
 	Header header;
 	memcpy(&header, clients[id].GetRecvBuffer(), sizeof(header));
 
@@ -102,7 +118,10 @@ void ServerFramework::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED ove
 	case C_Move:
 		C_Move_Packet packet;
 		memcpy(&packet, clients[id].GetRecvBuffer() + sizeof(header), sizeof(C_Move_Packet));
-		g_serverFramework->ProcessMove(packet, id);
+		g_serverFramework->ProcessMovePacket(packet, id);
+		break;
+	default: // 퇴장
+		g_serverFramework->ProcessDisconnect(id);
 		break;
 	}
 }

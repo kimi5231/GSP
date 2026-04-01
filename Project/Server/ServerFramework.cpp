@@ -108,21 +108,35 @@ void ServerFramework::ProcessMovePacket(C_Move_Packet packet, int clientID)
 void ServerFramework::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)
 {
 	int id = reinterpret_cast<int>(over->hEvent);
+
+	// 접속 종료
+	if (byteNum < sizeof(Header))
+	{
+		g_serverFramework->ProcessDisconnect(id);
+		return;
+	}
+		
 	std::unordered_map<int, Session>& clients = g_serverFramework->GetClients();
 
-	Header header;
-	memcpy(&header, clients[id].GetRecvBuffer(), sizeof(header));
-
-	switch (header.id)
+	while (byteNum > sizeof(Header))
 	{
-	case C_Move:
-		C_Move_Packet packet;
-		memcpy(&packet, clients[id].GetRecvBuffer() + sizeof(header), sizeof(C_Move_Packet));
-		g_serverFramework->ProcessMovePacket(packet, id);
-		break;
-	default: // 퇴장
-		g_serverFramework->ProcessDisconnect(id);
-		break;
+		int recvStart = 0;
+		Header header;
+		memcpy(&header, clients[id].GetRecvBuffer(), sizeof(header));
+		recvStart += sizeof(header);
+
+		switch (header.id)
+		{
+		case C_Move:
+			C_Move_Packet packet;
+			memcpy(&packet, clients[id].GetRecvBuffer() + recvStart, sizeof(C_Move_Packet));
+			recvStart += sizeof(C_Move_Packet);
+			g_serverFramework->ProcessMovePacket(packet, id);
+			break;
+		}
+
+		byteNum -= recvStart;
+		memmove(clients[id].GetRecvBuffer(), clients[id].GetRecvBuffer() + recvStart, byteNum);
 	}
 
 	ZeroMemory(clients[id].GetRecvBuffer(), BuffSize);

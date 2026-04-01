@@ -61,34 +61,46 @@ void GameNetwork::Send(std::vector<char>& sendBuffer)
 
 void GameNetwork::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)
 {
-	Header header;
-	memcpy(&header, g_gameNetwork->GetRecvBuffer(), sizeof(header));
+	while (byteNum > sizeof(Header))
+	{
+		int recvStart = 0;
 
-	switch (header.id)
-	{
-	case S_AddObject:
-	{
-		S_AddObject_Packet packet;
-		memcpy(&packet, g_gameNetwork->GetRecvBuffer() + sizeof(header), sizeof(S_AddObject_Packet));
-		g_gameFramework->ProcessAddObjectPacket(packet);
-		break;
-	}
-	case S_RemoveObject:
-	{
-		S_RemoveObject_Packet packet;
-		memcpy(&packet, g_gameNetwork->GetRecvBuffer() + sizeof(header), sizeof(S_RemoveObject_Packet));
-		g_gameFramework->ProcessRemoveObjectPacket(packet);
-		break;
-	}
-	case S_Move:
-	{
-		S_Move_Packet packet;
-		memcpy(&packet, g_gameNetwork->GetRecvBuffer() + sizeof(header), sizeof(S_Move_Packet));
-		g_gameFramework->ProcessMovePacket(packet);
-		break;
-	}
-	}
+		Header header;
+		memcpy(&header, g_gameNetwork->GetRecvBuffer() + recvStart, sizeof(header));
+		recvStart += sizeof(header);
 
+		switch (header.id)
+		{
+		case S_AddObject:
+		{
+			S_AddObject_Packet packet;
+			memcpy(&packet, g_gameNetwork->GetRecvBuffer() + recvStart, sizeof(S_AddObject_Packet));
+			recvStart += sizeof(S_AddObject_Packet);
+			g_gameFramework->ProcessAddObjectPacket(packet);
+			break;
+		}
+		case S_RemoveObject:
+		{
+			S_RemoveObject_Packet packet;
+			memcpy(&packet, g_gameNetwork->GetRecvBuffer() + recvStart, sizeof(S_RemoveObject_Packet));
+			recvStart += sizeof(S_RemoveObject_Packet);
+			g_gameFramework->ProcessRemoveObjectPacket(packet);
+			break;
+		}
+		case S_Move:
+		{
+			S_Move_Packet packet;
+			memcpy(&packet, g_gameNetwork->GetRecvBuffer() + recvStart, sizeof(S_Move_Packet));
+			recvStart += sizeof(S_Move_Packet);
+			g_gameFramework->ProcessMovePacket(packet);
+			break;
+		}
+		}
+
+		byteNum -= recvStart;
+		memmove(g_gameNetwork->GetRecvBuffer(), g_gameNetwork->GetRecvBuffer() + recvStart, byteNum);
+	}
+	
 	// Recv 다시 걸기
 	g_gameNetwork->Recv();
 }

@@ -58,7 +58,7 @@ void ServerFramework::Update()
 	// 새로 접속한 Client에게 기존에 존재하던 Player 정보를 전달
 	for (ServerObject& player : _players)
 	{
-		if (player.GetID() == _generateClientID)
+		if (player.GetID() == _generateClientID || player.GetID() == 0)
 			continue;
 		S_AddObject_Packet packetData2{ player.GetID(), player.GetPos()};
 		std::vector<char> sendBuffer2(sizeof(Header) + header.dataSize);
@@ -76,6 +76,8 @@ void ServerFramework::ProcessDisconnect(int clientID)
 {
 	// 퇴장한 Client 제거
 	_clients.erase(clientID);
+
+	_players[clientID - 1].SetID(0);
 
 	// 현재 접속되어 있는 모든 Client에게 퇴장 알림
 	Header header{ S_RemoveObject, sizeof(S_RemoveObject_Packet) };
@@ -101,8 +103,6 @@ void ServerFramework::ProcessMovePacket(C_Move_Packet packet, int clientID)
 
 	for (auto& item : _clients)
 		item.second.Send(sendBuffer);
-
-	_clients[clientID].Recv();
 }
 
 void ServerFramework::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)
@@ -124,6 +124,9 @@ void ServerFramework::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED ove
 		g_serverFramework->ProcessDisconnect(id);
 		break;
 	}
+
+	ZeroMemory(clients[id].GetRecvBuffer(), BuffSize);
+	clients[id].Recv();
 }
 
 void ServerFramework::SendCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)

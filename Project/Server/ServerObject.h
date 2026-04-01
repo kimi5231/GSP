@@ -11,6 +11,7 @@ public:
 
 public:
 	int GetID() { return _id; }
+	void SetID(int id) { _id = id; }
 	Vector GetPos() { return _pos; }
 
 private:

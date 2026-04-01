@@ -64,6 +64,7 @@ public:
 	void do_recv()
 	{
 		DWORD recv_flag = 0;
+		recv_over.m_iotype = IO_RECV;
 		memset(&recv_over.m_over, 0, sizeof(recv_over.m_over));
 		WSARecv(client, &recv_over.m_wsa, 1, 0, &recv_flag, &recv_over.m_over, nullptr);
 	}
@@ -72,6 +73,8 @@ public:
 		EXP_OVER* o = new EXP_OVER(IO_SEND);
 		o->m_buff[0] = num_bytes + 2;
 		o->m_buff[1] = sender_id;
+		o->m_wsa.len = num_bytes + 2;
+		o->m_wsa.buf = o->m_buff;
 		memcpy(o->m_buff + 2, mess, num_bytes);
 		WSASend(client, &o->m_wsa, 1, 0, 0, &o->m_over, nullptr);
 	}

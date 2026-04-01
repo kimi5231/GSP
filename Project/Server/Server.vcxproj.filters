@@ -15,6 +15,9 @@
     <Filter Include="소스 파일\Main">
       <UniqueIdentifier>{5a3d2ea7-f16a-4002-90cf-f1b7fe62e0e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Network">
+      <UniqueIdentifier>{4a7a3c7d-de89-4669-93d2-579a5b57bad1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ServerObject.cpp">
@@ -33,14 +36,11 @@
       <Filter>소스 파일\Main</Filter>
     </ClCompile>
     <ClCompile Include="Session.cpp">
-      <Filter>소스 파일\Main</Filter>
+      <Filter>소스 파일\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ServerObject.h">
-      <Filter>소스 파일\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Types.h">
       <Filter>소스 파일\Game</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
@@ -52,11 +52,14 @@
     <ClInclude Include="Global.h">
       <Filter>소스 파일\Main</Filter>
     </ClInclude>
-    <ClInclude Include="Session.h">
+    <ClInclude Include="Types.h">
       <Filter>소스 파일\Main</Filter>
     </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>소스 파일\Network</Filter>
+    </ClInclude>
     <ClInclude Include="Packets.h">
-      <Filter>소스 파일\Main</Filter>
+      <Filter>소스 파일\Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

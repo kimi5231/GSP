@@ -14,7 +14,7 @@ public:
 	void Update();
 
 public:
-	void ProcessMove(C_Move_Packet packet, int playerID);
+	void ProcessMove(C_Move_Packet packet, int clientID);
 
 public:
 	static void CALLBACK RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags);
@@ -30,7 +30,6 @@ private:
 
 	std::unordered_map<int, Session> _clients;
 	int _generateClientID;
-	int _generatePlayerID;
 
 	std::vector<ServerObject> _players;
 };

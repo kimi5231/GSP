@@ -24,7 +24,6 @@ ServerFramework::ServerFramework()
 	listen(_listenSocket, SOMAXCONN);
 
 	_generateClientID = 1;
-	_generatePlayerID = 1;
 }
 
 ServerFramework::~ServerFramework()
@@ -40,34 +39,46 @@ void ServerFramework::Update()
 	int addrLen = sizeof(_addr);
 	SOCKET clientSocket = WSAAccept(_listenSocket, reinterpret_cast<sockaddr*>(&_addr), &addrLen, 0, 0);
 	_clients.try_emplace(_generateClientID, _generateClientID, clientSocket);;
-	_clients[_generateClientID++].Recv();
+	_clients[_generateClientID].Recv();
 	std::cout << "Client Connect" << std::endl;
 
 	// Client에 대응되는 Player 생성
-	_players.emplace_back(_generatePlayerID);
+	_players.emplace_back(_generateClientID);
 
 	// 현재 접속되어 있는 모든 Client에게 새로 생성된 Player 정보를 전달
 	Header header{ S_AddObject, sizeof(S_AddObject_Packet) };
-	S_AddObject_Packet packetData{ _generatePlayerID, _players[_generatePlayerID++ - 1].GetPos() };
+	S_AddObject_Packet packetData{ _generateClientID, _players[_generateClientID - 1].GetPos() };
 	std::vector<char> sendBuffer(sizeof(Header) + header.dataSize);
 	memcpy(sendBuffer.data(), &header, sizeof(Header));
 	memcpy(sendBuffer.data() + sizeof(Header), &packetData, header.dataSize);
 
 	for (auto& item : _clients)
-	{
 		item.second.Send(sendBuffer);
+
+	// 새로 접속한 Client에게 기존에 존재하던 Player 정보를 전달
+	for (ServerObject& player : _players)
+	{
+		if (player.GetID() == _generateClientID)
+			continue;
+		S_AddObject_Packet packetData2{ player.GetID(), player.GetPos()};
+		std::vector<char> sendBuffer2(sizeof(Header) + header.dataSize);
+		memcpy(sendBuffer2.data(), &header, sizeof(Header));
+		memcpy(sendBuffer2.data() + sizeof(Header), &packetData2, header.dataSize);
+		_clients[_generateClientID].Send(sendBuffer2);
 	}
+
+	_generateClientID++;
 		
 	SleepEx(10, true);
 }
 
-void ServerFramework::ProcessMove(C_Move_Packet packet, int playerID)
+void ServerFramework::ProcessMove(C_Move_Packet packet, int clientID)
 {
-	Vector pos = _players[playerID - 1].Move(packet.dir);
+	Vector pos = _players[clientID - 1].Move(packet.dir);
 
 	// 현재 접속되어 있는 모든 Client에게 이동 알림
 	Header header{ S_Move, sizeof(S_Move_Packet) };
-	S_Move_Packet packetData{ playerID, pos };
+	S_Move_Packet packetData{ clientID, pos };
 	std::vector<char> sendBuffer(sizeof(Header) + header.dataSize);
 	memcpy(sendBuffer.data(), &header, sizeof(Header));
 	memcpy(sendBuffer.data() + sizeof(Header), &packetData, header.dataSize);
@@ -75,7 +86,7 @@ void ServerFramework::ProcessMove(C_Move_Packet packet, int playerID)
 	for (auto& item : _clients)
 		item.second.Send(sendBuffer);
 
-	_clients[playerID].Recv();
+	_clients[clientID].Recv();
 }
 
 void ServerFramework::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)

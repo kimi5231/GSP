@@ -9,28 +9,22 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="소스 파일\1주차">
-      <UniqueIdentifier>{f658cef7-3b45-4873-a77a-6d8385c93456}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\2주차">
-      <UniqueIdentifier>{35b3e0d1-4fd5-4e42-9dbf-fa31d77a7329}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="1-2-3.cpp">
-      <Filter>소스 파일\1주차</Filter>
-    </ClCompile>
     <ClCompile Include="1-2-1.cpp">
-      <Filter>소스 파일\1주차</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="1-2-2.cpp">
-      <Filter>소스 파일\1주차</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="matirix_multiply.cpp">
-      <Filter>소스 파일\2주차</Filter>
+    <ClCompile Include="1-2-3.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="2-1.cpp">
-      <Filter>소스 파일\2주차</Filter>
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="matirix_multiply.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

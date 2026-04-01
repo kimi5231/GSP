@@ -2,6 +2,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
+#include <unordered_map>
 
 #include "Types.h"
 

@@ -1,4 +1,7 @@
 #pragma once
+#include "Packets.h"
+#include "Session.h"
+
 class ServerObject;
 
 class ServerFramework
@@ -9,27 +12,25 @@ public:
 
 public:
 	void Update();
-	Vector ProcessMove(Dir dir);
 
 public:
-	void Recv();
-	void Send();
+	void ProcessMove(C_Move_Packet packet, int playerID);
+
+public:
 	static void CALLBACK RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags);
 	static void CALLBACK SendCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags);
 
 public:
-	char* GetRecvBuffer() { return _recvBuffer; }
-	void SetSendBuffer(char* sendBuffer) { _sendBuffer = sendBuffer; }
+	std::unordered_map<int, Session>& GetClients() { return _clients; }
 
 private:
+	SOCKADDR_IN _addr;
 	SOCKET _listenSocket;
 	SOCKET _clientSocket;
 
-	WSABUF _wsaRecvBuffer;
-	WSABUF _wsaSendBuffer;
-	char _recvBuffer[BuffSize];
-	char* _sendBuffer;
-	WSAOVERLAPPED _over;
+	std::unordered_map<int, Session> _clients;
+	int _generateClientID;
+	int _generatePlayerID;
 
-	ServerObject* _pawn;
+	std::vector<ServerObject> _players;
 };

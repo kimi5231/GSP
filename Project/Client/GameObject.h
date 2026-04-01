@@ -2,7 +2,8 @@
 class GameObject
 {
 public:
-	GameObject(std::array<std::array<char, 8>, 8>& board);
+	GameObject() {};
+	GameObject(int id, POINT pos);
 	~GameObject();
 
 public:
@@ -15,6 +16,7 @@ public:
 
 private:
 	HBITMAP _pawnBmp;
+	int _id;
 	POINT _pos;
 	POINT _size;
 };

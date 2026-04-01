@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "ServerObject.h"
 
-ServerObject::ServerObject()
+ServerObject::ServerObject(int id) 
+	: _id(id)
 {
 	_pos = { 0, 0 };
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include "../Server/Packets.h"
+
 class GameObject;
 
 class GameFramework
@@ -8,11 +10,14 @@ public:
 	~GameFramework();
 
 public:
-	void Update(WPARAM wParam);
+	void Update();
 	void Render(HDC hdc);
 
+	void ProcessInput(WPARAM wParam);
+
 public:
-	void ProcessMove(POINT pos);
+	void ProcessAddObjectPacket(S_AddObject_Packet packet);
+	void ProcessMovePacket(S_Move_Packet packet);
 
 private:
 	HWND _hwnd;
@@ -20,5 +25,6 @@ private:
 	HBITMAP _boardBmp;
 	std::array<std::array<char, 8>, 8> _board;
 	
-	GameObject* _pawn;
+	std::unordered_map<int, GameObject> _players;
+	int _myID;
 };

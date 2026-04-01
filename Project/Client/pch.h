@@ -6,6 +6,8 @@
 #include <windows.h>
 #include <iostream>
 #include <array>
+#include <vector>
+#include <unordered_map>
 
 #include "../Server/Types.h"
 

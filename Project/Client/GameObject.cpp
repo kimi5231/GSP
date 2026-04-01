@@ -1,14 +1,11 @@
 #include "pch.h"
 #include "GameObject.h"
 
-GameObject::GameObject(std::array<std::array<char, 8>, 8>& board)
+GameObject::GameObject(int id, POINT pos)
+	:_id(id), _pos(pos)
 {
 	_pawnBmp = (HBITMAP)LoadImage(NULL, L"Resource\\BlackPawn.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-	_pos = {0, 0};
 	_size = { 100, 100 };
-
-	// 보드에 기록
-	board[_pos.x][_pos.y] = 1;
 }
 
 GameObject::~GameObject()

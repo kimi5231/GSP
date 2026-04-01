@@ -9,18 +9,15 @@ GameFramework::GameFramework(HWND hwnd)
 	_hwnd = hwnd;
 
 	_boardBmp = (HBITMAP)LoadImage(NULL, L"Resource\\ChessBoard.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-
-	// 폰 생성
-	_pawn = new GameObject(_board);
 }
 
 GameFramework::~GameFramework()
 {
 }
 
-void GameFramework::Update(WPARAM wParam)
+void GameFramework::Update()
 {
-	g_gameNetwork->SendMove(wParam);
+	InvalidateRect(_hwnd, NULL, false);
 }
 
 void GameFramework::Render(HDC hdc)
@@ -34,7 +31,8 @@ void GameFramework::Render(HDC hdc)
 
 	TransparentBlt(backHDC, 0, 0, WinSize, WinSize, srcHDC, 0, 0, WinSize, WinSize, RGB(0, 255, 0));
 	
-	_pawn->Render(hdc, backHDC);
+	for (auto& item : _players)
+		item.second.Render(hdc, backHDC);
 
 	BitBlt(hdc, 0, 0, WinSize, WinSize, backHDC, 0, 0, SRCCOPY);
 
@@ -43,9 +41,45 @@ void GameFramework::Render(HDC hdc)
 	DeleteDC(srcHDC);
 }
 
-void GameFramework::ProcessMove(POINT pos)
+void GameFramework::ProcessInput(WPARAM wParam)
 {
-	_pawn->SetPos(pos);
+	switch (wParam)
+	{
+	case VK_UP:
+	{
+		Dir dir = UP;
+		g_gameNetwork->SendMovePacket(dir);
+		break;
+	}
+	case VK_RIGHT:
+	{
+		Dir dir = RIGHT;
+		g_gameNetwork->SendMovePacket(dir);
+		break;
+	}
+	case VK_DOWN:
+	{
+		Dir dir = DOWN;
+		g_gameNetwork->SendMovePacket(dir);
+		break;
+	}
+	case VK_LEFT:
+	{
+		Dir dir = LEFT;
+		g_gameNetwork->SendMovePacket(dir);
+		break;
+	}
+	}
+}
 
-	InvalidateRect(_hwnd, NULL, false);
+void GameFramework::ProcessAddObjectPacket(S_AddObject_Packet packet)
+{
+	if (_players.size() == 0)
+		_myID = packet.id;
+	_players.try_emplace(packet.id, packet.id, POINT{ packet.pos.x, packet.pos.y });
+}
+
+void GameFramework::ProcessMovePacket(S_Move_Packet packet)
+{
+	_players[packet.id].SetPos(POINT{ packet.pos.x, packet.pos.y });
 }

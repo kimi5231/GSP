@@ -10,12 +10,12 @@ public:
 
 public:
 	void Recv();
-	void Send();
+	void Send(std::vector<char>& sendBuffer);
 	static void CALLBACK RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags);
 	static void CALLBACK SendCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags);
 	
 public:
-	void SendMove(WPARAM wParam);
+	void SendMovePacket(Dir dir);
 	
 public:
 	char* GetRecvBuffer() { return _recvBuffer; }

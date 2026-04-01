@@ -32,6 +32,9 @@
     <ClCompile Include="Global.cpp">
       <Filter>소스 파일\Main</Filter>
     </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>소스 파일\Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ServerObject.h">
@@ -47,6 +50,12 @@
       <Filter>소스 파일\Main</Filter>
     </ClInclude>
     <ClInclude Include="Global.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Packets.h">
       <Filter>소스 파일\Main</Filter>
     </ClInclude>
   </ItemGroup>

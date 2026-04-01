@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameNetwork.h"
 #include "Global.h"
+#include "../Server/Packets.h"
 
 GameNetwork::GameNetwork()
 {
@@ -50,20 +51,36 @@ void GameNetwork::Recv()
 	WSARecv(_clientSocket, &_wsaRecvBuffer, 1, 0, &recvFlag, &_recvOver, RecvCallback);
 }
 
-void GameNetwork::Send()
+void GameNetwork::Send(std::vector<char>& sendBuffer)
 {
-	_wsaSendBuffer.buf = _sendBuffer;
-	_wsaSendBuffer.len = sizeof(Dir);
+	_wsaSendBuffer.buf = sendBuffer.data();
+	_wsaSendBuffer.len = sendBuffer.size();
 	ZeroMemory(&_sendOver, sizeof(_sendOver));
 	WSASend(_clientSocket, &_wsaSendBuffer, 1, 0, 0, &_sendOver, SendCallback);
 }
 
 void GameNetwork::RecvCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, DWORD flags)
 {
-	// 이동 처리
-	POINT pos;
-	memcpy(&pos, g_gameNetwork->GetRecvBuffer(), sizeof(pos));
-	g_gameFramework->ProcessMove(pos);
+	Header header;
+	memcpy(&header, g_gameNetwork->GetRecvBuffer(), sizeof(header));
+
+	switch (header.id)
+	{
+	case S_AddObject:
+	{
+		S_AddObject_Packet packet;
+		memcpy(&packet, g_gameNetwork->GetRecvBuffer() + sizeof(header), sizeof(S_AddObject_Packet));
+		g_gameFramework->ProcessAddObjectPacket(packet);
+		break;
+	}
+	case S_Move:
+	{
+		S_Move_Packet packet;
+		memcpy(&packet, g_gameNetwork->GetRecvBuffer() + sizeof(header), sizeof(S_Move_Packet));
+		g_gameFramework->ProcessMovePacket(packet);
+		break;
+	}
+	}
 
 	// Recv 다시 걸기
 	g_gameNetwork->Recv();
@@ -73,26 +90,12 @@ void GameNetwork::SendCallback(DWORD err, DWORD byteNum, LPWSAOVERLAPPED over, D
 {
 }
 
-void GameNetwork::SendMove(WPARAM wParam)
+void GameNetwork::SendMovePacket(Dir dir)
 {
-	Dir dir;
-
-	switch (wParam)
-	{
-	case VK_UP:
-		dir = UP;
-		break;
-	case VK_RIGHT:
-		dir = RIGHT;
-		break;
-	case VK_DOWN:
-		dir = DOWN;
-		break;
-	case VK_LEFT:
-		dir = LEFT;
-		break;
-	}
-
-	_sendBuffer = reinterpret_cast<char*>(&dir);
-	Send();
+	Header header{ C_Move, sizeof(C_Move_Packet) };
+	C_Move_Packet packetData{ dir };
+	std::vector<char> sendBuffer(sizeof(Header) + header.dataSize);
+	memcpy(sendBuffer.data(), &header, sizeof(Header));
+	memcpy(sendBuffer.data() + sizeof(Header), &packetData, header.dataSize);
+	Send(sendBuffer);
 }

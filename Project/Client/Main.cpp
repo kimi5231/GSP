@@ -44,6 +44,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             DispatchMessage(&msg);
         }
 
+      
+        g_gameFramework->Update();
         g_gameNetwork->Update();
     }
 
@@ -100,7 +102,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_KEYDOWN:
-        g_gameFramework->Update(wParam);
+        g_gameFramework->ProcessInput(wParam);
         break;
     case WM_COMMAND:
     {

@@ -136,12 +136,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ServerFramework.cpp" />
+    <ClCompile Include="Session.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
+    <ClInclude Include="Packets.h" />
     <ClInclude Include="ServerObject.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ServerFramework.h" />
+    <ClInclude Include="Session.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

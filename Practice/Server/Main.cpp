@@ -10,7 +10,8 @@ const int BUFSIZE = 256;
 
 int main()
 {
-	WSAStartup(MAKEWORD(2, 2), nullptr);
+	WSADATA WSAData;
+	WSAStartup(MAKEWORD(2, 2), &WSAData);
 
 	SOCKET s_socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, 0);
 	SOCKADDR_IN server_addr;

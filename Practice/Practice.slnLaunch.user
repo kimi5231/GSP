@@ -3,11 +3,11 @@
     "Name": "새 프로필",
     "Projects": [
       {
-        "Path": "client_sample\\client_sample.vcxproj",
+        "Path": "Client\\Client.vcxproj",
         "Action": "Start"
       },
       {
-        "Path": "iocp_game_server\\iocp_game_server.vcxproj",
+        "Path": "Server\\Server.vcxproj",
         "Action": "Start"
       }
     ]

@@ -126,7 +126,7 @@
     <ClCompile Include="1-2-1.cpp" />
     <ClCompile Include="1-2-2.cpp" />
     <ClCompile Include="1-2-3.cpp" />
-    <ClCompile Include="2-1.cpp" />
+    <ClCompile Include="2-1-1.cpp" />
     <ClCompile Include="matirix_multiply.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

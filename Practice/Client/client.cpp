@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-#include "..\iocp_game_server\protocol.h"
+#include "..\Server\protocol.h"
 
 sf::TcpSocket socket;
 

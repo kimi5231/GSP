@@ -9,6 +9,10 @@
       {
         "Path": "Server\\Server.vcxproj",
         "Action": "Start"
+      },
+      {
+        "Path": "STRESS_TEST\\STRESS_TEST.vcxproj",
+        "Action": "Start"
       }
     ]
   }

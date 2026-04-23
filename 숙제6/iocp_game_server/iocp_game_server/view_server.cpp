@@ -13,13 +13,24 @@
 #pragma comment(lib, "WS2_32.lib")
 using namespace std;
 
+enum IOType { IO_SEND, IO_RECV, IO_ACCEPT };
+
+struct Sector
+{
+	std::unordered_set<int> players;
+	std::mutex sectorMutex;
+};
+
 constexpr int BUF_SIZE = 200;
 constexpr int VIEW_RANGE = 5;
-constexpr int SECTOR_RANGE = 5;
+
+constexpr int SectorSize = VIEW_RANGE * 2;
+constexpr int SectorX = (WORLD_WIDTH / SectorSize);
+constexpr int SectorY = (WORLD_HEIGHT / SectorSize);
 
 std::atomic<int> player_index = 1;
 
-enum IOType { IO_SEND, IO_RECV, IO_ACCEPT };
+std::array<std::array<Sector, SectorY>, SectorX> sectors;
 
 class EXP_OVER {
 public:
@@ -188,14 +199,31 @@ bool SESSION::process_packet(unsigned char* p)
 		send_avatar_info();
 		m_state = CS_PLAYING;
 
-		for (auto& c : clients) {
-			std::shared_ptr<SESSION> pl = c.second.load();
-			if (nullptr == pl) continue;
-			if (pl->m_id == m_id) continue;
-			if (false == is_visible(pl->m_x, pl->m_y)) continue;
-			if (pl->m_state != CS_PLAYING) continue;
-			send_add_player(pl->m_id);
-			pl->send_add_player(m_id);
+		int X = m_x / SectorSize;
+		int Y = m_y / SectorSize;
+
+		std::unordered_set<int> new_v;
+		for (int x = X - 1; x <= X + 1; ++x)
+		{
+			for (int y = Y - 1; y <= Y + 1; ++y)
+			{
+				if (x < 0 || x >= SectorX || y < 0 || y >= SectorY)
+					continue;
+
+				sectors[x][y].sectorMutex.lock();
+				for (int id : sectors[x][y].players)
+				{
+					std::shared_ptr<SESSION> pl = clients[id].load();
+
+					if (nullptr == pl) continue;
+					if (id == m_id) continue;
+					if (pl->m_state != CS_PLAYING) continue;
+					if (false == is_visible(pl->m_x, pl->m_y)) continue;
+					send_add_player(id);
+					pl->send_add_player(m_id);
+				}
+				sectors[x][y].sectorMutex.unlock();
+			}
 		}
 	}
 				  break;
@@ -204,7 +232,11 @@ bool SESSION::process_packet(unsigned char* p)
 		DIRECTION dir = packet->dir;
 		m_move_time = packet->move_time;
 
+		int oldX = m_x / SectorSize;
+		int oldY = m_y / SectorSize;
+		m_visible_mutex.lock();
 		auto old_v = m_visible_players;
+		m_visible_mutex.unlock();
 
 		switch (dir) {
 		case UP: m_y = max(0, m_y - 1); break;
@@ -213,14 +245,42 @@ bool SESSION::process_packet(unsigned char* p)
 		case RIGHT: m_x = min(WORLD_WIDTH - 1, m_x + 1); break;
 		}
 
+		int newX = m_x / SectorSize;
+		int newY = m_y / SectorSize;
+
+		// Sector ¿Å±â±â
+		if (oldX != newX || oldY != newY)
+		{
+			sectors[oldX][oldY].sectorMutex.lock();
+			sectors[oldX][oldY].players.erase(m_id);
+			sectors[oldX][oldY].sectorMutex.unlock();
+
+			sectors[newX][newY].sectorMutex.lock();
+			sectors[newX][newY].players.insert(m_id);
+			sectors[newX][newY].sectorMutex.unlock();
+		}
+
 		std::unordered_set<int> new_v;
-		for (auto& c : clients) {
-			std::shared_ptr<SESSION> pl = c.second.load();
-			if (nullptr == pl) continue;
-			if (pl->m_id == m_id) continue;
-			if (pl->m_state != CS_PLAYING) continue;
-			if (is_visible(pl->m_x, pl->m_y))
-				new_v.insert(pl->m_id);
+		for (int x = newX - 1; x <= newX + 1; ++x)
+		{
+			for (int y = newY - 1; y <= newY + 1; ++y)
+			{
+				if (x < 0 || x >= SectorX || y < 0 || y >= SectorY) 
+					continue;
+
+				sectors[x][y].sectorMutex.lock();
+				for (int id : sectors[x][y].players)
+				{
+					std::shared_ptr<SESSION> pl = clients[id].load();
+
+					if (nullptr == pl) continue;
+					if (id == m_id) continue;
+					if (pl->m_state != CS_PLAYING) continue;
+					if (is_visible(pl->m_x, pl->m_y))
+						new_v.insert(id);
+				}
+				sectors[x][y].sectorMutex.unlock();
+			}
 		}
 
 		send_move_packet(m_id);
@@ -290,6 +350,13 @@ void disconnect(int key)
 	std::shared_ptr<SESSION> cl = clients[key].load();
 	if (nullptr != cl) {
 		cl->m_state = CS_LOGOUT;
+
+		int x = cl->m_x / SectorSize;
+		int y = cl->m_y / SectorSize;
+		sectors[x][y].sectorMutex.lock();
+		sectors[x][y].players.erase(key);
+		sectors[x][y].sectorMutex.unlock();
+
 		auto visible_copy = cl->m_visible_players;
 		for (auto& other : visible_copy) {
 			std::shared_ptr<SESSION> o = clients[other];
@@ -334,6 +401,13 @@ void worker_thread()
 				std::shared_ptr<SESSION> new_pl = std::make_shared<SESSION>(exp_over->m_client_socket, my_id);
 				clients[my_id] = new_pl;
 				new_pl->send_login_success();
+
+				int x = new_pl->m_x / SectorSize;
+				int y = new_pl->m_y / SectorSize;
+				sectors[x][y].sectorMutex.lock();
+				sectors[x][y].players.insert(my_id);
+				sectors[x][y].sectorMutex.unlock();
+
 				new_pl->do_recv();
 			}
 			exp_over->m_client_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);

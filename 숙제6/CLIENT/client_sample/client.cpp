@@ -4,7 +4,7 @@
 #include <unordered_map>
 using namespace std;
 
-#include "..\..\iocp_game_server\iocp_game_server\protocol.h"
+#include "../../iocp_game_server/iocp_game_server/protocol.h"
 
 sf::TcpSocket socket;
 

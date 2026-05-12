@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "STRESS_TEST", "STRESS_TEST\STRESS_TEST.vcxproj", "{78CFAE3D-E68D-4F82-9C2A-9459398D429F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lua Test", "Lua Test\Lua Test.vcxproj", "{8A7CC1BE-771D-4A8F-8BA2-66C4216BE570}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{78CFAE3D-E68D-4F82-9C2A-9459398D429F}.Release|x64.Build.0 = Release|x64
 		{78CFAE3D-E68D-4F82-9C2A-9459398D429F}.Release|x86.ActiveCfg = Release|Win32
 		{78CFAE3D-E68D-4F82-9C2A-9459398D429F}.Release|x86.Build.0 = Release|Win32
+		{8A7CC1BE-771D-4A8F-8BA2-66C4216BE570}.Debug|x64.ActiveCfg = Debug|x64
+		{8A7CC1BE-771D-4A8F-8BA2-66C4216BE570}.Debug|x64.Build.0 = Debug|x64
+		{8A7CC1BE-771D-4A8F-8BA2-66C4216BE570}.Debug|x86.ActiveCfg = Debug|Win32
+		{8A7CC1BE-771D-4A8F-8BA2-66C4216BE570}.Debug|x86.Build.0 = Debug|Win32
+		{8A7CC1BE-771D-4A8F-8BA2-66C4216BE570}.Release|x64.ActiveCfg = Release|x64
+		{8A7CC1BE-771D-4A8F-8BA2-66C4216BE570}.Release|x64.Build.0 = Release|x64
+		{8A7CC1BE-771D-4A8F-8BA2-66C4216BE570}.Release|x86.ActiveCfg = Release|Win32
+		{8A7CC1BE-771D-4A8F-8BA2-66C4216BE570}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

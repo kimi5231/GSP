@@ -12,15 +12,74 @@
     <Filter Include="소스 파일\Main">
       <UniqueIdentifier>{a39755c9-678d-4278-a32e-75532d9050bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Game">
+      <UniqueIdentifier>{6c2022b0-26e8-4a10-b346-ba31bed24404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Main\Network">
+      <UniqueIdentifier>{80f10a4d-6afb-4842-92fd-8b9c789edc29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Game\Object">
+      <UniqueIdentifier>{248c0c5f-5f35-4b77-b2d7-b6b7decaa35d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFramework.cpp">
+      <Filter>소스 파일\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GameNetwork.cpp">
+      <Filter>소스 파일\Main\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일\Game\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
       <Filter>소스 파일\Main</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DataManager.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="GameFramework.h">
+      <Filter>소스 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Server\Server\Types.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Server\Server\protocol_2026.h">
+      <Filter>소스 파일\Main\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="GameNetwork.h">
+      <Filter>소스 파일\Main\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

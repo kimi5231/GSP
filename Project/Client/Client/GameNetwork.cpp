@@ -1,0 +1,229 @@
+#include "pch.h"
+#include "GameNetwork.h"
+#include "GameFramework.h"
+
+GameNetwork::GameNetwork()
+{
+	// 扩加 檬扁拳
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		return;
+
+
+	// listenSocket 积己
+	_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (_clientSocket == INVALID_SOCKET)
+		return;
+
+	// connect
+	sockaddr_in addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	addr.sin_port = htons(7777);
+	if (connect(_clientSocket, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
+	{
+		//std::cout << "bind 角菩" << std::endl;
+		return;
+	}
+}
+
+GameNetwork::~GameNetwork()
+{
+	// clientSocket 辆丰
+	closesocket(_clientSocket);
+
+	// 扩加 辆丰
+	WSACleanup();
+}
+
+void GameNetwork::Update()
+{
+	// socket set 檬扁拳
+	FD_ZERO(&_readSet);
+ 	FD_ZERO(&_writeSet);
+
+	// readSet, writeSet俊 clientSocket 殿废
+	FD_SET(_clientSocket, &_readSet);
+	FD_SET(_clientSocket, &_writeSet);
+
+	// select
+	if (select(0, &_readSet, &_writeSet, NULL, 0) == SOCKET_ERROR)
+		return;
+
+	if (FD_ISSET(_clientSocket, &_readSet))
+	{
+		ProcessRecv();
+	}
+
+	// send啊 啊瓷且 锭付促 true
+	if (FD_ISSET(_clientSocket, &_writeSet))
+	{
+		for (NetworkEventRef event : _sendEvents)
+		{
+			send(_clientSocket, event->serializedPacketData.data(), event->serializedPacketData.size(), 0);
+			event->isComplete = true;
+		}
+
+		_sendEvents.erase(std::remove_if(_sendEvents.begin(), _sendEvents.end(),
+			[](NetworkEventRef event) {
+				return event->isComplete;
+			}), _sendEvents.end());
+	}
+}
+
+void GameNetwork::ProcessRecv()
+{
+	char packetSize;
+	recv(_clientSocket, (char*)&packetSize, sizeof(char), MSG_WAITALL);
+	std::vector<char> packet(BufferSize);
+	packet.push_back(packetSize);
+	recv(_clientSocket, packet.data() + sizeof(char), packetSize - sizeof(char), MSG_WAITALL);
+	
+	PACKET_TYPE id;
+	memcpy(&id, packet.data() + sizeof(char), sizeof(PACKET_TYPE));
+
+	// Data 眠免
+	switch (id)
+	{
+	case S2C_LOGIN_RESULT:
+	{
+		S2C_LoginResult loginResultPacket;
+		loginResultPacket.size = packetSize;
+		loginResultPacket.type = id;
+		memcpy(&loginResultPacket.success, packet.data() + sizeof(char) + sizeof(PACKET_TYPE), sizeof(bool));
+		memcpy(&loginResultPacket.message, packet.data() + sizeof(char) + sizeof(PACKET_TYPE) + sizeof(bool), sizeof(char) * 50);
+		ProcessLoginResultPacket(loginResultPacket);
+		break;
+	}
+	case S2C_AVATAR_INFO:
+	{
+		S2C_AvatarInfo avatarInfoPacket;
+		memcpy(&avatarInfoPacket, packet.data(), sizeof(S2C_AvatarInfo));
+		ProcessAvatarInfoPacket(avatarInfoPacket);
+		break;
+	}
+	}
+}
+
+void GameNetwork::SendLoginPacket(const std::vector<char>& id)
+{
+	// Packet Data 积己
+	char packetSize = sizeof(char) + sizeof(PACKET_TYPE) + id.size();
+	std::vector<char> idData = SerializeVector(id);
+
+	std::vector<char> serializedPacketData;
+	serializedPacketData.push_back(packetSize);
+	serializedPacketData.push_back(C2S_LOGIN);
+	serializedPacketData.insert(serializedPacketData.end(), idData.begin(), idData.end());
+	
+	// SendEvent 积己
+	NetworkEventRef event = std::make_shared<NetworkEvent>();
+	event->packetID = C2S_LOGIN;
+	event->serializedPacketData = serializedPacketData;
+	_sendEvents.push_back(event);
+}
+
+void GameNetwork::SendLogoutPacket()
+{
+	// Packet Data 积己
+	C2S_Logout packetData{ sizeof(C2S_Logout), C2S_LOGOUT };
+
+	// Packet Serialize
+	std::vector<char> serializedPacketData = SerializePOD(packetData);
+
+	// SendEvent 积己
+	NetworkEventRef event = std::make_shared<NetworkEvent>();
+	event->packetID = C2S_LOGOUT;
+	event->serializedPacketData = serializedPacketData;
+	_sendEvents.push_back(event);
+}
+
+//void GameNetwork::SendMovePacket(ObjectType type, int id, Vector pos, Rotation rotation, ObjectState state)
+//{
+//	// Packet Data 积己
+//	C_Move_Packet packetData{ sizeof(C_Move_Packet), C_Move, id, pos, rotation, type, state };
+//
+//	// Packet Serialize
+//	std::vector<char> serializedPacketData = SerializePOD(packetData);
+//
+//	// SendEvent 积己
+//	NetworkEventRef event = std::make_shared<NetworkEvent>();
+//	event->packetID = C_Move;
+//	event->serializedPacketData = serializedPacketData;
+//	std::lock_guard<std::mutex> lock(_sendMutex);
+//	_sendEvents.push_back(event);
+//}
+//
+//void GameNetwork::SendGetItemPacket(int itemID, bool isTool, int playerID)
+//{
+//	// Packet Data 积己
+//	C_GetItem_Packet packetData{ sizeof(C_GetItem_Packet), C_GetItem, itemID, playerID, isTool };
+//
+//	// Packet Serialize
+//	std::vector<char> serializedPacketData = SerializePOD(packetData);
+//
+//	// SendEvent 积己
+//	NetworkEventRef event = std::make_shared<NetworkEvent>();
+//	event->packetID = C_GetItem;
+//	event->serializedPacketData = serializedPacketData;
+//	std::lock_guard<std::mutex> lock(_sendMutex);
+//	_sendEvents.push_back(event);
+//}
+//
+//void GameNetwork::SendDropItemPacket(int itemID, bool isTool, int playerID)
+//{
+//	// Packet Data 积己
+//	C_DropItem_Packet packetData{ sizeof(C_DropItem_Packet), C_DropItem, itemID, playerID, isTool };
+//
+//	// Packet Serialize
+//	std::vector<char> serializedPacketData = SerializePOD(packetData);
+//
+//	// SendEvent 积己
+//	NetworkEventRef event = std::make_shared<NetworkEvent>();
+//	event->packetID = C_DropItem;
+//	event->serializedPacketData = serializedPacketData;
+//	std::lock_guard<std::mutex> lock(_sendMutex);
+//	_sendEvents.push_back(event);
+//}
+//
+//void GameNetwork::SendSellItemPacket(int playerID, int sellingMachineID)
+//{
+//	// Packet Data 积己
+//	C_SellItem_Packet packetData{ sizeof(C_SellItem_Packet), C_SellItem, sellingMachineID, playerID };
+//
+//	// Packet Serialize
+//	std::vector<char> serializedPacketData = SerializePOD(packetData);
+//
+//	// SendEvent 积己
+//	NetworkEventRef event = std::make_shared<NetworkEvent>();
+//	event->packetID = C_SellItem;
+//	event->serializedPacketData = serializedPacketData;
+//	std::lock_guard<std::mutex> lock(_sendMutex);
+//	_sendEvents.push_back(event);
+//}
+//
+//void GameNetwork::SendBuyItemPacket(int playerID, ItemType itemType, int itemCount)
+//{
+//	// Packet Data 积己
+//	C_BuyItem_Packet packetData{ sizeof(C_BuyItem_Packet), C_BuyItem, playerID, itemType, itemCount };
+//	
+//	// Packet Serialize
+//	std::vector<char> serializedPacketData = SerializePOD(packetData);
+//	
+//	// SendEvent 积己
+//	NetworkEventRef event = std::make_shared<NetworkEvent>();
+//	event->packetID = C_BuyItem;
+//	event->serializedPacketData = serializedPacketData;
+//	std::lock_guard<std::mutex> lock(_sendMutex);
+//	_sendEvents.push_back(event);
+//}
+
+void GameNetwork::ProcessLoginResultPacket(S2C_LoginResult packet)
+{
+
+}
+
+void GameNetwork::ProcessAvatarInfoPacket(S2C_AvatarInfo packet)
+{
+}

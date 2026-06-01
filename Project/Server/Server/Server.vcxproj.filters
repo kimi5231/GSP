@@ -12,15 +12,96 @@
     <Filter Include="소스 파일\Main">
       <UniqueIdentifier>{202a2684-9cd4-434a-af4c-7c6b8c8c127f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Game">
+      <UniqueIdentifier>{0ce0e83f-331c-4ea3-86ed-522431e085a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Game\Object">
+      <UniqueIdentifier>{f4d1c03d-9435-4067-8b85-f4406c14488c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Game\Object\Item">
+      <UniqueIdentifier>{0369cd23-687c-433a-9c07-af0ecdd6fe8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Main\Network">
+      <UniqueIdentifier>{b70917ef-8187-4052-aec0-6191b8cb6562}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>소스 파일\Main</Filter>
     </ClCompile>
+    <ClCompile Include="ServerFramework.cpp">
+      <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Creature.cpp">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ExpOver.cpp">
+      <Filter>소스 파일\Main\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerNetwork.cpp">
+      <Filter>소스 파일\Main\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>소스 파일\Main\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="protocol_2026.h">
+    <ClInclude Include="ServerFramework.h">
       <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="DataManager.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Creature.h">
+      <Filter>소스 파일\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ExpOver.h">
+      <Filter>소스 파일\Main\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol_2026.h">
+      <Filter>소스 파일\Main\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerNetwork.h">
+      <Filter>소스 파일\Main\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>소스 파일\Main\Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

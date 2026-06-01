@@ -1,0 +1,29 @@
+#pragma once
+#include "Player.h"
+
+class Monster;
+
+class ServerFramework
+{
+public:
+	ServerFramework();
+	~ServerFramework();
+
+public:
+	void Update();
+
+public:
+	Player* AddPlayer();
+	/*Monster* AddMonster(MonsterType monsterType, Vector pos);
+	Item* AddItem(bool isTool, ItemType itemType, Vector pos);*/
+	void RemoveObject(ObjectType type, int id, bool isSend);
+
+public:
+	GameObject* GetGameObject(ObjectType type, int id);
+	const std::array<Player*, MAX_PLAYERS>& GetPlayers() { return _players; }
+	const std::array<Monster*, NUM_NPCS>& GetMonsters() { return _monsters; }
+
+private:
+	std::array<Player*, MAX_PLAYERS> _players;
+	std::array<Monster*, NUM_NPCS> _monsters;
+};

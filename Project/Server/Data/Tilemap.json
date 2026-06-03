@@ -1,0 +1,8 @@
+{
+    "tilemap": {
+         "tileCount" : [40, 40],
+         "tiles" : [
+            { "pattern" : [[0, 40]], "repeatY" :  40 }
+         ]
+      }
+}

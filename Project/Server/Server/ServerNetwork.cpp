@@ -468,6 +468,10 @@ void ServerNetwork::SendMoveObjectPacket(GameObject* object, Session* client)
 
 void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 {
+	// 현재 접속하고 있는 ID라면 무시
+	if(_clients[clientIndex]->_player)
+		return;
+
 	// 데이터 베이스에 ID가 존재하는지 확인
 	// ID가 존재한다면 정보 가져오기
 

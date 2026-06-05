@@ -23,4 +23,5 @@ struct NetworkEvent
 };
 
 using NetworkEventRef = std::shared_ptr<NetworkEvent>;
+using GameObjectRef = std::shared_ptr<class GameObject>;
 using PlayerRef = std::shared_ptr<class Player>;

@@ -32,13 +32,25 @@ void GameFramework::Update()
 		Vector pos = _avatar->GetPos();
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
             _avatar->SetPos({ pos.x - 50, pos.y });
+			g_network->SendMovePacket(_avatar);
+        }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
             _avatar->SetPos({ pos.x + 50, pos.y });
+            g_network->SendMovePacket(_avatar);
+        }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
             _avatar->SetPos({ pos.x, pos.y - 50 });
+            g_network->SendMovePacket(_avatar);
+        }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
             _avatar->SetPos({ pos.x, pos.y + 50 });
+            g_network->SendMovePacket(_avatar); 
+        }
     }
 }
 
@@ -73,4 +85,13 @@ void GameFramework::AddPlayer(int id, int visualID, const char* name, short x, s
     player->SetExp(exp);
     player->SetLevel(level);
     _players[id] = player;
+}
+
+GameObjectRef GameFramework::GetGameObject(ObjectType type, int id)
+{
+    switch (type)
+    {
+    case ObjectType::Player:
+        return _players[id];
+    }
 }

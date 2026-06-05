@@ -24,7 +24,7 @@ public:
 public:
 	void SendLoginPacket(const char* id);
 	void SendLogoutPacket();
-	//void SendMovePacket(ObjectType type, int id, Vector pos, Rotation rotation, ObjectState state);
+	void SendMovePacket(PlayerRef player);
 	//void SendGetItemPacket(int itemID, bool isTool, int playerID);
 	//void SendDropItemPacket(int itemID, bool isTool, int playerID);
 	//void SendSellItemPacket(int playerID, int sellingMachineID);
@@ -34,7 +34,7 @@ public:
 	void ProcessLoginResultPacket(S2C_LoginResult packet);
 	void ProcessAvatarInfoPacket(S2C_AvatarInfo packet);
 	void ProcessAddObjectPacket(S2C_AddObject packet);
-	//void ProcessMoveObjectPacket(S2C_MoveObject packet);
+	void ProcessMoveObjectPacket(S2C_MoveObject packet);
 
 private:
 	fd_set _readSet{};

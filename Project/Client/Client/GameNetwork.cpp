@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameNetwork.h"
 #include "Global.h"
+#include "Player.h"
 
 GameNetwork::GameNetwork()
 {
@@ -109,6 +110,13 @@ void GameNetwork::ProcessRecv()
 		ProcessAddObjectPacket(addObjectPacket);
 		break;
 	}
+	case S2C_MOVE_OBJECT:
+	{
+		S2C_MoveObject moveObjectPacket;
+		memcpy(&moveObjectPacket, packet.data(), sizeof(S2C_MoveObject));
+		ProcessMoveObjectPacket(moveObjectPacket);
+		break;
+	}
 	}
 }
 
@@ -145,22 +153,21 @@ void GameNetwork::SendLogoutPacket()
 	_sendEvents.push_back(event);
 }
 
-//void GameNetwork::SendMovePacket(ObjectType type, int id, Vector pos, Rotation rotation, ObjectState state)
-//{
-//	// Packet Data 持失
-//	C_Move_Packet packetData{ sizeof(C_Move_Packet), C_Move, id, pos, rotation, type, state };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	// SendEvent 持失
-//	NetworkEventRef event = std::make_shared<NetworkEvent>();
-//	event->packetID = C_Move;
-//	event->serializedPacketData = serializedPacketData;
-//	std::lock_guard<std::mutex> lock(_sendMutex);
-//	_sendEvents.push_back(event);
-//}
-//
+void GameNetwork::SendMovePacket(PlayerRef player)
+{
+	// Packet Data 持失
+	C2S_Move packetData{ sizeof(C2S_Move), C2S_MOVE, player->GetPos().x, player->GetPos().y, 0 };
+
+	// Packet Serialize
+	std::vector<char> serializedPacketData = SerializePOD(packetData);
+
+	// SendEvent 持失
+	NetworkEventRef event = std::make_shared<NetworkEvent>();
+	event->packetID = C2S_MOVE;
+	event->serializedPacketData = serializedPacketData;
+	_sendEvents.push_back(event);
+}
+
 //void GameNetwork::SendGetItemPacket(int itemID, bool isTool, int playerID)
 //{
 //	// Packet Data 持失
@@ -238,4 +245,10 @@ void GameNetwork::ProcessAvatarInfoPacket(S2C_AvatarInfo packet)
 void GameNetwork::ProcessAddObjectPacket(S2C_AddObject packet)
 {
 	g_framework->AddPlayer(packet.object_id, packet.visual_id, packet.obj_name, packet.x, packet.y, packet.hp, packet.max_hp, packet.exp, packet.level);
+}
+
+void GameNetwork::ProcessMoveObjectPacket(S2C_MoveObject packet)
+{
+	GameObjectRef object = g_framework->GetGameObject(ObjectType::Player, packet.object_id);
+	object->SetPos(packet.x, packet.y);
 }

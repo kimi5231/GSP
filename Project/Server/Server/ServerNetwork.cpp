@@ -207,15 +207,9 @@ void ServerNetwork::ProcessPacket(std::vector<char>& packet, int clientIndex)
 	{
 	case C2S_LOGIN:
 	{
-		unsigned char packetSize;
-		memcpy(&packetSize, packet.data(), sizeof(unsigned char));
-		packet.erase(packet.begin(), packet.begin() + sizeof(unsigned char) + sizeof(PACKET_TYPE));
-		
 		C2S_Login loginPacket;
-		loginPacket.size = packetSize;
-		loginPacket.type = C2S_LOGIN;
-		memcpy(&loginPacket.username, packet.data(), MAX_NAME_LEN);
-		packet.erase(packet.begin(), packet.begin() + MAX_NAME_LEN);
+		memcpy(&loginPacket, packet.data(), sizeof(C2S_Login));
+		packet.erase(packet.begin(), packet.begin() + sizeof(C2S_Login));
 		ProcessLoginPacket(loginPacket, clientIndex);
 		break;
 	}
@@ -486,18 +480,17 @@ void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 
 	// 새로 접속한 Client에게 기존에 있던 Object 정보 전송
 	// 시야 처리 필요
-	//for (auto& client : _clients)
-	//{
-	//	// 이거 바꿔야 하나
-	//	if (!client->_player)
-	//		continue;
+	for (auto& client : _clients)
+	{
+		if (!client->_player)
+			continue;
 
-	//	// 자기 자신 제외
-	//	if (_clients[clientIndex] == client)
-	//		continue;
+		// 자기 자신 제외
+		if (_clients[clientIndex] == client)
+			continue;
 
-	//	SendAddObjectPacket(client->_player, _clients[clientIndex]);
-	//}
+		SendAddObjectPacket(client->_player, _clients[clientIndex]);
+	}
 
 	/*for (auto& monster : _clients[clientIndex]->_room->GetMonsters())
 	{

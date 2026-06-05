@@ -22,7 +22,7 @@ public:
 	std::vector<T> DeserializeVector(std::vector<char>& data);
 
 public:
-	void SendLoginPacket(const std::vector<char>& id);
+	void SendLoginPacket(const char* id);
 	void SendLogoutPacket();
 	//void SendMovePacket(ObjectType type, int id, Vector pos, Rotation rotation, ObjectState state);
 	//void SendGetItemPacket(int itemID, bool isTool, int playerID);
@@ -33,6 +33,7 @@ public:
 public:
 	void ProcessLoginResultPacket(S2C_LoginResult packet);
 	void ProcessAvatarInfoPacket(S2C_AvatarInfo packet);
+	void ProcessAddObjectPacket(S2C_AddObject packet);
 	//void ProcessMoveObjectPacket(S2C_MoveObject packet);
 
 private:

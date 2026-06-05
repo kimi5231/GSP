@@ -7,6 +7,7 @@
 #include <vector>
 #include <chrono>
 #include <filesystem>
+#include <unordered_map>
 
 #include "../../Server/Server/Types.h"
 #include "../../Server/Server/protocol_2026.h"

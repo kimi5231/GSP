@@ -12,7 +12,8 @@ constexpr int MAX_CHAT_MSG_LEN = 200;
 
 #define BufferSize 10000
 
-enum PACKET_TYPE { 
+enum PACKET_TYPE
+{ 
 	C2S_LOGIN,			// Client to Server: Login request
 						// 사용자 이름을 포함한 로그인 요청 패킷	
 	C2S_MOVE,			// Client to Server: Move request

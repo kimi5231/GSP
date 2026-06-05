@@ -24,6 +24,9 @@
     <Filter Include="소스 파일\Main\Network">
       <UniqueIdentifier>{b70917ef-8187-4052-aec0-6191b8cb6562}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Game\Object\Creature">
+      <UniqueIdentifier>{9e4bc387-12ce-4942-9bad-285b5d9b00eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -44,15 +47,6 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>소스 파일\Game\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Monster.cpp">
-      <Filter>소스 파일\Game\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>소스 파일\Game\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Creature.cpp">
-      <Filter>소스 파일\Game\Object</Filter>
-    </ClCompile>
     <ClCompile Include="ExpOver.cpp">
       <Filter>소스 파일\Main\Network</Filter>
     </ClCompile>
@@ -61,6 +55,15 @@
     </ClCompile>
     <ClCompile Include="Session.cpp">
       <Filter>소스 파일\Main\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Creature.cpp">
+      <Filter>소스 파일\Game\Object\Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>소스 파일\Game\Object\Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일\Game\Object\Creature</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,15 +85,6 @@
     <ClInclude Include="GameObject.h">
       <Filter>소스 파일\Game\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Monster.h">
-      <Filter>소스 파일\Game\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>소스 파일\Game\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Creature.h">
-      <Filter>소스 파일\Game\Object</Filter>
-    </ClInclude>
     <ClInclude Include="ExpOver.h">
       <Filter>소스 파일\Main\Network</Filter>
     </ClInclude>
@@ -102,6 +96,15 @@
     </ClInclude>
     <ClInclude Include="Session.h">
       <Filter>소스 파일\Main\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Creature.h">
+      <Filter>소스 파일\Game\Object\Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>소스 파일\Game\Object\Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>소스 파일\Game\Object\Creature</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,7 +5,12 @@
 
 ServerFramework::ServerFramework()
 {
-	
+	for (int i = 0; i < MAX_PLAYERS; ++i)
+	{
+		_players[i] = new Player();
+		_players[i]->SetID(i);
+		_players[i]->SetObjectPoolState(ObjectPoolState::Reusable);
+	}
 }
 
 ServerFramework::~ServerFramework()
@@ -37,6 +42,8 @@ Player* ServerFramework::AddPlayer()
 			return _players[i];
 		}
 	}
+
+	return nullptr;
 }
 
 void ServerFramework::RemoveObject(ObjectType type, int id, bool isSend)

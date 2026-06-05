@@ -118,8 +118,14 @@ void ServerNetwork::ProcessAccept()
 
 	// 할당할 수 있는 Client Session이 없다면 무시
 	if (clientIndex == -1)
+	{
+		// accept 다시 걸기
+		_tempSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+		_acceptOver._ioType = IOType::Accept;
+		AcceptEx(_listenSocket, _tempSocket, _acceptOver._buffer.data(), 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, NULL, &_acceptOver._over);
 		return;
-
+	}
+	
 	std::cout << "Client[" << clientIndex << "] 접속" << std::endl;
 
 	// clientSocket 등록
@@ -208,7 +214,8 @@ void ServerNetwork::ProcessPacket(std::vector<char>& packet, int clientIndex)
 		C2S_Login loginPacket;
 		loginPacket.size = packetSize;
 		loginPacket.type = C2S_LOGIN;
-		memcpy(&loginPacket.username, packet.data(), sizeof(char) * MAX_NAME_LEN);
+		memcpy(&loginPacket.username, packet.data(), MAX_NAME_LEN);
+		packet.erase(packet.begin(), packet.begin() + MAX_NAME_LEN);
 		ProcessLoginPacket(loginPacket, clientIndex);
 		break;
 	}
@@ -311,6 +318,15 @@ void ServerNetwork::SendAddObjectPacket(Player* player, Session* client)
 	S2C_AddObject packet;
 	packet.size = sizeof(S2C_AddObject);
 	packet.type = S2C_ADD_OBJECT;
+	packet.object_id = player->GetID();
+	packet.visual_id = 0;
+	strncpy_s(packet.obj_name, player->GetName(), sizeof(packet.obj_name) - 1);
+	packet.x = player->GetPos().x;
+	packet.y = player->GetPos().y;
+	packet.hp = player->GetHP();
+	packet.max_hp = player->GetMaxHP();
+	packet.exp = player->GetEXP();
+	packet.level = player->GetLevel();
 
 	client->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
@@ -457,6 +473,7 @@ void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 
 	// ID가 없다면 데이터베이스에 추가 후, 새로운 Player 생성
 	_clients[clientIndex]->_player = g_framework->AddPlayer();
+	_clients[clientIndex]->_player->SetName(packet.username);
 	// 삭제 예정
 	_clients[clientIndex]->_player->SetClient(_clients[clientIndex]);
 
@@ -465,28 +482,23 @@ void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 
 	// 새로 접속한 Client에게 기존에 있던 Object 정보 전송
 	// 시야 처리 필요
-	for (auto& client : _clients)
-	{
-		if (!client->_isConnected)
-			continue;
+	//for (auto& client : _clients)
+	//{
+	//	// 이거 바꿔야 하나
+	//	if (!client->_player)
+	//		continue;
 
-		// 자기 자신 제외
-		if (_clients[clientIndex]->_id == client->_id)
-			continue;
+	//	// 자기 자신 제외
+	//	if (_clients[clientIndex] == client)
+	//		continue;
 
-		SendAddObjectPacket(client->_player, _clients[clientIndex]);
-	}
+	//	SendAddObjectPacket(client->_player, _clients[clientIndex]);
+	//}
 
 	/*for (auto& monster : _clients[clientIndex]->_room->GetMonsters())
 	{
 		if (monster->GetObjectPoolState() == ObjectPoolState::InWorld)
 			SendAddMonsterPacket(monster, _clients[clientIndex]);
-	}
-
-	for (auto& item : _clients[clientIndex]->_room->GetItems())
-	{
-		if (item->GetObjectPoolState() == ObjectPoolState::InWorld)
-			SendAddItemPacket(item, dynamic_cast<Tool*>(item), _clients[clientIndex]);
 	}*/
 }
 

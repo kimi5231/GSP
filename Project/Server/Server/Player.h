@@ -11,7 +11,7 @@ public:
 
 public:
 	virtual void Init();
-	virtual void Update();
+	virtual void Update() {};
 
 public:
 	bool AddItemToInventory(bool isTool, int id);

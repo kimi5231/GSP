@@ -12,10 +12,14 @@ public:
 	void Update();
 	void Render();
 
+public:
+	void CreateAvatar(int id, int visualID, short x, short y, int hp, int maxHp, long long exp, int level);
+	void AddPlayer(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level);
+
 private:
 	sf::RenderWindow* _window;
 
 private:
 	PlayerRef _avatar;
-	std::vector<GameObject*> _gameObjects;
+	std::unordered_map<int, PlayerRef> _players;
 };

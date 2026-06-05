@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "GameNetwork.h"
-#include "GameFramework.h"
+#include "Global.h"
 
 GameNetwork::GameNetwork()
 {
@@ -8,7 +8,6 @@ GameNetwork::GameNetwork()
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return;
-
 
 	// listenSocket 积己
 	_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -20,10 +19,10 @@ GameNetwork::GameNetwork()
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	addr.sin_port = htons(7777);
+	addr.sin_port = htons(PORT);
 	if (connect(_clientSocket, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
 	{
-		//std::cout << "bind 角菩" << std::endl;
+		std::cout << "connect 角菩" << std::endl;
 		return;
 	}
 }
@@ -103,20 +102,27 @@ void GameNetwork::ProcessRecv()
 		ProcessAvatarInfoPacket(avatarInfoPacket);
 		break;
 	}
+	case S2C_ADD_OBJECT:
+	{
+		S2C_AddObject addObjectPacket;
+		memcpy(&addObjectPacket, packet.data(), sizeof(S2C_AddObject));
+		ProcessAddObjectPacket(addObjectPacket);
+		break;
+	}
 	}
 }
 
-void GameNetwork::SendLoginPacket(const std::vector<char>& id)
+void GameNetwork::SendLoginPacket(const char* id)
 {
 	// Packet Data 积己
-	char packetSize = sizeof(char) + sizeof(PACKET_TYPE) + id.size();
-	std::vector<char> idData = SerializeVector(id);
-
-	std::vector<char> serializedPacketData;
-	serializedPacketData.push_back(packetSize);
-	serializedPacketData.push_back(C2S_LOGIN);
-	serializedPacketData.insert(serializedPacketData.end(), idData.begin(), idData.end());
+	C2S_Login packet;
+	packet.size = sizeof(C2S_Login);
+	packet.type = C2S_LOGIN;
+	memcpy(packet.username, id, MAX_NAME_LEN);
 	
+	// Packet Serialize
+	std::vector<char> serializedPacketData = SerializePOD(packet);
+
 	// SendEvent 积己
 	NetworkEventRef event = std::make_shared<NetworkEvent>();
 	event->packetID = C2S_LOGIN;
@@ -226,4 +232,10 @@ void GameNetwork::ProcessLoginResultPacket(S2C_LoginResult packet)
 
 void GameNetwork::ProcessAvatarInfoPacket(S2C_AvatarInfo packet)
 {
+	g_framework->CreateAvatar(packet.playerId, packet.visualId, packet.x, packet.y, packet.hp, packet.max_hp, packet.exp, packet.level);
+}
+
+void GameNetwork::ProcessAddObjectPacket(S2C_AddObject packet)
+{
+	g_framework->AddPlayer(packet.object_id, packet.visual_id, packet.obj_name, packet.x, packet.y, packet.hp, packet.max_hp, packet.exp, packet.level);
 }

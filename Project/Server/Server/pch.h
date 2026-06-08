@@ -20,9 +20,14 @@
 #include <optional>
 #include <MSWSock.h>
 #include <limits>
+#include <thread>
+#include <mutex>
+#include <tbb/concurrent_unordered_map.h>
 
 #include "Types.h"
 #include "protocol_2026.h"
 
 #pragma comment(lib, "MSWSock.lib")
 #pragma comment(lib, "ws2_32")
+
+using SessionRef = std::shared_ptr<class Session>;

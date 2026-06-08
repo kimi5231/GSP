@@ -107,4 +107,7 @@
       <Filter>소스 파일\Game\Object\Creature</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>

@@ -19,11 +19,15 @@ public:
 	void RemoveObject(ObjectType type, int id, bool isSend);
 
 public:
+	bool IsCanGo(int x, int y);
+
+public:
 	GameObject* GetGameObject(ObjectType type, int id);
 	const std::array<Player*, MAX_PLAYERS>& GetPlayers() { return _players; }
 	const std::array<Monster*, NUM_NPCS>& GetMonsters() { return _monsters; }
 
 private:
+	std::vector<std::vector<short>> _map;
 	std::array<Player*, MAX_PLAYERS> _players;
 	std::array<Monster*, NUM_NPCS> _monsters;
 };

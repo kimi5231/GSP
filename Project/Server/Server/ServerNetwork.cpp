@@ -75,7 +75,7 @@ void ServerNetwork::Update()
 	DWORD numByte;
 	ULONG_PTR key;
 	LPOVERLAPPED over;
-	GetQueuedCompletionStatus(_iocp, &numByte, &key, &over, 0);
+	GetQueuedCompletionStatus(_iocp, &numByte, &key, &over, INFINITE);
 	
 	if (over == nullptr)
 	{
@@ -149,6 +149,7 @@ void ServerNetwork::ProcessDisconnected(int clientIndex)
 	closesocket(_clients[clientIndex]->_clientSocket);
 	_clients[clientIndex]->_clientSocket = INVALID_SOCKET;
 	_clients[clientIndex]->_isConnected = false;
+	_clients[clientIndex]->_player = nullptr;
 	//_clients[clientIndex]->_room->RemoveObject(ObjectType::Player, _clients[clientIndex]->_player->GetID(), true);
 }
 
@@ -511,6 +512,13 @@ void ServerNetwork::ProcessMovePacket(C2S_Move packet, int clientIndex)
 	if (player == nullptr)
 		return;
 
+	// 갈 수 없는 곳이면 이전 좌표로 되돌리기
+	if (!g_framework->IsCanGo(packet.x, packet.y))
+	{
+		SendMoveObjectPacket(player, _clients[clientIndex]);
+		return;
+	}
+		
 	player->SetPos({packet.x, packet.y});
 	
 	// 자신을 제외한 모든 Client들에게 알리기

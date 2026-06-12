@@ -7,6 +7,29 @@ using json = nlohmann::json;
 
 DataManager::DataManager()
 {
-    _dataPath = std::filesystem::current_path();
+    _dataPath = std::filesystem::current_path().parent_path() / "Data";
 
+    LoadTilemaps();
+}
+
+void DataManager::LoadTilemaps()
+{
+    std::ifstream file(_dataPath / "Tilemap.json");
+    json data = json::parse(file);
+
+    // Tilemap √ﬂ√‚
+    Vector tileCount{ data["tileCount"][0],  data["tileCount"][1] };
+
+    std::vector<short> x;
+    for (const auto& tiles : data["tiles"])
+    {
+        for (const auto& pattern : tiles["pattern"])
+        {
+            for (int i = 0; i < pattern[1]; i++)
+                x.push_back(pattern[0]);
+        }
+
+        for (int i = 0; i < tiles["repeatY"]; i++)
+            _tilemap.push_back(x);
+    }
 }

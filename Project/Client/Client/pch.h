@@ -8,12 +8,16 @@
 #include <chrono>
 #include <filesystem>
 #include <unordered_map>
+#include <algorithm>
 
 #include "../../Server/Server/Types.h"
 #include "../../Server/Server/protocol_2026.h"
 
 #pragma comment(lib, "MSWSock.lib")
 #pragma comment(lib, "ws2_32")
+
+constexpr int WINDOW_WIDTH = 1000;
+constexpr int WINDOW_HEIGHT = 1000;
 
 struct NetworkEvent
 {

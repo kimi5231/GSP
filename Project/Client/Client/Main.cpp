@@ -4,9 +4,10 @@
 int main()
 {
     // 윈도우창 생성
-    sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode(1000, 1000), "GSP");
+    sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "GSP");
     window->setFramerateLimit(60);
 
+    g_dataManager = new DataManager();
     g_framework = new GameFramework(window);
 	g_network = new GameNetwork();
 

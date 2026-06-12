@@ -10,7 +10,7 @@ DataManager::DataManager()
     _dataPath = std::filesystem::current_path().parent_path() / "Data";
 
     LoadTilemaps();
-    LoadItemInfos();
+   // LoadItemInfos();
 }
 
 void DataManager::LoadTilemaps()
@@ -19,9 +19,7 @@ void DataManager::LoadTilemaps()
     json data = json::parse(file);
 
     // Tilemap √ﬂ√‚
-    Vector tileCount{ data["tileCounts"][0],  data["tileCounts"][1] };
-
-    std::vector<std::vector<short>> tilemap;
+    Vector tileCount{ data["tileCount"][0],  data["tileCount"][1] };
 
     std::vector<short> x;
     for (const auto& tiles : data["tiles"])
@@ -33,7 +31,7 @@ void DataManager::LoadTilemaps()
         }
 
         for (int i = 0; i < tiles["repeatY"]; i++)
-            tilemap.push_back(x);
+            _tilemap.push_back(x);
     }
 }
 

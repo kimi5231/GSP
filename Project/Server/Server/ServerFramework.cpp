@@ -5,6 +5,8 @@
 
 ServerFramework::ServerFramework()
 {
+	_map = g_dataManager->GetTilemap();
+
 	for (int i = 0; i < MAX_PLAYERS; ++i)
 	{
 		_players[i] = new Player();
@@ -49,6 +51,20 @@ Player* ServerFramework::AddPlayer()
 void ServerFramework::RemoveObject(ObjectType type, int id, bool isSend)
 {
 
+}
+
+bool ServerFramework::IsCanGo(int x, int y)
+{
+	Vector index{ x / TILE_SIZE, y / TILE_SIZE };
+	Vector max{ static_cast<int>(_map[0].size()), static_cast<int>(_map.size()) };
+
+	if (index < Vector{0, 0} || index >= max)
+		return false;
+
+	if (_map[index.x][index.y] != 0)
+		return false;
+
+	return true;
 }
 
 GameObject* ServerFramework::GetGameObject(ObjectType type, int id)

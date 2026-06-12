@@ -12,9 +12,10 @@ void WorkerThread()
 
 int main()
 {
+	g_dataManager = new DataManager();
 	g_framework = new ServerFramework();
 	g_network = new ServerNetwork(g_framework);
-
+	
 	std::vector<std::thread> workerThreads;
 	int threadCount = std::thread::hardware_concurrency();
 

@@ -249,6 +249,13 @@ void GameNetwork::ProcessAddObjectPacket(S2C_AddObject packet)
 
 void GameNetwork::ProcessMoveObjectPacket(S2C_MoveObject packet)
 {
+	// ID가 Avatar의 ID와 같다면 Avatar의 좌표 수정
+	if (packet.object_id == g_framework->GetAvatar()->GetID())
+	{
+		g_framework->GetAvatar()->SetPos(packet.x, packet.y);
+		return;
+	}
+
 	GameObjectRef object = g_framework->GetGameObject(ObjectType::Player, packet.object_id);
 	object->SetPos(packet.x, packet.y);
 }

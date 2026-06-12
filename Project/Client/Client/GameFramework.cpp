@@ -8,6 +8,11 @@ GameFramework::GameFramework(sf::RenderWindow* window)
 	// 윈도우창 생성
 	_window = window;
     _avatar = nullptr;
+
+    _map = g_dataManager->GetTilemap();
+
+    _texture.loadFromFile("Resource/Tile0.png");
+    _sprite.setTexture(_texture);
 }
 
 GameFramework::~GameFramework()
@@ -32,43 +37,72 @@ void GameFramework::Update()
 		Vector pos = _avatar->GetPos();
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
-            _avatar->SetPos({ pos.x - 50, pos.y });
-			g_network->SendMovePacket(_avatar);
-        }
+            pos.x -= 50;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            _avatar->SetPos({ pos.x + 50, pos.y });
-            g_network->SendMovePacket(_avatar);
-        }
+            pos.x += 50;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            _avatar->SetPos({ pos.x, pos.y - 50 });
-            g_network->SendMovePacket(_avatar);
-        }
+            pos.y -= 50;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        {
-            _avatar->SetPos({ pos.x, pos.y + 50 });
-            g_network->SendMovePacket(_avatar); 
-        }
+            pos.y += 50;
+
+        if (!IsCanGo(pos))
+            return;
+
+        _avatar->SetPos(pos);
+        g_network->SendMovePacket(_avatar);
+    }
+
+    if (_avatar)
+    {
+        Vector cameraPos = _avatar->GetPos();
+
+        cameraPos.x = std::max(WINDOW_WIDTH / 2, std::min(cameraPos.x, WORLD_WIDTH * TILE_SIZE - WINDOW_WIDTH / 2));
+        cameraPos.y = std::max(WINDOW_HEIGHT / 2, std::min(cameraPos.y, WORLD_HEIGHT * TILE_SIZE - WINDOW_HEIGHT / 2));
+
+        _view.setCenter(cameraPos.x, cameraPos.y);
+        _window->setView(_view);
     }
 }
 
 void GameFramework::Render()
 {
     _window->clear(); 
+
+    sf::Vector2f viewPos = _view.getCenter();
+    Vector index{ static_cast<int>(viewPos.x) / TILE_SIZE, static_cast<int>(viewPos.y) / TILE_SIZE };
+   
+    int viewRange = 12;
+    Vector start{ std::max(0, index.x - viewRange), std::max(0, index.y - viewRange) };
+    Vector end{ std::min(WORLD_WIDTH - 1, index.x + viewRange), std::min(WORLD_HEIGHT - 1, index.y + viewRange) };
+  
+    for (int y = start.y; y <= end.y; ++y)
+    {
+        for (int x = start.x; x <= end.x; ++x)
+        {
+            // 타일 스프라이트 위치 세팅 후 그리기
+            _sprite.setPosition(x * TILE_SIZE, y * TILE_SIZE);
+            _window->draw(_sprite);
+        }
+    }
+
     if (_avatar)
 	    _avatar->Render(_window);
+
     for (auto& [id, player] : _players)
-    {
         player->Render(_window);
-    }
+
     _window->display();
+}
+
+void GameFramework::LoadTile()
+{
+
 }
 
 void GameFramework::CreateAvatar(int playerId, int visualId, short x, short y, int hp, int maxHp, long long exp, int level)
 {
     _avatar = std::make_shared<Player>();
+    _avatar->SetID(playerId);
     _avatar->SetPos(x, y);
     _avatar->SetHP(hp);
     _avatar->SetMaxHP(maxHp);
@@ -79,12 +113,27 @@ void GameFramework::CreateAvatar(int playerId, int visualId, short x, short y, i
 void GameFramework::AddPlayer(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level)
 {
     PlayerRef player = std::make_shared<Player>();
+    player->SetID(id);
     player->SetPos(x, y);
     player->SetHP(hp);
     player->SetMaxHP(maxHp);
     player->SetExp(exp);
     player->SetLevel(level);
     _players[id] = player;
+}
+
+bool GameFramework::IsCanGo(Vector pos)
+{
+    Vector index = pos / TILE_SIZE;
+    Vector max{ static_cast<int>(_map[0].size()), static_cast<int>(_map.size()) };
+
+    if (index < Vector{ 0, 0 } || index >= max)
+        return false;
+
+    if (_map[index.x][index.y] != 0)
+        return false;
+
+    return true;
 }
 
 GameObjectRef GameFramework::GetGameObject(ObjectType type, int id)

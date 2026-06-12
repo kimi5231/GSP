@@ -1,7 +1,7 @@
 #pragma once
 
-using TimePoint = std::chrono::steady_clock::time_point;
-using FloatSec = std::chrono::duration<float>;
+//using TimePoint = std::chrono::steady_clock::time_point;
+//using FloatSec = std::chrono::duration<float>;
 
 //------------------Enums------------------
 enum class IOType
@@ -156,8 +156,8 @@ struct VectorHash
 	size_t operator()(const Vector& v) const noexcept
 	{
 		// 두 값을 섞어서 Hash 생성
-		std::size_t h1 = std::hash<float>()(v.x);
-		std::size_t h2 = std::hash<float>()(v.y);
+		std::size_t h1 = std::hash<int>()(v.x);
+		std::size_t h2 = std::hash<int>()(v.y);
 		return h1 ^ (h2 << 1);
 	}
 };

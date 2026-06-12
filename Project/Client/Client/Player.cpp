@@ -3,9 +3,8 @@
 
 Player::Player()
 {
-    _texture.loadFromFile("Resource/BlackPawn.bmp");
+    _texture.loadFromFile("Resource/BlackPawn.png");
     _sprite.setTexture(_texture);
-    //_sprite.setPosition(500, 500);
 }
 
 void Player::Render(sf::RenderWindow* window)

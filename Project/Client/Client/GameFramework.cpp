@@ -38,12 +38,14 @@ void GameFramework::Update()
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             pos.x -= 50;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
             pos.x += 50;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             pos.y -= 50;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             pos.y += 50;
+        else
+            return;
 
         if (!IsCanGo(pos))
             return;
@@ -120,6 +122,11 @@ void GameFramework::AddPlayer(int id, int visualID, const char* name, short x, s
     player->SetExp(exp);
     player->SetLevel(level);
     _players[id] = player;
+}
+
+void GameFramework::RemoveObject(int id)
+{
+    _players.erase(id);
 }
 
 bool GameFramework::IsCanGo(Vector pos)

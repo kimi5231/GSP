@@ -25,32 +25,27 @@ void ServerFramework::Update()
 	
 }
 
-Player* ServerFramework::AddPlayer()
+Player* ServerFramework::AddPlayer(int clientIndex)
 {
-	for (int i = 0; i < MAX_PLAYERS; ++i)
+	// 해당 ID의 Player가 재사용 가능한지 확인
+	if (_players[clientIndex]->GetObjectPoolState() == ObjectPoolState::Reusable)
 	{
-		// 재사용 가능한 플레이어 찾기
-		if (_players[i]->GetObjectPoolState() == ObjectPoolState::Reusable)
-		{
-			// ObjectPoolState 변경
-			_players[i]->Init();
-
-			for (auto& player : _players)
-			{
-				if (player->GetClient())
-					g_network->SendAddObjectPacket(_players[i], player->GetClient());
-			}
-
-			return _players[i];
-		}
+		// 초기화
+		_players[clientIndex]->Init();
+		return _players[clientIndex];
 	}
 
 	return nullptr;
 }
 
-void ServerFramework::RemoveObject(ObjectType type, int id, bool isSend)
+void ServerFramework::RemoveObject(ObjectType type, int id)
 {
-
+	switch (type)
+	{
+	case ObjectType::Player:
+		_players[id]->SetObjectPoolState(ObjectPoolState::Reusable);
+		break;
+	}
 }
 
 bool ServerFramework::IsCanGo(int x, int y)

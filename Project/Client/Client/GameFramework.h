@@ -18,6 +18,7 @@ public:
 public:
 	void CreateAvatar(int id, int visualID, short x, short y, int hp, int maxHp, long long exp, int level);
 	void AddPlayer(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level);
+	void RemoveObject(int id);
 
 public:
 	bool IsCanGo(Vector pos);

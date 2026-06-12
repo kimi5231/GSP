@@ -27,7 +27,7 @@ public:
 	void SendLoginResultPacket(bool result, const char* message, Session* client);
 	void SendAvatarInfoPacket(Player* player, Session* client);
 	void SendAddObjectPacket(Player* player, Session* client);
-	/*void SendRemoveObjectPacket(ObjectType objectType, int objectID, Session* client);*/
+	void SendRemoveObjectPacket(GameObject* object, Session* client);
 	void SendMoveObjectPacket(GameObject* object, Session* client);
 	/*void SendUpdateObjectStatePacket(GameObject* object, Session* client);
 	void SendAddItemToInventoryPacket(Item* item, bool isTool, Session* client);
@@ -59,5 +59,6 @@ private:
 	HANDLE _iocp{};
 	std::array<class Session*, MAX_PLAYERS> _clients;
 
+	std::array<std::array<Sector, WORLD_HEIGHT / SECTOR_SIZE>, WORLD_WIDTH / SECTOR_SIZE> _sectors;
 	ServerFramework* _framework;
 };

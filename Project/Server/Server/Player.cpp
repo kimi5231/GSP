@@ -16,5 +16,4 @@ Player::~Player()
 void Player::Init()
 {
 	_objectPoolState = ObjectPoolState::InWorld;
-	_client = nullptr;
 }

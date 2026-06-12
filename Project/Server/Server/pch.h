@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
@@ -29,5 +30,15 @@
 
 #pragma comment(lib, "MSWSock.lib")
 #pragma comment(lib, "ws2_32")
+
+constexpr int VIEW_RANGE = 15;
+constexpr int SECTOR_SIZE = 20;
+
+struct Sector
+{
+	std::unordered_set<int> players;
+	std::unordered_set<int> monsters;
+	std::mutex sectorMutex;
+};
 
 using SessionRef = std::shared_ptr<class Session>;

@@ -21,11 +21,8 @@ public:
 	void Attack();
 
 public:
-	Session* GetClient() { return _client; }
-	void SetClient(Session* client) { _client = client; }	
 
 private:
-	Session* _client;
 	//Inventory* _inventory{};
 };
 

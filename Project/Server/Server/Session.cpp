@@ -7,10 +7,10 @@ Session::Session()
 {
 	_clientSocket = INVALID_SOCKET;
 	_isConnected = false;
+	_state = SessionState::Title;
 	_id = -1;
 	_recvOver._ioType = IOType::Recv;
 	_prevRecv = 0;
-	_player = nullptr;
 }
 
 Session::~Session()

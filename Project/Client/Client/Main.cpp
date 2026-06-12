@@ -18,5 +18,7 @@ int main()
 		g_framework->Render();
     }
 
+    delete g_network;
+
     return 0;
 }

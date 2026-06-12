@@ -34,6 +34,7 @@ public:
 	void ProcessLoginResultPacket(S2C_LoginResult packet);
 	void ProcessAvatarInfoPacket(S2C_AvatarInfo packet);
 	void ProcessAddObjectPacket(S2C_AddObject packet);
+	void ProcessRemoveObjectPacket(S2C_RemoveObject packet);
 	void ProcessMoveObjectPacket(S2C_MoveObject packet);
 
 private:

@@ -13,10 +13,10 @@ public:
 	void Update();
 
 public:
-	Player* AddPlayer();
+	Player* AddPlayer(int clientIndex);
 	/*Monster* AddMonster(MonsterType monsterType, Vector pos);
 	Item* AddItem(bool isTool, ItemType itemType, Vector pos);*/
-	void RemoveObject(ObjectType type, int id, bool isSend);
+	void RemoveObject(ObjectType type, int id);
 
 public:
 	bool IsCanGo(int x, int y);

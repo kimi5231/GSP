@@ -10,6 +10,9 @@ public:
 	virtual void Update();
 
 public:
+	bool IsVisiable(Vector pos);
+
+public:
 	int GetID() { return _id; }
 	void SetID(int id) { _id = id; }
 	ObjectType GetObjectType() { return _type; }

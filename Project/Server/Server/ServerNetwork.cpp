@@ -149,10 +149,47 @@ void ServerNetwork::ProcessDisconnected(int clientIndex)
 	closesocket(_clients[clientIndex]->_clientSocket);
 	_clients[clientIndex]->_clientSocket = INVALID_SOCKET;
 	_clients[clientIndex]->_isConnected = false;
-	if(_clients[clientIndex]->_player)
-		_framework->RemoveObject(ObjectType::Player, _clients[clientIndex]->_player->GetID(), true);
-	_clients[clientIndex]->_player = nullptr;
-	
+	if (_clients[clientIndex]->_state == SessionState::Play)
+	{
+		// 시야 처리
+		{
+			const std::array<Player*, MAX_PLAYERS>& players = _framework->GetPlayers();
+			Vector sectorIndex{ players[clientIndex]->GetPos().x / (SECTOR_SIZE * TILE_SIZE), players[clientIndex]->GetPos().y / (SECTOR_SIZE * TILE_SIZE)};
+
+			Vector start{ std::max(0, sectorIndex.x - 1), std::max(0, sectorIndex.y - 1) };
+			Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE, sectorIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE, sectorIndex.y + 1) };
+
+			std::unordered_set<int> currentView;
+			for (int x = start.x; x < end.x; ++x)
+			{
+				for (int y = start.y; y < end.y; ++y)
+				{
+					_sectors[x][y].sectorMutex.lock();
+					// Sector에 자기 자신 삭제
+					_sectors[x][y].players.erase(clientIndex);
+
+					for (int id : _sectors[x][y].players)
+					{
+						if (_clients[id]->_state == SessionState::Play && players[clientIndex]->IsVisiable(players[id]->GetPos()))
+							currentView.insert(id);
+					}
+					_sectors[x][y].sectorMutex.unlock();
+				}
+			}
+
+			// 시야에 있는 Player에게 삭제 알림
+			for (int id : currentView)
+				SendRemoveObjectPacket(players[clientIndex], _clients[id]);
+
+			// View List 업데이트
+			_clients[clientIndex]->_viewLock.lock();
+			_clients[clientIndex]->_viewList.clear();
+			_clients[clientIndex]->_viewLock.unlock();
+		}
+
+		_framework->RemoveObject(ObjectType::Player, clientIndex);
+	}
+	_clients[clientIndex]->_state = SessionState::Title;
 }
 
 void ServerNetwork::ProcessRecv(int clientIndex, int numByte, ExpOver* expOver)
@@ -324,16 +361,13 @@ void ServerNetwork::SendAddObjectPacket(Player* player, Session* client)
 	client->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
 
-//void ServerNetwork::SendRemoveObjectPacket(ObjectType objectType, int objectID, Session* client)
-//{
-//	// Packet Data 생성
-//	S_RemoveObject_Packet packetData{ sizeof(S_RemoveObject_Packet), S_RemoveObject, objectID, objectType };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	client->Send(serializedPacketData);
-//}
+void ServerNetwork::SendRemoveObjectPacket(GameObject* object, Session* client)
+{
+	// Packet Data 생성
+	S2C_RemoveObject packet{ sizeof(S2C_RemoveObject), S2C_REMOVE_OBJECT, object->GetID()};
+
+	client->Send(packet.size, reinterpret_cast<char*>(&packet));
+}
 
 void ServerNetwork::SendMoveObjectPacket(GameObject* object, Session* client)
 {
@@ -462,33 +496,60 @@ void ServerNetwork::SendMoveObjectPacket(GameObject* object, Session* client)
 void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 {
 	// 현재 접속하고 있는 ID라면 무시
-	if(_clients[clientIndex]->_player)
+	if (_clients[clientIndex]->_state == SessionState::Play)
 		return;
 
 	// 데이터 베이스에 ID가 존재하는지 확인
 	// ID가 존재한다면 정보 가져오기
 
 	// ID가 없다면 데이터베이스에 추가 후, 새로운 Player 생성
-	_clients[clientIndex]->_player = g_framework->AddPlayer();
-	_clients[clientIndex]->_player->SetName(packet.username);
-	// 삭제 예정
-	_clients[clientIndex]->_player->SetClient(_clients[clientIndex]);
+	Player* player = g_framework->AddPlayer(clientIndex);
+
+	_clients[clientIndex]->_state = SessionState::Play;
 
 	// 새로 접속한 Client에게 자신을 나타낼 Player 정보 전송
-	SendAvatarInfoPacket(_clients[clientIndex]->_player, _clients[clientIndex]);
+	SendAvatarInfoPacket(player, _clients[clientIndex]);
 
-	// 새로 접속한 Client에게 기존에 있던 Object 정보 전송
-	// 시야 처리 필요
-	for (auto& client : _clients)
+	// 시야처리
 	{
-		if (!client->_player)
-			continue;
+		Vector sectorIndex{ player->GetPos().x / (SECTOR_SIZE * TILE_SIZE), player->GetPos().y / (SECTOR_SIZE * TILE_SIZE) };
 
-		// 자기 자신 제외
-		if (_clients[clientIndex] == client)
-			continue;
+		Vector start{ std::max(0, sectorIndex.x - 1), std::max(0, sectorIndex.y - 1) };
+		Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE, sectorIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE, sectorIndex.y + 1) };
 
-		SendAddObjectPacket(client->_player, _clients[clientIndex]);
+		const std::array<Player*, MAX_PLAYERS>& players = _framework->GetPlayers();
+		std::unordered_set<int> currentView;
+		for (int x = start.x; x < end.x; ++x)
+		{
+			for (int y = start.y; y < end.y; ++y)
+			{
+				_sectors[x][y].sectorMutex.lock();
+				// Sector에 자기 자신 추가
+				_sectors[x][y].players.insert(clientIndex);
+
+				for (int id : _sectors[x][y].players)
+				{
+					if (player->GetID() == id)
+						continue;
+
+					if(_clients[id]->_state == SessionState::Play && player->IsVisiable(players[id]->GetPos()))
+						currentView.insert(id);
+				}
+				_sectors[x][y].sectorMutex.unlock();
+			}
+		}
+
+		for (int id : currentView)
+		{
+			// 시야에 있는 Player 추가 및 접속 알림
+			SendAddObjectPacket(players[id], _clients[clientIndex]);
+			SendAddObjectPacket(player, _clients[id]);
+		}
+
+		// View List 업데이트
+		_clients[clientIndex]->_viewLock.lock();
+		_clients[clientIndex]->_viewList = std::move(currentView);
+		_clients[clientIndex]->_viewLock.unlock();
 	}
 
 	/*for (auto& monster : _clients[clientIndex]->_room->GetMonsters())
@@ -500,15 +561,53 @@ void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 
 void ServerNetwork::ProcessLogoutPacket(C2S_Logout packet, int clientIndex)
 {
-	
+	_clients[clientIndex]->_state = SessionState::Title;
+
+	// 시야 처리
+	{
+		const std::array<Player*, MAX_PLAYERS>& players = _framework->GetPlayers();
+		Vector sectorIndex{ players[clientIndex]->GetPos().x / (SECTOR_SIZE * TILE_SIZE), players[clientIndex]->GetPos().y / (SECTOR_SIZE * TILE_SIZE) };
+
+		Vector start{ std::max(0, sectorIndex.x - 1), std::max(0, sectorIndex.y - 1) };
+		Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE, sectorIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE, sectorIndex.y + 1) };
+
+		std::unordered_set<int> currentView;
+		for (int x = start.x; x < end.x; ++x)
+		{
+			for (int y = start.y; y < end.y; ++y)
+			{
+				_sectors[x][y].sectorMutex.lock();
+				// Sector에 자기 자신 삭제
+				_sectors[x][y].players.erase(clientIndex);
+
+				for (int id : _sectors[x][y].players)
+				{
+					if (_clients[id]->_state == SessionState::Play && players[clientIndex]->IsVisiable(players[id]->GetPos()))
+						currentView.insert(id);
+				}
+				_sectors[x][y].sectorMutex.unlock();
+			}
+		}
+
+		// 시야에 있는 Player에게 삭제 알림
+		for (int id : currentView)
+			SendRemoveObjectPacket(players[id], _clients[id]);
+
+		// View List 업데이트
+		_clients[clientIndex]->_viewLock.lock();
+		_clients[clientIndex]->_viewList.clear();
+		_clients[clientIndex]->_viewLock.unlock();
+	}
+
+	_framework->RemoveObject(ObjectType::Player, clientIndex);
 }
 
 void ServerNetwork::ProcessMovePacket(C2S_Move packet, int clientIndex)
 {
-	Player* player = _clients[clientIndex]->_player;
+	const std::array<Player*, MAX_PLAYERS>& players = _framework->GetPlayers();
+	Player* player = players[clientIndex];
 
-	if (player == nullptr)
-		return;
+	Vector prevPos = player->GetPos();
 
 	// 갈 수 없는 곳이면 이전 좌표로 되돌리기
 	if (!g_framework->IsCanGo(packet.x, packet.y))
@@ -518,18 +617,75 @@ void ServerNetwork::ProcessMovePacket(C2S_Move packet, int clientIndex)
 	}
 		
 	player->SetPos({packet.x, packet.y});
-	
-	// 자신을 제외한 모든 Client들에게 알리기
-	for (auto& client : _clients)
+
+	// 시야처리
 	{
-		if (!client->_isConnected)
-			continue;
+		Vector oldIndex{ prevPos.x / (SECTOR_SIZE * TILE_SIZE), prevPos.y / (SECTOR_SIZE * TILE_SIZE) };
+		Vector newIndex{ packet.x / (SECTOR_SIZE * TILE_SIZE), packet.y / (SECTOR_SIZE * TILE_SIZE) };
 
-		// 자기 자신 제외
-		if (client == _clients[clientIndex])
-			continue;
+		// 섹터 옮기기
+		if (oldIndex != newIndex)
+		{
+			_sectors[oldIndex.x][oldIndex.y].sectorMutex.lock();
+			_sectors[oldIndex.x][oldIndex.y].players.erase(player->GetID());
+			_sectors[oldIndex.x][oldIndex.y].sectorMutex.unlock();
 
-		SendMoveObjectPacket(player, client);
+			_sectors[newIndex.x][newIndex.y].sectorMutex.lock();
+			_sectors[newIndex.x][newIndex.y].players.insert(player->GetID());
+			_sectors[newIndex.x][newIndex.y].sectorMutex.unlock();
+		}
+
+		Vector start{ std::max(0, newIndex.x - 1), std::max(0, newIndex.y - 1) };
+		Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE, newIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE, newIndex.y + 1) };
+
+		std::unordered_set<int> newSectorObjects;
+		for (int x = start.x; x < end.x; ++x)
+		{
+			for (int y = start.y; y < end.y; ++y)
+			{
+				_sectors[x][y].sectorMutex.lock();
+				for (int id : _sectors[x][y].players)
+				{
+					if (player->GetID() == id)
+						continue;
+
+					newSectorObjects.insert(id);
+				}
+				_sectors[x][y].sectorMutex.unlock();
+			}
+		}
+
+		std::unordered_set<int> newView;
+		for (int id : newSectorObjects)
+		{
+			if (_clients[id]->_state == SessionState::Play && player->IsVisiable(players[id]->GetPos()))
+				newView.insert(id);
+		}
+
+		_clients[clientIndex]->_viewLock.lock();
+		for (int id : newView) {
+			// 새로 시야에 들어온 Player 추가
+			if (!_clients[clientIndex]->_viewList.count(id))
+			{
+				SendAddObjectPacket(players[id], _clients[clientIndex]);
+				SendAddObjectPacket(player, _clients[id]);
+			}
+			else // 계속 시야에 있는 Player들에게 이동 알림
+				SendMoveObjectPacket(player, _clients[id]);
+		}
+
+		// 시야에서 사라진 Player 삭제
+		for (int id : _clients[clientIndex]->_viewList) {
+			if (!newView.count(id))
+			{
+				SendRemoveObjectPacket(players[id], _clients[clientIndex]);
+				SendRemoveObjectPacket(player, _clients[id]);
+			}
+		}
+
+		// View List 업데이트
+		_clients[clientIndex]->_viewList = std::move(newView);
+		_clients[clientIndex]->_viewLock.unlock();
 	}
 }
 

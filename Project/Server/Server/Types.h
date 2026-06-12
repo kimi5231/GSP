@@ -11,20 +11,18 @@ enum class IOType
 	Accept,
 };
 
+enum class SessionState
+{
+	Title,
+	Play,
+};
+
 enum class LoginResult
 {
 	Sucess,
 };
 
-enum class RoomState
-{
-	Wait,
-	Lock,
-	Play,
-	Full,
-};
-
-enum class ObjectType : int
+enum class ObjectType : char
 {
 	Player,
 	Monster,

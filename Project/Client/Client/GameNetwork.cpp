@@ -110,6 +110,13 @@ void GameNetwork::ProcessRecv()
 		ProcessAddObjectPacket(addObjectPacket);
 		break;
 	}
+	case S2C_REMOVE_OBJECT:
+	{
+		S2C_RemoveObject removeObjectPacket;
+		memcpy(&removeObjectPacket, packet.data(), sizeof(S2C_RemoveObject));
+		ProcessRemoveObjectPacket(removeObjectPacket);
+		break;
+	}
 	case S2C_MOVE_OBJECT:
 	{
 		S2C_MoveObject moveObjectPacket;
@@ -245,6 +252,11 @@ void GameNetwork::ProcessAvatarInfoPacket(S2C_AvatarInfo packet)
 void GameNetwork::ProcessAddObjectPacket(S2C_AddObject packet)
 {
 	g_framework->AddPlayer(packet.object_id, packet.visual_id, packet.obj_name, packet.x, packet.y, packet.hp, packet.max_hp, packet.exp, packet.level);
+}
+
+void GameNetwork::ProcessRemoveObjectPacket(S2C_RemoveObject packet)
+{
+	g_framework->RemoveObject(packet.object_id);
 }
 
 void GameNetwork::ProcessMoveObjectPacket(S2C_MoveObject packet)

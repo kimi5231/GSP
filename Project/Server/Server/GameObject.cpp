@@ -30,4 +30,5 @@ bool GameObject::SetObjectState(ObjectState state, bool isSend)
 
 void GameObject::SetObjectPoolState(ObjectPoolState objectPoolState)
 {
+	_objectPoolState = objectPoolState;
 }

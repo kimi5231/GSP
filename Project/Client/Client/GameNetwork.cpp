@@ -257,5 +257,7 @@ void GameNetwork::ProcessMoveObjectPacket(S2C_MoveObject packet)
 	}
 
 	GameObjectRef object = g_framework->GetGameObject(ObjectType::Player, packet.object_id);
+	if (!object)
+		return;
 	object->SetPos(packet.x, packet.y);
 }

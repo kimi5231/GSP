@@ -2,7 +2,7 @@
 #include "ServerFramework.h"
 #include "Global.h"
 #include "Player.h"
-#include "Monster.h"
+#include "Agro.h"
 
 ServerFramework::ServerFramework()
 {
@@ -17,14 +17,12 @@ ServerFramework::ServerFramework()
 
 	for (int i = 0; i < NUM_NPCS; ++i)
 	{
-		_monsters[i] = new Monster();
+		_monsters[i] = new Agro();
 		_monsters[i]->SetID(i + MONSTER_ID);
 		_monsters[i]->SetObjectPoolState(ObjectPoolState::Reusable);
-		
-		std::uniform_int_distribution<int> randPos(0, 1999);
-		Vector index{ randPos(gen), randPos(gen) };
-		_monsters[i]->SetPos({ index.x * TILE_SIZE, index.y * TILE_SIZE });
 	}
+
+	_sumTime = 0.f;
 }
 
 ServerFramework::~ServerFramework()
@@ -34,7 +32,15 @@ ServerFramework::~ServerFramework()
 
 void ServerFramework::Update()
 {
-	
+	_sumTime += g_timer->GetDeltaTime();
+	if (_sumTime < 0.5)
+		return;
+	_sumTime = 0;
+
+	_aliveLock.lock();
+	for (auto& [id, count] : _aliveMonsters)
+		_monsters[id - MONSTER_ID]->Update();
+	_aliveLock.unlock();
 }
 
 Player* ServerFramework::AddPlayer(int clientIndex)
@@ -79,15 +85,30 @@ bool ServerFramework::IsCanGo(int x, int y)
 	return true;
 }
 
+bool ServerFramework::IsCanGo(Vector index)
+{
+	Vector max{ static_cast<int>(_map[0].size()), static_cast<int>(_map.size()) };
+
+	if (index < Vector{ 0, 0 } || index >= max)
+		return false;
+
+	if (_map[index.x][index.y] != 0)
+		return false;
+
+	return true;
+}
+
 void ServerFramework::AddAliveMonster(int id)
 {
 	if (id < MONSTER_ID)
 		return;
 
+	_aliveLock.lock();
 	if (!_aliveMonsters.count(id))
 		_aliveMonsters[id] = 1;
 	else
 		_aliveMonsters[id]++;
+	_aliveLock.unlock();
 }
 
 void ServerFramework::RemoveAliveMonster(int id)
@@ -95,10 +116,12 @@ void ServerFramework::RemoveAliveMonster(int id)
 	if (!_aliveMonsters.count(id))
 		return;
 
+	_aliveLock.lock();
 	_aliveMonsters[id]--;
 
 	if (_aliveMonsters[id] == 0)
 		_aliveMonsters.erase(id);
+	_aliveLock.unlock();
 }
 
 GameObject* ServerFramework::GetGameObject(ObjectType type, int id)

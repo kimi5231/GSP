@@ -8,7 +8,6 @@ class Creature;
 class Player;
 class Monster;
 class Item;
-class Obstacle;
 
 class ServerNetwork
 {
@@ -22,6 +21,7 @@ public:
 	void ProcessDisconnected(int clientIndex);
 	void ProcessRecv(int clientIndex, int numByte, ExpOver* expOver);
 	void ProcessPacket(std::vector<char>& packet, int clientIndex);
+	void ProcessMonster(int monsterID, ExpOver* expOver);
 
 public:
 	// Send
@@ -52,7 +52,10 @@ public:
 	void ProcessUseToolPacket(C_UseTool_Packet packet, int clientIndex);
 	void ProcessSellItemPacket(C_SellItem_Packet packet, int clientIndex);
 	void ProcessBuyItemPacket(C_BuyItem_Packet packet, int clientIndex);*/
-	
+
+public:
+	HANDLE GetIOCP() { return _iocp; }
+
 private:
 	SOCKET _listenSocket{};
 	SOCKET _tempSocket{};

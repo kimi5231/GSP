@@ -27,6 +27,12 @@
     <Filter Include="소스 파일\Game\Object\Creature">
       <UniqueIdentifier>{9e4bc387-12ce-4942-9bad-285b5d9b00eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Game\Object\Creature\Monster">
+      <UniqueIdentifier>{12eeb289-c475-4a35-8d06-18eca7f487e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Game\Object\Creature\Monster\FSM">
+      <UniqueIdentifier>{cc6802d6-b505-47df-b324-cdf96340c062}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -59,11 +65,26 @@
     <ClCompile Include="Creature.cpp">
       <Filter>소스 파일\Game\Object\Creature</Filter>
     </ClCompile>
-    <ClCompile Include="Monster.cpp">
-      <Filter>소스 파일\Game\Object\Creature</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>소스 파일\Game\Object\Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>소스 파일\Game\Object\Creature\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Peace.cpp">
+      <Filter>소스 파일\Game\Object\Creature\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Agro.cpp">
+      <Filter>소스 파일\Game\Object\Creature\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="FSM.cpp">
+      <Filter>소스 파일\Game\Object\Creature\Monster\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>소스 파일\Game\Object\Creature\Monster\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>소스 파일\Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -100,11 +121,26 @@
     <ClInclude Include="Creature.h">
       <Filter>소스 파일\Game\Object\Creature</Filter>
     </ClInclude>
-    <ClInclude Include="Monster.h">
-      <Filter>소스 파일\Game\Object\Creature</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>소스 파일\Game\Object\Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>소스 파일\Game\Object\Creature\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Peace.h">
+      <Filter>소스 파일\Game\Object\Creature\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Agro.h">
+      <Filter>소스 파일\Game\Object\Creature\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="FSM.h">
+      <Filter>소스 파일\Game\Object\Creature\Monster\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>소스 파일\Game\Object\Creature\Monster\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>소스 파일\Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

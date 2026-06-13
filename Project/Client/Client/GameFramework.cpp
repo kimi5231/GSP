@@ -125,7 +125,7 @@ void GameFramework::AddCreature(int id, int visualID, const char* name, short x,
         creture = std::make_shared<Player>();
         creture->SetName(name);
         break;
-    case ObjectType::Monster:
+    case ObjectType::Agro:
         creture = std::make_shared<Monster>();
         break;
     }

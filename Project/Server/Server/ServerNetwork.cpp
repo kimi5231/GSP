@@ -117,6 +117,9 @@ void ServerNetwork::Update()
 	case IOType::Send:
 		delete expOver;
 		break;
+	case IOType::Monster:
+		ProcessMonster(static_cast<int>(key), expOver);
+		break;
 	default:
 		std::cout << "Unknown IO type.\n";
 		exit(-1);
@@ -176,6 +179,9 @@ void ServerNetwork::ProcessDisconnected(int clientIndex)
 		{
 			const std::array<Player*, MAX_PLAYERS>& players = _framework->GetPlayers();
 			Vector sectorIndex{ players[clientIndex]->GetPos().x / (SECTOR_SIZE * TILE_SIZE), players[clientIndex]->GetPos().y / (SECTOR_SIZE * TILE_SIZE)};
+			_sectors[sectorIndex.x][sectorIndex.y].sectorMutex.lock();
+			_sectors[sectorIndex.x][sectorIndex.y].objects.erase(clientIndex);
+			_sectors[sectorIndex.x][sectorIndex.y].sectorMutex.unlock();
 
 			Vector start{ std::max(0, sectorIndex.x - 1), std::max(0, sectorIndex.y - 1) };
 			Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE, sectorIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE, sectorIndex.y + 1) };
@@ -187,9 +193,6 @@ void ServerNetwork::ProcessDisconnected(int clientIndex)
 				for (int y = start.y; y < end.y; ++y)
 				{
 					_sectors[x][y].sectorMutex.lock();
-					// Sector에 자기 자신 삭제
-					_sectors[x][y].objects.erase(clientIndex);
-
 					for (int id : _sectors[x][y].objects)
 					{
 						// Monster
@@ -352,6 +355,105 @@ void ServerNetwork::ProcessPacket(std::vector<char>& packet, int clientIndex)
 		ProcessBuyItemPacket(buyItemPacket, clientIndex);
 		break;
 	}*/
+	}
+}
+
+void ServerNetwork::ProcessMonster(int monsterID, ExpOver* expOver)
+{
+	switch (expOver->_monsterEventType)
+	{
+	case MonsterEventType::Move:
+	{
+		const std::array<Monster*, NUM_NPCS>& monsters = _framework->GetMonsters();
+		Monster* monster = monsters[monsterID - MONSTER_ID];
+
+		if (monster->GetObjectState() == ObjectState::DEAD)
+		{
+			delete expOver;
+			return;
+		}
+
+		Vector oldIndex{ monster->GetPrevPos().x / (SECTOR_SIZE * TILE_SIZE), monster->GetPrevPos().y / (SECTOR_SIZE * TILE_SIZE)};
+		Vector newIndex{ monster->GetPos().x / (SECTOR_SIZE * TILE_SIZE), monster->GetPos().y / (SECTOR_SIZE * TILE_SIZE) };
+
+		// 섹터 옮기기 
+		if (oldIndex != newIndex)
+		{
+			_sectors[oldIndex.x][oldIndex.y].sectorMutex.lock();
+			_sectors[oldIndex.x][oldIndex.y].objects.erase(monsterID);
+			_sectors[oldIndex.x][oldIndex.y].sectorMutex.unlock();
+
+			_sectors[newIndex.x][newIndex.y].sectorMutex.lock();
+			_sectors[newIndex.x][newIndex.y].objects.insert(monsterID);
+			_sectors[newIndex.x][newIndex.y].sectorMutex.unlock();
+		}
+
+		Vector newStart{ std::max(0, newIndex.x - 1), std::max(0, newIndex.y - 1) };
+		Vector newEnd{ std::min(WORLD_WIDTH / SECTOR_SIZE - 1, newIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE - 1, newIndex.y + 1) };
+
+		std::unordered_set<int> newNearPlayers;
+		for (int x = newStart.x; x <= newEnd.x; ++x)
+		{
+			for (int y = newStart.y; y <= newEnd.y; ++y)
+			{
+				_sectors[x][y].sectorMutex.lock();
+				for (int id : _sectors[x][y].objects)
+				{
+					if (id >= MONSTER_ID)
+						continue;
+					
+					newNearPlayers.insert(id);
+				}
+				_sectors[x][y].sectorMutex.unlock();
+			}
+		}
+
+		Vector oldStart{ std::max(0, oldIndex.x - 1), std::max(0, oldIndex.y - 1) };
+		Vector oldEnd{ std::min(WORLD_WIDTH / SECTOR_SIZE - 1, oldIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE - 1, oldIndex.y + 1) };
+
+		std::unordered_set<int> oldNearPlayers;
+		for (int x = oldStart.x; x <= oldEnd.x; ++x)
+		{
+			for (int y = oldStart.y; y <= oldEnd.y; ++y)
+			{
+				_sectors[x][y].sectorMutex.lock();
+				for (int id : _sectors[x][y].objects)
+				{
+					if (id >= MONSTER_ID)
+						continue;
+
+					oldNearPlayers.insert(id);
+				}
+				_sectors[x][y].sectorMutex.unlock();
+			}
+		}
+
+		const std::array<Player*, MAX_PLAYERS>& players = _framework->GetPlayers();
+		for (int id : newNearPlayers)
+		{
+			if (!oldNearPlayers.count(id))
+				SendAddObjectPacket(monster, _clients[id]);
+			else
+				SendMoveObjectPacket(monster, _clients[id]);
+
+			if (monster->IsAgro(players[id]->GetPos()) && !monster->GetTarget())
+			{
+				monster->SetTarget(players[id]);
+				monster->SetState(ObjectState::CHASE);
+			}
+
+			if (monster->IsAttack(players[id]->GetPos()))
+				monster->SetState(ObjectState::ATTACK);
+		}
+
+		for (int id : oldNearPlayers)
+		{
+			if (!newNearPlayers.count(id))
+				SendRemoveObjectPacket(monster, _clients[id]);
+		}
+		delete expOver;
+		break;
+	}
 	}
 }
 
@@ -543,6 +645,9 @@ void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 	// 시야처리
 	{
 		Vector sectorIndex{ player->GetPos().x / (SECTOR_SIZE * TILE_SIZE), player->GetPos().y / (SECTOR_SIZE * TILE_SIZE) };
+		_sectors[sectorIndex.x][sectorIndex.y].sectorMutex.lock();
+		_sectors[sectorIndex.x][sectorIndex.y].objects.insert(clientIndex);
+		_sectors[sectorIndex.x][sectorIndex.y].sectorMutex.unlock();
 
 		Vector start{ std::max(0, sectorIndex.x - 1), std::max(0, sectorIndex.y - 1) };
 		Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE, sectorIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE, sectorIndex.y + 1) };
@@ -555,9 +660,6 @@ void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 			for (int y = start.y; y < end.y; ++y)
 			{
 				_sectors[x][y].sectorMutex.lock();
-				// Sector에 자기 자신 추가
-				_sectors[x][y].objects.insert(clientIndex);
-
 				for (int id : _sectors[x][y].objects)
 				{
 					if (player->GetID() == id)
@@ -610,6 +712,9 @@ void ServerNetwork::ProcessLogoutPacket(C2S_Logout packet, int clientIndex)
 	{
 		const std::array<Player*, MAX_PLAYERS>& players = _framework->GetPlayers();
 		Vector sectorIndex{ players[clientIndex]->GetPos().x / (SECTOR_SIZE * TILE_SIZE), players[clientIndex]->GetPos().y / (SECTOR_SIZE * TILE_SIZE) };
+		_sectors[sectorIndex.x][sectorIndex.y].sectorMutex.lock();
+		_sectors[sectorIndex.x][sectorIndex.y].objects.erase(clientIndex);
+		_sectors[sectorIndex.x][sectorIndex.y].sectorMutex.unlock();
 
 		Vector start{ std::max(0, sectorIndex.x - 1), std::max(0, sectorIndex.y - 1) };
 		Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE, sectorIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE, sectorIndex.y + 1) };
@@ -621,9 +726,6 @@ void ServerNetwork::ProcessLogoutPacket(C2S_Logout packet, int clientIndex)
 			for (int y = start.y; y < end.y; ++y)
 			{
 				_sectors[x][y].sectorMutex.lock();
-				// Sector에 자기 자신 삭제
-				_sectors[x][y].objects.erase(clientIndex);
-
 				for (int id : _sectors[x][y].objects)
 				{
 					// Monster
@@ -712,10 +814,7 @@ void ServerNetwork::ProcessMovePacket(C2S_Move packet, int clientIndex)
 					if (id >= MONSTER_ID)
 					{
 						if (player->IsVisiable(monsters[id - MONSTER_ID]->GetPos()))
-						{
-							_framework->AddAliveMonster(id);
 							newView.insert(id);
-						}
 						continue;
 					}
 
@@ -735,6 +834,7 @@ void ServerNetwork::ProcessMovePacket(C2S_Move packet, int clientIndex)
 				// Monster
 				if (id >= MONSTER_ID)
 				{
+					_framework->AddAliveMonster(id);
 					SendAddObjectPacket(monsters[id - MONSTER_ID], _clients[clientIndex]);
 					continue;
 				}
@@ -758,6 +858,7 @@ void ServerNetwork::ProcessMovePacket(C2S_Move packet, int clientIndex)
 				// Monster
 				if (id >= MONSTER_ID)
 				{
+					_framework->RemoveAliveMonster(id);
 					SendRemoveObjectPacket(monsters[id - MONSTER_ID], _clients[clientIndex]);
 					continue;
 				}

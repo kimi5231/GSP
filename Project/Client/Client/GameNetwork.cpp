@@ -76,8 +76,8 @@ void GameNetwork::ProcessRecv()
 {
 	char packetSize;
 	recv(_clientSocket, (char*)&packetSize, sizeof(char), MSG_WAITALL);
-	std::vector<char> packet(BufferSize);
-	packet.push_back(packetSize);
+	std::vector<char> packet(packetSize);
+	packet[0] = packetSize;
 	recv(_clientSocket, packet.data() + sizeof(char), packetSize - sizeof(char), MSG_WAITALL);
 	
 	PACKET_TYPE id;

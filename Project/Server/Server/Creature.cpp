@@ -12,12 +12,23 @@ Creature::~Creature()
 
 bool Creature::TackDamage(int damage)
 {
-	return false;
+	_hp -= damage;
+
+	if (_hp <= 0)
+		SetState(ObjectState::DEAD);
+	else
+		SetState(ObjectState::HIT);
+
+	return true;
 }
 
 bool Creature::TackHeal(int heal)
 {
-	return false;
+	_hp += heal;
+	if (_hp > _maxHP)
+		_hp = _maxHP;
+
+	return true;
 }
 
 bool Creature::IsCanMove()
@@ -33,4 +44,14 @@ bool Creature::IsCanMove()
 	}
 		
 	return false;
+}
+
+bool Creature::SetState(ObjectState state)
+{
+	if (_state == state)
+		return false;
+
+	_state = state;
+
+	return true;
 }

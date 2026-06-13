@@ -8,6 +8,14 @@ enum class IOType
 	Send,
 	Recv,
 	Accept,
+
+	Monster,
+};
+
+enum class MonsterEventType
+{
+	Move,
+
 };
 
 enum class SessionState
@@ -25,25 +33,15 @@ enum class ObjectType : char
 {
 	Player,
 	Monster,
+	Peace,
+	Agro,
 	Item,
 };
 
 enum ObjectState : char
 {
 	IDLE,
-	RUN,
-	JUMP,
-	CROUCHED,
-
-	// Interaction
-	OPEN_DOOR,
-	CLOSE_DOOR,
-	GET_ITEM,
-
-	// Tool
-	SLASH,
-	SHOOT,
-
+	
 	// Etc
 	HIT,
 	DEAD,
@@ -54,24 +52,10 @@ enum ObjectState : char
 	CLOSE,
 
 	// Monster
-	MAKE_WEB,
 	ROAMING,
 	CHASE,
 	ATTACK,
 	RETURN,
-	TELEPORT,
-	GRAB,
-	PLAY,
-	RELEASE,
-	ABSENT,
-	STARING,
-	VANISHING,
-	CHECK,
-	SPAWN,
-	ALL_ATTACK,
-	MOVE,
-	COLLECT,
-	ESCAPE,
 };
 
 enum class ObjectPoolState 
@@ -83,9 +67,9 @@ enum class ObjectPoolState
 
 enum Dir
 {
-	Front,
+	Up,
 	Right,
-	Back,
+	Down,
 	Left,
 
 	DirCount
@@ -161,7 +145,6 @@ struct VectorHash
 
 struct TileNode
 {
-	//VectorInt pos;
 	Vector index;
 	float g, h, f;
 	TileNode* parent;
@@ -172,4 +155,23 @@ struct ItemInfo
 	Vector size;
 	float weight;
 	int cost;
+};
+
+struct MonsterStat
+{
+	int hp;
+	int level;
+	Vector minPos;
+	Vector maxPos;
+	float idleTime;
+	int damage;
+};
+
+struct PeaceStat
+{
+	int hp;
+	int level;
+	Vector minPos;
+	Vector maxPos;
+	int damage;
 };

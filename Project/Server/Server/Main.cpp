@@ -5,8 +5,9 @@ void WorkerThread()
 {
 	while (true)
 	{
-		g_network->Update();
 		g_framework->Update();
+		g_network->Update();
+		g_timer->Update();
 	}
 }
 
@@ -15,6 +16,7 @@ int main()
 	g_dataManager = new DataManager();
 	g_framework = new ServerFramework();
 	g_network = new ServerNetwork(g_framework);
+	g_timer = new Timer();
 	
 	std::vector<std::thread> workerThreads;
 	int threadCount = std::thread::hardware_concurrency();

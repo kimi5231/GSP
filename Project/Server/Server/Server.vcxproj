@@ -129,9 +129,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Agro.cpp" />
     <ClCompile Include="Creature.cpp" />
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="ExpOver.cpp" />
+    <ClCompile Include="FSM.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -140,24 +142,32 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Peace.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ServerFramework.cpp" />
     <ClCompile Include="ServerNetwork.cpp" />
     <ClCompile Include="Session.cpp" />
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Agro.h" />
     <ClInclude Include="Creature.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="ExpOver.h" />
+    <ClInclude Include="FSM.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Peace.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="protocol_2026.h" />
     <ClInclude Include="ServerFramework.h" />
     <ClInclude Include="ServerNetwork.h" />
     <ClInclude Include="Session.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>

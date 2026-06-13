@@ -13,6 +13,7 @@ public:
 	bool IsCanMove();
 
 public:
+	virtual bool SetState(ObjectState state);
 	int GetMaxHP() { return _maxHP; }
 	int GetHP() { return _hp; }
 	long long GetEXP() { return _exp; }

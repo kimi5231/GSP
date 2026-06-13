@@ -20,6 +20,7 @@ public:
 
 public:
 	bool IsCanGo(int x, int y);
+	bool IsCanGo(Vector index);
 
 	void AddAliveMonster(int id);
 	void RemoveAliveMonster(int id);
@@ -35,4 +36,7 @@ private:
 	std::array<Monster*, NUM_NPCS> _monsters;
 
 	std::unordered_map<int, int> _aliveMonsters;
+	std::mutex _aliveLock;
+
+	float _sumTime;
 };

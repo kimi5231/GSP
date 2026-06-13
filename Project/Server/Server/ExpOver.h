@@ -23,6 +23,7 @@ public:
 
 	WSAOVERLAPPED _over;
 	IOType  _ioType;
+	MonsterEventType _monsterEventType;
 	WSABUF	_wsaBuffer;
 	std::vector<char> _buffer;
 };

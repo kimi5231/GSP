@@ -11,6 +11,7 @@ DataManager::DataManager()
 
     LoadTilemaps();
    // LoadItemInfos();
+    LoadMonsterStat();
 }
 
 void DataManager::LoadTilemaps()
@@ -53,4 +54,8 @@ void DataManager::LoadItemInfos()
 
         _itemInfos[info.type] = info;
     }*/
+}
+
+void DataManager::LoadMonsterStat()
+{
 }

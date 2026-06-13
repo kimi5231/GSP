@@ -23,6 +23,7 @@
 #include <limits>
 #include <thread>
 #include <mutex>
+#include <atomic>
 #include <tbb/concurrent_unordered_map.h>
 
 #include "Types.h"
@@ -31,7 +32,10 @@
 #pragma comment(lib, "MSWSock.lib")
 #pragma comment(lib, "ws2_32")
 
-constexpr int VIEW_RANGE = 15;
+constexpr int VIEW_RANGE = 7;
+constexpr int MONSTER_ROAMING_RANGE = 10;
+constexpr int MONSTER_AGRO_RANGE = 5;
+constexpr int MONSTER_ATTACK_RANGE = 1;
 constexpr int SECTOR_SIZE = 20;
 
 struct Sector

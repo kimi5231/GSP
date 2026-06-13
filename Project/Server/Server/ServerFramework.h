@@ -14,12 +14,15 @@ public:
 
 public:
 	Player* AddPlayer(int clientIndex);
-	/*Monster* AddMonster(MonsterType monsterType, Vector pos);
-	Item* AddItem(bool isTool, ItemType itemType, Vector pos);*/
+	Monster* AddMonster(Vector pos);
+	/*Item* AddItem(bool isTool, ItemType itemType, Vector pos);*/
 	void RemoveObject(ObjectType type, int id);
 
 public:
 	bool IsCanGo(int x, int y);
+
+	void AddAliveMonster(int id);
+	void RemoveAliveMonster(int id);
 
 public:
 	GameObject* GetGameObject(ObjectType type, int id);
@@ -30,4 +33,6 @@ private:
 	std::vector<std::vector<short>> _map;
 	std::array<Player*, MAX_PLAYERS> _players;
 	std::array<Monster*, NUM_NPCS> _monsters;
+
+	std::unordered_map<int, int> _aliveMonsters;
 };

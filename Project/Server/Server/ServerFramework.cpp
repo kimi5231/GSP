@@ -2,6 +2,7 @@
 #include "ServerFramework.h"
 #include "Global.h"
 #include "Player.h"
+#include "Monster.h"
 
 ServerFramework::ServerFramework()
 {
@@ -12,6 +13,17 @@ ServerFramework::ServerFramework()
 		_players[i] = new Player();
 		_players[i]->SetID(i);
 		_players[i]->SetObjectPoolState(ObjectPoolState::Reusable);
+	}
+
+	for (int i = 0; i < NUM_NPCS; ++i)
+	{
+		_monsters[i] = new Monster();
+		_monsters[i]->SetID(i + MONSTER_ID);
+		_monsters[i]->SetObjectPoolState(ObjectPoolState::Reusable);
+		
+		std::uniform_int_distribution<int> randPos(0, 1999);
+		Vector index{ randPos(gen), randPos(gen) };
+		_monsters[i]->SetPos({ index.x * TILE_SIZE, index.y * TILE_SIZE });
 	}
 }
 
@@ -38,6 +50,11 @@ Player* ServerFramework::AddPlayer(int clientIndex)
 	return nullptr;
 }
 
+Monster* ServerFramework::AddMonster(Vector pos)
+{
+	return nullptr;
+}
+
 void ServerFramework::RemoveObject(ObjectType type, int id)
 {
 	switch (type)
@@ -60,6 +77,28 @@ bool ServerFramework::IsCanGo(int x, int y)
 		return false;
 
 	return true;
+}
+
+void ServerFramework::AddAliveMonster(int id)
+{
+	if (id < MONSTER_ID)
+		return;
+
+	if (!_aliveMonsters.count(id))
+		_aliveMonsters[id] = 1;
+	else
+		_aliveMonsters[id]++;
+}
+
+void ServerFramework::RemoveAliveMonster(int id)
+{
+	if (!_aliveMonsters.count(id))
+		return;
+
+	_aliveMonsters[id]--;
+
+	if (_aliveMonsters[id] == 0)
+		_aliveMonsters.erase(id);
 }
 
 GameObject* ServerFramework::GetGameObject(ObjectType type, int id)

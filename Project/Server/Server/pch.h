@@ -36,8 +36,7 @@ constexpr int SECTOR_SIZE = 20;
 
 struct Sector
 {
-	std::unordered_set<int> players;
-	std::unordered_set<int> monsters;
+	std::unordered_set<int> objects;
 	std::mutex sectorMutex;
 };
 

@@ -10,6 +10,7 @@ constexpr int NPC_ID_START = 1000000;
 constexpr int NPC_MOVE_INTERVAL = 1000; // in milliseconds
 constexpr int MAX_NAME_LEN = 20;
 constexpr int MAX_CHAT_MSG_LEN = 200;
+constexpr int MONSTER_ID = 10000;
 
 #define BufferSize 10000
 

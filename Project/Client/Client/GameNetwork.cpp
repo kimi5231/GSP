@@ -251,7 +251,7 @@ void GameNetwork::ProcessAvatarInfoPacket(S2C_AvatarInfo packet)
 
 void GameNetwork::ProcessAddObjectPacket(S2C_AddObject packet)
 {
-	g_framework->AddPlayer(packet.object_id, packet.visual_id, packet.obj_name, packet.x, packet.y, packet.hp, packet.max_hp, packet.exp, packet.level);
+	g_framework->AddCreature(packet.object_id, packet.visual_id, packet.obj_name, packet.x, packet.y, packet.hp, packet.max_hp, packet.exp, packet.level);
 }
 
 void GameNetwork::ProcessRemoveObjectPacket(S2C_RemoveObject packet)
@@ -268,7 +268,7 @@ void GameNetwork::ProcessMoveObjectPacket(S2C_MoveObject packet)
 		return;
 	}
 
-	GameObjectRef object = g_framework->GetGameObject(ObjectType::Player, packet.object_id);
+	GameObjectRef object = g_framework->GetGameObject(packet.object_id);
 	if (!object)
 		return;
 	object->SetPos(packet.x, packet.y);

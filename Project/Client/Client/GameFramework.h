@@ -17,7 +17,7 @@ public:
 
 public:
 	void CreateAvatar(int id, int visualID, short x, short y, int hp, int maxHp, long long exp, int level);
-	void AddPlayer(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level);
+	void AddCreature(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level);
 	void RemoveObject(int id);
 
 public:
@@ -25,7 +25,7 @@ public:
 
 public:
 	PlayerRef GetAvatar() { return _avatar; }
-	GameObjectRef GetGameObject(ObjectType type, int id);
+	GameObjectRef GetGameObject(int id);
 
 private:
 	sf::RenderWindow* _window;
@@ -37,5 +37,5 @@ private:
 private:
 	std::vector<std::vector<short>> _map;
 	PlayerRef _avatar;
-	std::unordered_map<int, PlayerRef> _players;
+	std::unordered_map<int, GameObjectRef> _objects;
 };

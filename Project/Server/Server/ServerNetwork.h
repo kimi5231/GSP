@@ -4,6 +4,7 @@
 class ServerFramework;
 class Session;
 class GameObject;
+class Creature;
 class Player;
 class Monster;
 class Item;
@@ -26,7 +27,7 @@ public:
 	// Send
 	void SendLoginResultPacket(bool result, const char* message, Session* client);
 	void SendAvatarInfoPacket(Player* player, Session* client);
-	void SendAddObjectPacket(Player* player, Session* client);
+	void SendAddObjectPacket(Creature* creature, Session* client);
 	void SendRemoveObjectPacket(GameObject* object, Session* client);
 	void SendMoveObjectPacket(GameObject* object, Session* client);
 	/*void SendUpdateObjectStatePacket(GameObject* object, Session* client);

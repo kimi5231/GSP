@@ -5,11 +5,10 @@ class Monster : public Creature
 {
 public:
 	Monster();
-	virtual ~Monster();
+	virtual ~Monster() {};
 
 public:
-	void Update();
-
-public:
-	void Move();
+	virtual void Update();
+	virtual void Render(sf::RenderWindow* window);
 };
+

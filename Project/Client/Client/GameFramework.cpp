@@ -2,6 +2,7 @@
 #include "GameFramework.h"
 #include "Global.h"
 #include "Player.h"
+#include "Monster.h"
 
 GameFramework::GameFramework(sf::RenderWindow* window)
 {	
@@ -84,7 +85,6 @@ void GameFramework::Render()
     {
         for (int x = start.x; x <= end.x; ++x)
         {
-            // 타일 스프라이트 위치 세팅 후 그리기
             _sprite.setPosition(x * TILE_SIZE, y * TILE_SIZE);
             _window->draw(_sprite);
         }
@@ -93,8 +93,8 @@ void GameFramework::Render()
     if (_avatar)
 	    _avatar->Render(_window);
 
-    for (auto& [id, player] : _players)
-        player->Render(_window);
+    for (auto& [id, object] : _objects)
+        object->Render(_window);
 
     _window->display();
 }
@@ -115,16 +115,18 @@ void GameFramework::CreateAvatar(int playerId, int visualId, short x, short y, i
 	_avatar->SetLevel(level);
 }
 
-void GameFramework::AddPlayer(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level)
+void GameFramework::AddCreature(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level)
 {
     CreatureRef creture;
     
     switch (static_cast<ObjectType>(visualID))
     {
     case ObjectType::Player:
-        _players[id] = std::make_shared<Player>();
-        creture = _players[id];
+        creture = std::make_shared<Player>();
         creture->SetName(name);
+        break;
+    case ObjectType::Monster:
+        creture = std::make_shared<Monster>();
         break;
     }
 
@@ -134,11 +136,13 @@ void GameFramework::AddPlayer(int id, int visualID, const char* name, short x, s
     creture->SetMaxHP(maxHp);
     creture->SetExp(exp);
     creture->SetLevel(level);
+
+    _objects[id] = creture;
 }
 
 void GameFramework::RemoveObject(int id)
 {
-    _players.erase(id);
+    _objects.erase(id);
 }
 
 bool GameFramework::IsCanGo(Vector pos)
@@ -155,11 +159,10 @@ bool GameFramework::IsCanGo(Vector pos)
     return true;
 }
 
-GameObjectRef GameFramework::GetGameObject(ObjectType type, int id)
+GameObjectRef GameFramework::GetGameObject(int id)
 {
-    switch (type)
-    {
-    case ObjectType::Player:
-        return _players[id];
-    }
+    if(_objects.count(id))
+        return _objects[id];
+
+    return nullptr;
 }

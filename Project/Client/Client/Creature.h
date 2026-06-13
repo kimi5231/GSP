@@ -14,7 +14,7 @@ public:
 	void SetLevel(int level) { _level = level; }
 	void SetName(const char* name) { strncpy_s(_name, name, sizeof(_name) - 1); }
 
-private:
+protected:
 	int _maxHP;
 	int _hp;
 	long long _exp;

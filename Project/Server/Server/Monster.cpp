@@ -13,7 +13,8 @@ Monster::Monster()
 	Vector index{ randPos(gen), randPos(gen) };
 	_returnPos = { index.x * TILE_SIZE, index.y * TILE_SIZE };
 	_pos = _returnPos;
-	_damage = 10;
+
+	_sumTime = 0.f;
 }
 
 Monster::~Monster()
@@ -176,9 +177,9 @@ bool Monster::IsAgro(Vector pos)
 	return abs(_pos.x - pos.x) <= MONSTER_AGRO_RANGE * TILE_SIZE && abs(_pos.y - pos.y) <= MONSTER_AGRO_RANGE * TILE_SIZE;
 }
 
-bool Monster::IsAttack(Vector pos)
+bool Monster::IsNear(Vector pos)
 {
-	return abs(_pos.x - pos.x) <= MONSTER_ATTACK_RANGE * TILE_SIZE && abs(_pos.y - pos.y) <= MONSTER_ATTACK_RANGE * TILE_SIZE;
+	return abs(_pos.x - pos.x) <= MONSTER_NEAR_RANGE * TILE_SIZE && abs(_pos.y - pos.y) <= MONSTER_NEAR_RANGE * TILE_SIZE;
 }
 
 bool Monster::IsHome(Vector pos)

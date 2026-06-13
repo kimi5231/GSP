@@ -436,13 +436,13 @@ void ServerNetwork::ProcessMonster(int monsterID, ExpOver* expOver)
 			else
 				SendMoveObjectPacket(monster, _clients[id]);
 
-			if (monster->IsAgro(players[id]->GetPos()) && !monster->GetTarget())
+			if (monster->IsAgro(players[id]->GetPos()) && monster->GetObjectType() == ObjectType::Agro && !monster->GetTarget())
 			{
 				monster->SetTarget(players[id]);
 				monster->SetState(ObjectState::CHASE);
 			}
 
-			if (monster->IsAttack(players[id]->GetPos()))
+			if (monster->IsNear(players[id]->GetPos()) && monster->GetObjectType() == ObjectType::Agro)
 				monster->SetState(ObjectState::ATTACK);
 		}
 

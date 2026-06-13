@@ -15,7 +15,4 @@ public:
 
 public:
 	virtual bool SetState(ObjectState state);
-
-private:
-	
 };

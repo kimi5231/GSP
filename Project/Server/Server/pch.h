@@ -35,7 +35,7 @@
 constexpr int VIEW_RANGE = 7;
 constexpr int MONSTER_ROAMING_RANGE = 10;
 constexpr int MONSTER_AGRO_RANGE = 5;
-constexpr int MONSTER_ATTACK_RANGE = 1;
+constexpr int MONSTER_NEAR_RANGE = 1;
 constexpr int SECTOR_SIZE = 20;
 
 struct Sector

@@ -3,6 +3,7 @@
 #include "Global.h"
 #include "Player.h"
 #include "Agro.h"
+#include "Peace.h"
 
 ServerFramework::ServerFramework()
 {
@@ -15,11 +16,18 @@ ServerFramework::ServerFramework()
 		_players[i]->SetObjectPoolState(ObjectPoolState::Reusable);
 	}
 
-	for (int i = 0; i < NUM_NPCS; ++i)
+	for (int i = 0; i < NUM_NPCS / 2; ++i)
 	{
 		_monsters[i] = new Agro();
 		_monsters[i]->SetID(i + MONSTER_ID);
-		_monsters[i]->SetObjectPoolState(ObjectPoolState::Reusable);
+		_monsters[i]->SetObjectPoolState(ObjectPoolState::InWorld);
+	}
+
+	for (int i = NUM_NPCS / 2; i < NUM_NPCS; ++i)
+	{
+		_monsters[i] = new Peace();
+		_monsters[i]->SetID(i + MONSTER_ID);
+		_monsters[i]->SetObjectPoolState(ObjectPoolState::InWorld);
 	}
 
 	_sumTime = 0.f;

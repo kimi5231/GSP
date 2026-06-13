@@ -4,7 +4,7 @@
 class Monster : public Creature
 {
 public:
-	Monster();
+	Monster(ObjectType type);
 	virtual ~Monster() {};
 
 public:

@@ -86,6 +86,9 @@ void ReturnState::Tick(Monster* monster)
 	Vector prevPos = monster->GetPos();
 	monster->Move();
 
+	if (monster->IsNear(monster->GetReturnPos()))
+		monster->SetPos(monster->GetReturnPos());
+
 	if (prevPos != monster->GetPos())
 	{
 		ExpOver* over = new ExpOver(IOType::Monster);

@@ -14,7 +14,7 @@ Agro::Agro()
 	_level = stat.level;
 
 	_idleTime = 0.5f;
-	_sumTime = 0.f;
+	_damage = 10;
 
 	// State Table
 	_stateTable[IDLE] = ROAMING;

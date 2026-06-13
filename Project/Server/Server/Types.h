@@ -32,7 +32,6 @@ enum class LoginResult
 enum class ObjectType : char
 {
 	Player,
-	Monster,
 	Peace,
 	Agro,
 	Item,

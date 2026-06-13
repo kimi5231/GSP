@@ -26,7 +26,6 @@ public:
 	
 protected:
 	int _id;
-	int _visualID;
 	ObjectType _type;
 	Vector _pos;
 	ObjectState _state;

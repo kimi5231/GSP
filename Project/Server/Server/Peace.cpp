@@ -3,8 +3,9 @@
 
 Peace::Peace()
 {
+	_type = ObjectType::Peace;
+
 	// State Table
-	_stateTable[CHASE] = RETURN;
 	_stateTable[RETURN] = IDLE;
 	_stateTable[ATTACK] = CHASE;
 	_stateTable[HIT] = CHASE;
@@ -12,4 +13,22 @@ Peace::Peace()
 
 Peace::~Peace()
 {
+}
+
+void Peace::Update()
+{
+	Monster::Update();
+}
+
+bool Peace::IsReadyNextState()
+{
+	switch (_state)
+	{
+	case ObjectState::RETURN:
+		return _returnPos == _pos;
+	case ObjectState::ATTACK:
+		return true;
+	case ObjectState::HIT:
+		return true;
+	}
 }

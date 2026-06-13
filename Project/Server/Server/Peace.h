@@ -8,5 +8,8 @@ public:
 	virtual ~Peace();
 
 public:
-	virtual void Update() {};
+	virtual void Update();
+
+public:
+	virtual bool IsReadyNextState();
 };

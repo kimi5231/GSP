@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Creature.cpp" />
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameNetwork.cpp" />
@@ -149,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\Server\Server\protocol_2026.h" />
     <ClInclude Include="..\..\Server\Server\Types.h" />
+    <ClInclude Include="Creature.h" />
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameNetwork.h" />

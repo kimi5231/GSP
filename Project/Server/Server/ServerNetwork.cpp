@@ -349,7 +349,7 @@ void ServerNetwork::SendAddObjectPacket(Player* player, Session* client)
 	packet.size = sizeof(S2C_AddObject);
 	packet.type = S2C_ADD_OBJECT;
 	packet.object_id = player->GetID();
-	packet.visual_id = 0;
+	packet.visual_id = static_cast<int>(player->GetObjectType());
 	strncpy_s(packet.obj_name, client->_userName, sizeof(packet.obj_name) - 1);
 	packet.x = player->GetPos().x;
 	packet.y = player->GetPos().y;

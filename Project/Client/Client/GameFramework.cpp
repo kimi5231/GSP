@@ -117,14 +117,23 @@ void GameFramework::CreateAvatar(int playerId, int visualId, short x, short y, i
 
 void GameFramework::AddPlayer(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level)
 {
-    PlayerRef player = std::make_shared<Player>();
-    player->SetID(id);
-    player->SetPos(x, y);
-    player->SetHP(hp);
-    player->SetMaxHP(maxHp);
-    player->SetExp(exp);
-    player->SetLevel(level);
-    _players[id] = player;
+    CreatureRef creture;
+    
+    switch (static_cast<ObjectType>(visualID))
+    {
+    case ObjectType::Player:
+        _players[id] = std::make_shared<Player>();
+        creture = _players[id];
+        creture->SetName(name);
+        break;
+    }
+
+    creture->SetID(id);
+    creture->SetPos(x, y);
+    creture->SetHP(hp);
+    creture->SetMaxHP(maxHp);
+    creture->SetExp(exp);
+    creture->SetLevel(level);
 }
 
 void GameFramework::RemoveObject(int id)

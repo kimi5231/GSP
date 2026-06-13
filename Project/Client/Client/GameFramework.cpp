@@ -34,16 +34,19 @@ void GameFramework::Update()
    
     if (_avatar && _window->hasFocus())
     {
+       if (!_avatar->IsCanMove())
+            return;
+
 		Vector pos = _avatar->GetPos();
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            pos.x -= 50;
+            pos.x -= TILE_SIZE;
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            pos.x += 50;
+            pos.x += TILE_SIZE;
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            pos.y -= 50;
+            pos.y -= TILE_SIZE;
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            pos.y += 50;
+            pos.y += TILE_SIZE;
         else
             return;
 

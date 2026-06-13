@@ -1,7 +1,6 @@
 #pragma once
 
-//using TimePoint = std::chrono::steady_clock::time_point;
-//using FloatSec = std::chrono::duration<float>;
+using TimePoint = std::chrono::steady_clock::time_point;
 
 //------------------Enums------------------
 enum class IOType

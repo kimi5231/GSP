@@ -350,7 +350,7 @@ void ServerNetwork::SendAddObjectPacket(Player* player, Session* client)
 	packet.type = S2C_ADD_OBJECT;
 	packet.object_id = player->GetID();
 	packet.visual_id = 0;
-	strncpy_s(packet.obj_name, player->GetName(), sizeof(packet.obj_name) - 1);
+	strncpy_s(packet.obj_name, client->_userName, sizeof(packet.obj_name) - 1);
 	packet.x = player->GetPos().x;
 	packet.y = player->GetPos().y;
 	packet.hp = player->GetHP();
@@ -606,6 +606,12 @@ void ServerNetwork::ProcessMovePacket(C2S_Move packet, int clientIndex)
 {
 	const std::array<Player*, MAX_PLAYERS>& players = _framework->GetPlayers();
 	Player* player = players[clientIndex];
+
+	if (!player->IsCanMove())
+	{
+		SendMoveObjectPacket(player, _clients[clientIndex]);
+		return;
+	}
 
 	Vector prevPos = player->GetPos();
 

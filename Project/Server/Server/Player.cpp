@@ -3,6 +3,7 @@
 
 Player::Player()
 {
+	_type = ObjectType::Player;
 	_maxHP = 100;
 	_hp = _maxHP;
 	_exp = 0;

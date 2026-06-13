@@ -3,6 +3,7 @@
 
 Creature::Creature()
 {
+	_lastMoveTime = std::chrono::high_resolution_clock::now();
 }
 
 Creature::~Creature()
@@ -16,5 +17,20 @@ bool Creature::TackDamage(int damage)
 
 bool Creature::TackHeal(int heal)
 {
+	return false;
+}
+
+bool Creature::IsCanMove()
+{
+	auto duration = std::chrono::high_resolution_clock::now() - _lastMoveTime;
+
+	long long ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+	if (ms > 500)
+	{
+		_lastMoveTime = std::chrono::high_resolution_clock::now();
+		return true;
+	}
+		
 	return false;
 }

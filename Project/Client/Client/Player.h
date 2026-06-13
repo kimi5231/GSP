@@ -12,6 +12,9 @@ public:
 	virtual void Render(sf::RenderWindow* window);
 
 public:
+	bool IsCanMove();
+
+public:
 	void SetMaxHP(int maxHP) { _maxHP = maxHP; }
 	void SetHP(int hp) { _hp = hp; }
 	void SetExp(long long exp) { _exp = exp; }
@@ -22,4 +25,5 @@ private:
 	int _hp;
 	long long _exp;
 	int _level;
+	TimePoint _lastMoveTime;
 };

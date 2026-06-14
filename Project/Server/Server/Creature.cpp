@@ -14,6 +14,9 @@ Creature::~Creature()
 
 bool Creature::TackDamage(int damage)
 {
+	if (_state == ObjectState::DEAD)
+		return false;
+
 	_hp -= damage;
 
 	if (_hp <= 0)

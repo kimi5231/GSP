@@ -955,6 +955,9 @@ void ServerNetwork::ProcessMovePacket(C2S_Move packet, int clientIndex)
 				// Monster
 				if (id >= MONSTER_ID)
 				{
+					if(monsters[id - MONSTER_ID]->GetObjectState() == ObjectState::DEAD)
+						continue;
+						
 					_framework->AddAliveMonster(id);
 					SendAddObjectPacket(monsters[id - MONSTER_ID], _clients[clientIndex]);
 					continue;

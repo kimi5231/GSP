@@ -11,6 +11,7 @@ public:
 	virtual ~Monster();
 
 public:
+	void Init();
 	virtual void Update();
 
 public:
@@ -55,5 +56,6 @@ protected:
 	std::deque<Vector> _path;
 
 	float _idleTime;
+	float _deadTime;
 	int _damage;
 };

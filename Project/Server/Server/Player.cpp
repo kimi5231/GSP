@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Player.h"
+#include "Global.h"
 
 Player::Player()
 {
@@ -20,6 +21,20 @@ Player::~Player()
 void Player::Init()
 {
 	_objectPoolState = ObjectPoolState::InWorld;
+}
+
+void Player::AddExp(long long exp)
+{
+	_exp += exp;
+
+	// 레벨업에 필요한 경험치만큼 모았다면 레벨업
+	long long maxExp = pow(2, _level - 1) * 100;
+	if (maxExp <= _exp)
+	{
+		_level++;
+		_exp -= maxExp;
+		g_network->SendStatusChangePacket(this, _id);
+	}
 }
 
 int Player::GetDamage()

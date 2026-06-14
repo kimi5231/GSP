@@ -13,6 +13,7 @@ Agro::Agro()
 	_stateTable[RETURN] = IDLE;
 	_stateTable[ATTACK] = CHASE;
 	_stateTable[HIT] = CHASE;
+	_stateTable[DEAD] = IDLE;
 }
 
 Agro::~Agro()
@@ -38,6 +39,8 @@ bool Agro::IsReadyNextState()
 		return true;
 	case ObjectState::HIT:
 		return true;
+	case ObjectState::DEAD:
+		return _sumTime > _deadTime;
 	}
 }
 

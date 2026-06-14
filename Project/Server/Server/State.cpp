@@ -128,5 +128,28 @@ void HitState::Tick(Monster* monster)
 //--------------Dead--------------
 void DeadState::Enter(Monster* monster)
 {
-	// 30초 뒤 부활
+	// 경험치 지급
+	int monsterLevel = monster->GetLevel();
+	monster->GetTarget()->AddExp(monsterLevel* monsterLevel*2);
+	monster->SetTarget(nullptr);
+
+	ExpOver* over = new ExpOver(IOType::MonsterEvent);
+	over->_monsterEventType = MonsterEventType::Dead;
+	PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(monster->GetID()), &over->_over);
+}
+
+void DeadState::Tick(Monster* monster)
+{
+	State::Tick(monster);
+
+	monster->AddDeltaTime(g_timer->GetDeltaTime());
+}
+
+void DeadState::Exit(Monster* monster)
+{
+	monster->InitSumTime();
+	monster->Init();
+	ExpOver* over = new ExpOver(IOType::MonsterEvent);
+	over->_monsterEventType = MonsterEventType::Respawn;
+	PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(monster->GetID()), &over->_over);
 }

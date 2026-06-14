@@ -16,6 +16,8 @@ Monster::Monster()
 	_damage = stat.damage;
 
 	_idleTime = 0.5f;
+	_deadTime = 30.f;
+	_attackDelay = 1.f;
 
 	std::uniform_int_distribution<int> randPos(0, 1999);
 	Vector index{ randPos(gen), randPos(gen) };
@@ -27,6 +29,12 @@ Monster::Monster()
 
 Monster::~Monster()
 {
+}
+
+void Monster::Init()
+{
+	_pos = _returnPos;
+	_hp = _maxHP;
 }
 
 void Monster::Update()

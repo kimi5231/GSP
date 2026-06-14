@@ -455,7 +455,7 @@ void ServerNetwork::ProcessMonsterEvent(int monsterID, ExpOver* expOver)
 				if(!monster->GetTarget())
 					monster->SetTarget(players[id]);
 				monster->SetState(ObjectState::ATTACK);
-				SendStatusChangePacket(players[id], _clients[id]);
+				SendStatusChangePacket(players[id], id);
 			}	
 		}
 
@@ -501,8 +501,74 @@ void ServerNetwork::ProcessMonsterEvent(int monsterID, ExpOver* expOver)
 		}
 
 		for (int id : newNearPlayers)
-			SendStatusChangePacket(monster, _clients[id]);
+			SendStatusChangePacket(monster, id);
 		
+		delete expOver;
+		break;
+	}
+	case MonsterEventType::Dead:
+	{
+		const std::array<Monster*, NUM_NPCS>& monsters = _framework->GetMonsters();
+		Monster* monster = monsters[monsterID - MONSTER_ID];
+
+		Vector sectorIndex{ monster->GetPos().x / (SECTOR_SIZE * TILE_SIZE), monster->GetPos().y / (SECTOR_SIZE * TILE_SIZE) };
+
+		Vector start{ std::max(0, sectorIndex.x - 1), std::max(0, sectorIndex.y - 1) };
+		Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE - 1, sectorIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE - 1, sectorIndex.y + 1) };
+
+		std::unordered_set<int> newNearPlayers;
+		for (int x = start.x; x <= end.x; ++x)
+		{
+			for (int y = start.y; y <= end.y; ++y)
+			{
+				_sectors[x][y].sectorMutex.lock();
+				for (int id : _sectors[x][y].objects)
+				{
+					if (id >= MONSTER_ID)
+						continue;
+
+					newNearPlayers.insert(id);
+				}
+				_sectors[x][y].sectorMutex.unlock();
+			}
+		}
+
+		for (int id : newNearPlayers)
+			SendRemoveObjectPacket(monster, _clients[id]);
+
+		delete expOver;
+		break;
+	}
+	case MonsterEventType::Respawn:
+	{
+		const std::array<Monster*, NUM_NPCS>& monsters = _framework->GetMonsters();
+		Monster* monster = monsters[monsterID - MONSTER_ID];
+
+		Vector sectorIndex{ monster->GetPos().x / (SECTOR_SIZE * TILE_SIZE), monster->GetPos().y / (SECTOR_SIZE * TILE_SIZE) };
+
+		Vector start{ std::max(0, sectorIndex.x - 1), std::max(0, sectorIndex.y - 1) };
+		Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE - 1, sectorIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE - 1, sectorIndex.y + 1) };
+
+		std::unordered_set<int> newNearPlayers;
+		for (int x = start.x; x <= end.x; ++x)
+		{
+			for (int y = start.y; y <= end.y; ++y)
+			{
+				_sectors[x][y].sectorMutex.lock();
+				for (int id : _sectors[x][y].objects)
+				{
+					if (id >= MONSTER_ID)
+						continue;
+
+					newNearPlayers.insert(id);
+				}
+				_sectors[x][y].sectorMutex.unlock();
+			}
+		}
+
+		for (int id : newNearPlayers)
+			SendAddObjectPacket(monster, _clients[id]);
+
 		delete expOver;
 		break;
 	}
@@ -561,12 +627,12 @@ void ServerNetwork::SendMoveObjectPacket(GameObject* object, Session* client)
 	client->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
 
-void ServerNetwork::SendStatusChangePacket(Creature* creature, Session* client)
+void ServerNetwork::SendStatusChangePacket(Creature* creature, int clientIndex)
 {
 	// Packet Data »ý¼º
 	S2C_StatusChange packet{ sizeof(S2C_StatusChange), S2C_STATUS_CHANGE, creature->GetID(), creature->GetHP(), creature->GetMaxHP(), creature->GetEXP(), creature->GetLevel() };
 
-	client->Send(packet.size, reinterpret_cast<char*>(&packet));
+	_clients[clientIndex]->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
 
 //void ServerNetwork::SendUpdateObjectStatePacket(GameObject* object, Session* client)
@@ -974,6 +1040,7 @@ void ServerNetwork::ProcessAttackPacket(C2S_Attack packet, int clientIndex)
 		if (player->IsNear(pos))
 		{
 			monsters[id - MONSTER_ID]->TackDamage(player->GetDamage());
+			monsters[id - MONSTER_ID]->SetTarget(player);
 			ExpOver* over = new ExpOver(IOType::MonsterEvent);
 			over->_monsterEventType = MonsterEventType::UpdateStat;
 			PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(id), &over->_over);

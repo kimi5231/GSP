@@ -14,6 +14,8 @@ public:
 	virtual void Update() {};
 
 public:
+	void AddExp(long long exp);
+
 	bool AddItemToInventory(bool isTool, int id);
 	bool RemoveItemFromInventory(bool isTool, int id);
 	bool ExistItem(bool isTool, int id);

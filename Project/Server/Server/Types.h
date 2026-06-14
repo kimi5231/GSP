@@ -16,6 +16,8 @@ enum class MonsterEventType
 {
 	Move,
 	UpdateStat,
+	Dead,
+	Respawn,
 };
 
 enum class SessionState

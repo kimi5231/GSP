@@ -9,6 +9,7 @@ Peace::Peace()
 	_stateTable[RETURN] = IDLE;
 	_stateTable[ATTACK] = CHASE;
 	_stateTable[HIT] = CHASE;
+	_stateTable[DEAD] = IDLE;
 }
 
 Peace::~Peace()
@@ -30,5 +31,7 @@ bool Peace::IsReadyNextState()
 		return true;
 	case ObjectState::HIT:
 		return true;
+	case ObjectState::DEAD:
+		return _sumTime > _deadTime;
 	}
 }

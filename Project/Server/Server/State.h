@@ -101,6 +101,6 @@ public:
 
 public:
 	virtual void Enter(Monster* monster) override;
-	virtual void Tick(Monster* monster) override {};
-	virtual void Exit(Monster* monster) override {};
+	virtual void Tick(Monster* monster) override;
+	virtual void Exit(Monster* monster) override;
 };

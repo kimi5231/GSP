@@ -30,7 +30,7 @@ public:
 	void SendAddObjectPacket(Creature* creature, Session* client);
 	void SendRemoveObjectPacket(GameObject* object, Session* client);
 	void SendMoveObjectPacket(GameObject* object, Session* client);
-	void SendStatusChangePacket(Creature* creature, Session* client);
+	void SendStatusChangePacket(Creature* creature, int clientIndex);
 	/*void SendUpdateObjectStatePacket(GameObject* object, Session* client);
 	void SendAddItemToInventoryPacket(Item* item, bool isTool, Session* client);
 	void SendRemoveItemFromInventoryPacket(Item* item, bool isTool, Session* client);

@@ -149,6 +149,7 @@ void DeadState::Exit(Monster* monster)
 {
 	monster->InitSumTime();
 	monster->Init();
+
 	ExpOver* over = new ExpOver(IOType::MonsterEvent);
 	over->_monsterEventType = MonsterEventType::Respawn;
 	PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(monster->GetID()), &over->_over);

@@ -118,6 +118,15 @@ void GameFramework::Render()
             _window->draw(_barBackground);
             _hpBar->Render(_window);
             _expBar->Render(_window);
+
+            std::string uiText = "Lv " + std::to_string(_avatar->GetLevel()) + "   " + _userName;
+            sf::Text text;
+            text.setFont(g_dataManager->GetFont());
+            text.setString(uiText);
+            text.setCharacterSize(25);
+            text.setFillColor(sf::Color::Black);
+            text.setPosition(475, 870);
+            _window->draw(text);
         }  
     }
     else
@@ -174,6 +183,7 @@ void GameFramework::AddCreature(int id, int visualID, const char* name, short x,
     creture->SetMaxHP(maxHp);
     creture->SetExp(exp);
     creture->SetLevel(level);
+    creture->SetName(name);
 
     _objects[id] = creture;
 }

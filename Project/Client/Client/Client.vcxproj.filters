@@ -24,6 +24,9 @@
     <Filter Include="소스 파일\Game\Object\Creature">
       <UniqueIdentifier>{21913a3f-c7ef-479c-9c88-acc386f8ef14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Game\UI">
+      <UniqueIdentifier>{da87fda7-dbc6-4bf4-bc00-7098418fe624}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -55,6 +58,12 @@
     </ClCompile>
     <ClCompile Include="Monster.cpp">
       <Filter>소스 파일\Game\Object\Creature</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>소스 파일\Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Bar.cpp">
+      <Filter>소스 파일\Game\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +104,12 @@
     </ClInclude>
     <ClInclude Include="Monster.h">
       <Filter>소스 파일\Game\Object\Creature</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>소스 파일\Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Bar.h">
+      <Filter>소스 파일\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

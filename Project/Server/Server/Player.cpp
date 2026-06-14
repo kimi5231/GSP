@@ -4,10 +4,12 @@
 Player::Player()
 {
 	_type = ObjectType::Player;
+
+	// юс╫ц
 	_maxHP = 100;
 	_hp = _maxHP;
-	_exp = 0;
 	_level = 1;
+	_exp = 50;
 }
 
 Player::~Player()

@@ -3,12 +3,21 @@
 #include "Global.h"
 #include "Player.h"
 #include "Monster.h"
+#include "Bar.h"
 
 GameFramework::GameFramework(sf::RenderWindow* window)
 {	
 	// 윈도우창 생성
 	_window = window;
+    _isInGame = false;
     _avatar = nullptr;
+
+    // UI
+    _barBackground.setPosition(470, 895);
+    _barBackground.setSize(sf::Vector2f(110, 50));
+    _barBackground.setFillColor(sf::Color::White);
+    _hpBar = new Bar({475, 900}, {100, 15}, UIType::HpBar);
+    _expBar = new Bar({ 475, 925 }, { 100, 15 }, UIType::ExpBar);
 
     _map = g_dataManager->GetTilemap();
 
@@ -65,36 +74,51 @@ void GameFramework::Update()
         cameraPos.x = std::max(WINDOW_WIDTH / 2, std::min(cameraPos.x, WORLD_WIDTH * TILE_SIZE - WINDOW_WIDTH / 2));
         cameraPos.y = std::max(WINDOW_HEIGHT / 2, std::min(cameraPos.y, WORLD_HEIGHT * TILE_SIZE - WINDOW_HEIGHT / 2));
 
-        _view.setCenter(cameraPos.x, cameraPos.y);
-        _window->setView(_view);
+        _gameView.setCenter(cameraPos.x, cameraPos.y);
     }
 }
 
 void GameFramework::Render()
 {
-    _window->clear(); 
+    _window->clear();
 
-    sf::Vector2f viewPos = _view.getCenter();
-    Vector index{ static_cast<int>(viewPos.x) / TILE_SIZE, static_cast<int>(viewPos.y) / TILE_SIZE };
-   
-    int viewRange = 12;
-    Vector start{ std::max(0, index.x - viewRange), std::max(0, index.y - viewRange) };
-    Vector end{ std::min(WORLD_WIDTH - 1, index.x + viewRange), std::min(WORLD_HEIGHT - 1, index.y + viewRange) };
-  
-    for (int y = start.y; y <= end.y; ++y)
+    if (_isInGame)
     {
-        for (int x = start.x; x <= end.x; ++x)
+        _window->setView(_gameView);
+        sf::Vector2f viewPos = _gameView.getCenter();
+        Vector index{ static_cast<int>(viewPos.x) / TILE_SIZE, static_cast<int>(viewPos.y) / TILE_SIZE };
+
+        int viewRange = 11;
+        Vector start{ std::max(0, index.x - viewRange), std::max(0, index.y - viewRange) };
+        Vector end{ std::min(WORLD_WIDTH - 1, index.x + viewRange), std::min(WORLD_HEIGHT - 1, index.y + viewRange) };
+
+        for (int y = start.y; y <= end.y; ++y)
         {
-            _sprite.setPosition(x * TILE_SIZE, y * TILE_SIZE);
-            _window->draw(_sprite);
+            for (int x = start.x; x <= end.x; ++x)
+            {
+                _sprite.setPosition(x * TILE_SIZE, y * TILE_SIZE);
+                _window->draw(_sprite);
+            }
         }
+
+        for (auto& [id, object] : _objects)
+            object->Render(_window);
+
+        if (_avatar)
+        {
+            _avatar->Render(_window);
+
+            _window->setView(_uiView);
+
+            _window->draw(_barBackground);
+            _hpBar->Render(_window);
+            _expBar->Render(_window);
+        }  
     }
+    else
+    {
 
-    if (_avatar)
-	    _avatar->Render(_window);
-
-    for (auto& [id, object] : _objects)
-        object->Render(_window);
+    }
 
     _window->display();
 }
@@ -113,6 +137,11 @@ void GameFramework::CreateAvatar(int playerId, int visualId, short x, short y, i
     _avatar->SetMaxHP(maxHp);
     _avatar->SetExp(exp);
 	_avatar->SetLevel(level);
+
+    _hpBar->SetMaxValue(maxHp);
+    _hpBar->SetCurrentValue(hp);
+    _expBar->SetMaxValue(pow(2, level - 1) * 100);
+    _expBar->SetCurrentValue(exp);
 }
 
 void GameFramework::AddCreature(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level)

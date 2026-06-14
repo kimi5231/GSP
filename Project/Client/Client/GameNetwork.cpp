@@ -241,7 +241,8 @@ void GameNetwork::SendMovePacket(PlayerRef player)
 
 void GameNetwork::ProcessLoginResultPacket(S2C_LoginResult packet)
 {
-
+	if(packet.success)
+		g_framework->SetIsInGame(true);
 }
 
 void GameNetwork::ProcessAvatarInfoPacket(S2C_AvatarInfo packet)

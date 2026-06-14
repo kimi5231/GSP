@@ -627,9 +627,15 @@ void ServerNetwork::SendMoveObjectPacket(GameObject* object, Session* client)
 
 void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 {
-	// 현재 접속하고 있는 ID라면 무시
+	// 현재 접속하고 있는 ID라면 로그인 실패
 	if (_clients[clientIndex]->_state == SessionState::Play)
+	{
+		SendLoginResultPacket(false, "이미 접속한 ID입니다.", _clients[clientIndex]);
 		return;
+	}
+		
+	// 로그인 성공
+	SendLoginResultPacket(true, "로그인 성공", _clients[clientIndex]);
 
 	// 데이터 베이스에 ID가 존재하는지 확인
 	// ID가 존재한다면 정보 가져오기

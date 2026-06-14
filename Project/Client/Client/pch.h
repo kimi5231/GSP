@@ -19,6 +19,12 @@
 constexpr int WINDOW_WIDTH = 1000;
 constexpr int WINDOW_HEIGHT = 1000;
 
+enum class UIType
+{
+	HpBar,
+	ExpBar,
+};
+
 struct NetworkEvent
 {
 	bool isComplete = false;

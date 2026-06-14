@@ -1,6 +1,7 @@
 #pragma once
 class GameObject;
 class Player;
+class Bar;
 
 class GameFramework
 {
@@ -26,16 +27,25 @@ public:
 public:
 	PlayerRef GetAvatar() { return _avatar; }
 	GameObjectRef GetGameObject(int id);
+	void SetIsInGame(bool isInGame) { _isInGame = isInGame; }
 
 private:
 	sf::RenderWindow* _window;
-	sf::View _view;
+	sf::View _gameView;
+	sf::View _uiView;
 
 	sf::Texture _texture;
 	sf::Sprite _sprite;
-
+	
 private:
+	bool _isInGame;
+
+	sf::RectangleShape _barBackground;
+	Bar* _hpBar;
+	Bar* _expBar;
+
 	std::vector<std::vector<short>> _map;
+	
 	PlayerRef _avatar;
 	std::unordered_map<int, GameObjectRef> _objects;
 };

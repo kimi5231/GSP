@@ -11,6 +11,7 @@ public:
 	virtual void Render(sf::RenderWindow* window);
 
 public:
+	virtual void SetPos(Vector pos);
 	void SetMaxValue(int value) { _maxValue = value; }
 	void SetCurrentValue(int value) { _currentValue = value; }
 

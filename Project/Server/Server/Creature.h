@@ -11,6 +11,7 @@ public:
 	bool TackDamage(int damage);
 	bool TackHeal(int heal);
 	bool IsCanMove();
+	bool IsNear(Vector pos);
 
 public:
 	virtual bool SetState(ObjectState state);

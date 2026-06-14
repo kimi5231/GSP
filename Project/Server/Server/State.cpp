@@ -40,7 +40,7 @@ void RoamingState::Enter(Monster* monster)
 
 	if (prevPos != monster->GetPos())
 	{
-		ExpOver* over = new ExpOver(IOType::Monster);
+		ExpOver* over = new ExpOver(IOType::MonsterEvent);
 		over->_monsterEventType = MonsterEventType::Move;
 		PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(monster->GetID()), &over->_over);
 	}
@@ -60,7 +60,7 @@ void ChaseState::Tick(Monster* monster)
 	
 	if (prevPos != monster->GetPos())
 	{
-		ExpOver* over = new ExpOver(IOType::Monster);
+		ExpOver* over = new ExpOver(IOType::MonsterEvent);
 		over->_monsterEventType = MonsterEventType::Move;
 		PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(monster->GetID()), &over->_over);
 	}
@@ -91,7 +91,7 @@ void ReturnState::Tick(Monster* monster)
 
 	if (prevPos != monster->GetPos())
 	{
-		ExpOver* over = new ExpOver(IOType::Monster);
+		ExpOver* over = new ExpOver(IOType::MonsterEvent);
 		over->_monsterEventType = MonsterEventType::Move;
 		PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(monster->GetID()), &over->_over);
 	}

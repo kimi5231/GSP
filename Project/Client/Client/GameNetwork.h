@@ -25,6 +25,7 @@ public:
 	void SendLoginPacket(const char* id);
 	void SendLogoutPacket();
 	void SendMovePacket(PlayerRef player);
+	void SendAttackPacket();
 	//void SendGetItemPacket(int itemID, bool isTool, int playerID);
 	//void SendDropItemPacket(int itemID, bool isTool, int playerID);
 	//void SendSellItemPacket(int playerID, int sellingMachineID);

@@ -44,27 +44,28 @@ void GameFramework::Update()
    
     if (_avatar && _window->hasFocus())
     {
-       if (!_avatar->IsCanMove())
-            return;
+        if (_avatar->IsCanMove())
+        {
+            Vector pos = _avatar->GetPos();
 
-		Vector pos = _avatar->GetPos();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+                pos.x -= TILE_SIZE;
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+                pos.x += TILE_SIZE;
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+                pos.y -= TILE_SIZE;
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+                pos.y += TILE_SIZE;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            pos.x -= TILE_SIZE;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            pos.x += TILE_SIZE;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            pos.y -= TILE_SIZE;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            pos.y += TILE_SIZE;
-        else
-            return;
+            if (IsCanGo(pos))
+            {
+                _avatar->SetPos(pos);
+                g_network->SendMovePacket(_avatar);
+            }
+        }
 
-        if (!IsCanGo(pos))
-            return;
-
-        _avatar->SetPos(pos);
-        g_network->SendMovePacket(_avatar);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            g_network->SendAttackPacket();
     }
 
     if (_avatar)

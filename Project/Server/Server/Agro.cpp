@@ -1,20 +1,11 @@
 #include "pch.h"
 #include "Agro.h"
-#include "Global.h"
 #include "FSM.h"
 #include "State.h"
 
 Agro::Agro()
 {
 	_type = ObjectType::Agro;
-
-	MonsterStat stat = g_dataManager->GetMonsterStat();
-	_maxHP = stat.hp;
-	_hp = stat.hp;
-	_level = stat.level;
-
-	_idleTime = 0.5f;
-	_damage = 10;
 
 	// State Table
 	_stateTable[IDLE] = ROAMING;

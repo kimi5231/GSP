@@ -21,7 +21,7 @@ public:
 	void ProcessDisconnected(int clientIndex);
 	void ProcessRecv(int clientIndex, int numByte, ExpOver* expOver);
 	void ProcessPacket(std::vector<char>& packet, int clientIndex);
-	void ProcessMonster(int monsterID, ExpOver* expOver);
+	void ProcessMonsterEvent(int monsterID, ExpOver* expOver);
 
 public:
 	// Send
@@ -46,6 +46,7 @@ public:
 	void ProcessLoginPacket(C2S_Login packet, int clientIndex);
 	void ProcessLogoutPacket(C2S_Logout packet, int clientIndex);
 	void ProcessMovePacket(C2S_Move packet, int clientIndex);
+	void ProcessAttackPacket(C2S_Attack packet, int clientIndex);
 
 	/*void ProcessGetItemPacket(C_GetItem_Packet packet, int clientIndex);
 	void ProcessDropItemPacket(C_DropItem_Packet packet, int clientIndex);

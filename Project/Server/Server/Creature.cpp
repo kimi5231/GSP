@@ -4,6 +4,8 @@
 Creature::Creature()
 {
 	_lastMoveTime = std::chrono::high_resolution_clock::now();
+
+	_exp = 0;
 }
 
 Creature::~Creature()
@@ -47,6 +49,19 @@ bool Creature::IsCanMove()
 	}
 		
 	return false;
+}
+
+bool Creature::IsNear(Vector pos)
+{
+	float diffX = static_cast<float>(_pos.x - pos.x);
+	float diffY = static_cast<float>(_pos.y - pos.y);
+
+	float distanceSquare = (diffX * diffX) + (diffY * diffY);
+
+	float range = static_cast<float>(MONSTER_NEAR_RANGE * TILE_SIZE);
+	float rangeSquare = range * range;
+
+	return distanceSquare <= rangeSquare;
 }
 
 bool Creature::SetState(ObjectState state)

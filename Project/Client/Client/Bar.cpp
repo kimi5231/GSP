@@ -27,3 +27,11 @@ void Bar::Render(sf::RenderWindow* window)
 	_gage.setSize(sf::Vector2f((_size.x - 10) * (_currentValue / _maxValue), _size.y - 10));
 	window->draw(_gage);
 }
+
+void Bar::SetPos(Vector pos)
+{
+	UI::SetPos(pos);
+
+	_background.setPosition(pos.x, pos.y);
+	_gage.setPosition(pos.x + 5, pos.y + 5);
+}

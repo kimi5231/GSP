@@ -182,6 +182,21 @@ void GameNetwork::SendMovePacket(PlayerRef player)
 	_sendEvents.push_back(event);
 }
 
+void GameNetwork::SendAttackPacket()
+{
+	// Packet Data 持失
+	C2S_Attack packetData{ sizeof(C2S_Attack), C2S_ATTACK };
+
+	// Packet Serialize
+	std::vector<char> serializedPacketData = SerializePOD(packetData);
+
+	// SendEvent 持失
+	NetworkEventRef event = std::make_shared<NetworkEvent>();
+	event->packetID = C2S_ATTACK;
+	event->serializedPacketData = serializedPacketData;
+	_sendEvents.push_back(event);
+}
+
 //void GameNetwork::SendGetItemPacket(int itemID, bool isTool, int playerID)
 //{
 //	// Packet Data 持失

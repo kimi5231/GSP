@@ -9,6 +9,14 @@ Monster::Monster()
 	_fsm = new FSM();
 	_target = nullptr;
 
+	const MonsterStat& stat = g_dataManager->GetMonsterStat();
+	_maxHP = stat.hp;
+	_hp = stat.hp;
+	_level = stat.level;
+	_damage = stat.damage;
+
+	_idleTime = 0.5f;
+
 	std::uniform_int_distribution<int> randPos(0, 1999);
 	Vector index{ randPos(gen), randPos(gen) };
 	_returnPos = { index.x * TILE_SIZE, index.y * TILE_SIZE };
@@ -175,11 +183,6 @@ void Monster::UpdateNextAttackTime()
 bool Monster::IsAgro(Vector pos)
 {
 	return abs(_pos.x - pos.x) <= MONSTER_AGRO_RANGE * TILE_SIZE && abs(_pos.y - pos.y) <= MONSTER_AGRO_RANGE * TILE_SIZE;
-}
-
-bool Monster::IsNear(Vector pos)
-{
-	return abs(_pos.x - pos.x) <= MONSTER_NEAR_RANGE * TILE_SIZE && abs(_pos.y - pos.y) <= MONSTER_NEAR_RANGE * TILE_SIZE;
 }
 
 bool Monster::IsHome(Vector pos)

@@ -58,4 +58,22 @@ void DataManager::LoadItemInfos()
 
 void DataManager::LoadMonsterStat()
 {
+    std::ifstream file(_dataPath / "MonsterStat.json");
+    json data = json::parse(file);
+
+    // MonsterStat √ﬂ√‚
+    for (const auto& monsterStat : data["MonsterStats"])
+    {
+        MonsterStat stat;
+
+        stat.hp = monsterStat["hp"];
+        stat.level = monsterStat["level"];
+        stat.damage = monsterStat["damage"];
+        stat.minPos.x = monsterStat["minPos"][0];
+        stat.minPos.y = monsterStat["minPos"][1];
+        stat.maxPos.x = monsterStat["maxPos"][0];
+        stat.maxPos.y = monsterStat["maxPos"][1];
+      
+        _monsterStat = stat;
+    }
 }

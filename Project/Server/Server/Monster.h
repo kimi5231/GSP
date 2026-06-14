@@ -28,7 +28,6 @@ public:
 	void UpdateNextAttackTime();
 
 	bool IsAgro(Vector pos);
-	bool IsNear(Vector pos);
 	bool IsHome(Vector pos);
 
 public:

@@ -8,6 +8,9 @@ public:
 public:
 	virtual void Render(sf::RenderWindow* window) {};
 
+public:
+	virtual void SetPos(Vector pos) { _pos = pos; }
+
 protected:
 	Vector _pos;
 	Vector _size;

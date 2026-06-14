@@ -1,0 +1,11 @@
+{
+    "MonsterStats" : [
+        {
+            "hp": 100,
+            "level": 1,
+            "damage": 10,
+            "minPos" : [0, 0],
+            "maxPos" : [1999, 1999]
+        }
+    ]
+}

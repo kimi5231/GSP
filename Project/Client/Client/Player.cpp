@@ -32,24 +32,24 @@ bool Player::IsCanMove()
 
 void Player::SetMaxHP(int maxHP)
 {
-	_maxHP = maxHP;
+	Creature::SetMaxHP(maxHP);
 	g_framework->GetHpBar()->SetMaxValue(maxHP);
 }
 
 void Player::SetHP(int hp)
 {
-	_hp = hp;
+	Creature::SetHP(hp);
 	g_framework->GetHpBar()->SetCurrentValue(hp);
 }
 
 void Player::SetExp(long long exp)
 {
-	_exp = exp;
+	Creature::SetExp(exp);
 	g_framework->GetExpBar()->SetCurrentValue(exp);
 }
 
 void Player::SetLevel(int level)
 {
-	_level = level;
+	Creature::SetLevel(level);
 	g_framework->GetExpBar()->SetMaxValue(pow(2, level - 1) * 100);
 }

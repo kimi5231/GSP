@@ -9,13 +9,13 @@ enum class IOType
 	Recv,
 	Accept,
 
-	Monster,
+	MonsterEvent,
 };
 
 enum class MonsterEventType
 {
 	Move,
-
+	UpdateStat,
 };
 
 enum class SessionState
@@ -160,10 +160,9 @@ struct MonsterStat
 {
 	int hp;
 	int level;
+	int damage;
 	Vector minPos;
 	Vector maxPos;
-	float idleTime;
-	int damage;
 };
 
 struct PeaceStat

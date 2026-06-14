@@ -48,6 +48,7 @@ private:
 
 	std::vector<std::vector<short>> _map;
 	
+	char _userName[MAX_NAME_LEN];
 	PlayerRef _avatar;
 	std::unordered_map<int, GameObjectRef> _objects;
 };

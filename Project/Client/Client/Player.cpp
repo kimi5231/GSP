@@ -13,6 +13,16 @@ Player::Player()
 void Player::Render(sf::RenderWindow* window)
 {
     window->draw(_sprite);
+
+	sf::Text text;
+	text.setFont(g_dataManager->GetFont());            
+	text.setString(_name);
+	text.setCharacterSize(25); 
+	text.setFillColor(sf::Color::Black);
+	Vector pos = _pos;
+	pos.y += 50;
+	text.setPosition(pos.x, pos.y);
+	window->draw(text);
 }
 
 bool Player::IsCanMove()

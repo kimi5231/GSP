@@ -9,6 +9,8 @@ DataManager::DataManager()
 {
     _dataPath = std::filesystem::current_path().parent_path() / "Data";
 
+    _font.loadFromFile("cour.ttf");
+
     LoadTilemaps();
 }
 

@@ -9,12 +9,13 @@ GameFramework::GameFramework(sf::RenderWindow* window)
 {	
 	// 윈도우창 생성
 	_window = window;
+
     _isInGame = false;
     _avatar = nullptr;
 
     // UI
-    _barBackground.setPosition(470, 895);
-    _barBackground.setSize(sf::Vector2f(110, 50));
+    _barBackground.setPosition(470, 870);
+    _barBackground.setSize(sf::Vector2f(110, 75));
     _barBackground.setFillColor(sf::Color::White);
     _hpBar = new Bar({475, 900}, {100, 15}, UIType::HpBar);
     _expBar = new Bar({ 475, 925 }, { 100, 15 }, UIType::ExpBar);
@@ -40,8 +41,11 @@ void GameFramework::Update()
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && !_avatar)
-        g_network->SendLoginPacket("abc");
-   
+    {
+        strncpy_s(_userName, "abc", sizeof(_userName) - 1);
+        g_network->SendLoginPacket(_userName);
+    }
+       
     if (_avatar && _window->hasFocus())
     {
         if (_avatar->IsCanMove())
@@ -138,6 +142,7 @@ void GameFramework::CreateAvatar(int playerId, int visualId, short x, short y, i
     _avatar->SetMaxHP(maxHp);
     _avatar->SetExp(exp);
 	_avatar->SetLevel(level);
+    _avatar->SetName(_userName);
 
     _hpBar->SetMaxValue(maxHp);
     _hpBar->SetCurrentValue(hp);

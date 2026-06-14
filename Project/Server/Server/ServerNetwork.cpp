@@ -443,7 +443,12 @@ void ServerNetwork::ProcessMonster(int monsterID, ExpOver* expOver)
 			}
 
 			if (monster->IsNear(players[id]->GetPos()) && monster->GetObjectType() == ObjectType::Agro)
+			{
+				if(!monster->GetTarget())
+					monster->SetTarget(players[id]);
 				monster->SetState(ObjectState::ATTACK);
+				SendStatusChangePacket(players[id], _clients[id]);
+			}	
 		}
 
 		for (int id : oldNearPlayers)
@@ -505,6 +510,14 @@ void ServerNetwork::SendMoveObjectPacket(GameObject* object, Session* client)
 {
 	// Packet Data 持失
 	S2C_MoveObject packet{ sizeof(S2C_MoveObject), S2C_MOVE_OBJECT, object->GetID(), object ->GetPos().x, object->GetPos().y, 0 };
+
+	client->Send(packet.size, reinterpret_cast<char*>(&packet));
+}
+
+void ServerNetwork::SendStatusChangePacket(Creature* creature, Session* client)
+{
+	// Packet Data 持失
+	S2C_StatusChange packet{ sizeof(S2C_StatusChange), S2C_STATUS_CHANGE, creature->GetID(), creature->GetHP(), creature->GetMaxHP(), creature->GetEXP(), creature->GetLevel() };
 
 	client->Send(packet.size, reinterpret_cast<char*>(&packet));
 }

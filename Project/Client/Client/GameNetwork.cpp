@@ -124,6 +124,13 @@ void GameNetwork::ProcessRecv()
 		ProcessMoveObjectPacket(moveObjectPacket);
 		break;
 	}
+	case S2C_STATUS_CHANGE:
+	{
+		S2C_StatusChange statusChangePacket;
+		memcpy(&statusChangePacket, packet.data(), sizeof(S2C_StatusChange));
+		ProcessStatusChangePacket(statusChangePacket);
+		break;
+	}
 	}
 }
 
@@ -273,4 +280,25 @@ void GameNetwork::ProcessMoveObjectPacket(S2C_MoveObject packet)
 	if (!object)
 		return;
 	object->SetPos(packet.x, packet.y);
+}
+
+void GameNetwork::ProcessStatusChangePacket(S2C_StatusChange packet)
+{
+	if (packet.object_id == g_framework->GetAvatar()->GetID())
+	{
+		PlayerRef avatar = g_framework->GetAvatar();
+		avatar->SetHP(packet.hp);
+		avatar->SetMaxHP(packet.max_hp);
+		avatar->SetExp(packet.exp);
+		avatar->SetLevel(packet.level);
+		return;
+	}
+
+	CreatureRef creature = dynamic_pointer_cast<Creature>(g_framework->GetGameObject(packet.object_id));
+	if (!creature)
+		return;
+	creature->SetHP(packet.hp);
+	creature->SetMaxHP(packet.max_hp);
+	creature->SetExp(packet.exp);
+	creature->SetLevel(packet.level);
 }

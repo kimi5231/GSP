@@ -8,10 +8,10 @@ public:
 	virtual ~Creature() {};
 
 public:
-	void SetMaxHP(int maxHP) { _maxHP = maxHP; }
-	void SetHP(int hp) { _hp = hp; }
-	void SetExp(long long exp) { _exp = exp; }
-	void SetLevel(int level) { _level = level; }
+	virtual void SetMaxHP(int maxHP);
+	virtual void SetHP(int hp);
+	virtual void SetExp(long long exp);
+	virtual void SetLevel(int level);
 	void SetName(const char* name) { strncpy_s(_name, name, sizeof(_name) - 1); }
 
 protected:

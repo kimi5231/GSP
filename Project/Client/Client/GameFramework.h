@@ -28,6 +28,8 @@ public:
 	PlayerRef GetAvatar() { return _avatar; }
 	GameObjectRef GetGameObject(int id);
 	void SetIsInGame(bool isInGame) { _isInGame = isInGame; }
+	Bar* GetHpBar() { return _hpBar; }
+	Bar* GetExpBar() { return _expBar; }
 
 private:
 	sf::RenderWindow* _window;

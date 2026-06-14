@@ -36,6 +36,7 @@ public:
 	void ProcessAddObjectPacket(S2C_AddObject packet);
 	void ProcessRemoveObjectPacket(S2C_RemoveObject packet);
 	void ProcessMoveObjectPacket(S2C_MoveObject packet);
+	void ProcessStatusChangePacket(S2C_StatusChange packet);
 
 private:
 	fd_set _readSet{};

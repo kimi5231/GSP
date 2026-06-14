@@ -14,6 +14,12 @@ public:
 public:
 	bool IsCanMove();
 
+public:
+	virtual void SetMaxHP(int maxHP);
+	virtual void SetHP(int hp);
+	virtual void SetExp(long long exp);
+	virtual void SetLevel(int level);
+
 private:
 	TimePoint _lastMoveTime;
 };

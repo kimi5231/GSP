@@ -12,6 +12,8 @@ Player::Player()
 	_level = 1;
 	_exp = 50;
 	_damage = 10;
+
+	_sumTime = 0.f;
 }
 
 Player::~Player()
@@ -21,6 +23,18 @@ Player::~Player()
 void Player::Init()
 {
 	_objectPoolState = ObjectPoolState::InWorld;
+}
+
+void Player::Update()
+{
+	_sumTime += g_timer->GetDeltaTime();
+
+	if (_sumTime > 5)
+	{
+		_sumTime = 0;
+		TackHeal(_maxHP / 10);
+		g_network->SendStatusChangePacket(this, _id);
+	}
 }
 
 void Player::AddExp(long long exp)

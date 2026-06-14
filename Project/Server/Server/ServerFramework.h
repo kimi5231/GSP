@@ -24,6 +24,8 @@ public:
 
 	void AddAliveMonster(int id);
 	void RemoveAliveMonster(int id);
+	void AddAlivePlayer(int id);
+	void RemoveAlivePlayer(int id);
 
 public:
 	GameObject* GetGameObject(ObjectType type, int id);
@@ -36,7 +38,9 @@ private:
 	std::array<Monster*, NUM_NPCS> _monsters;
 
 	std::unordered_map<int, int> _aliveMonsters;
-	std::mutex _aliveLock;
+	std::unordered_set<int> _alivePlayers;
+	std::mutex _aliveMonsterLock;
+	std::mutex _alivePlayerLock;
 
 	float _sumTime;
 };

@@ -45,10 +45,15 @@ void ServerFramework::Update()
 		return;
 	_sumTime = 0;
 
-	_aliveLock.lock();
+	_aliveMonsterLock.lock();
 	for (auto& [id, count] : _aliveMonsters)
 		_monsters[id - MONSTER_ID]->Update();
-	_aliveLock.unlock();
+	_aliveMonsterLock.unlock();
+
+	_alivePlayerLock.lock();
+	for (auto& id : _alivePlayers)
+		_players[id]->Update();
+	_alivePlayerLock.unlock();
 }
 
 Player* ServerFramework::AddPlayer(int clientIndex)
@@ -58,6 +63,7 @@ Player* ServerFramework::AddPlayer(int clientIndex)
 	{
 		// ÃÊ±âÈ­
 		_players[clientIndex]->Init();
+		AddAlivePlayer(clientIndex);
 		return _players[clientIndex];
 	}
 
@@ -75,6 +81,7 @@ void ServerFramework::RemoveObject(ObjectType type, int id)
 	{
 	case ObjectType::Player:
 		_players[id]->SetObjectPoolState(ObjectPoolState::Reusable);
+		RemoveAlivePlayer(id);
 		break;
 	}
 }
@@ -111,12 +118,12 @@ void ServerFramework::AddAliveMonster(int id)
 	if (id < MONSTER_ID)
 		return;
 
-	_aliveLock.lock();
+	_aliveMonsterLock.lock();
 	if (!_aliveMonsters.count(id))
 		_aliveMonsters[id] = 1;
 	else
 		_aliveMonsters[id]++;
-	_aliveLock.unlock();
+	_aliveMonsterLock.unlock();
 }
 
 void ServerFramework::RemoveAliveMonster(int id)
@@ -124,12 +131,35 @@ void ServerFramework::RemoveAliveMonster(int id)
 	if (!_aliveMonsters.count(id))
 		return;
 
-	_aliveLock.lock();
+	_aliveMonsterLock.lock();
 	_aliveMonsters[id]--;
 
 	if (_aliveMonsters[id] == 0)
 		_aliveMonsters.erase(id);
-	_aliveLock.unlock();
+	_aliveMonsterLock.unlock();
+}
+
+void ServerFramework::AddAlivePlayer(int id)
+{
+	if (id >= MONSTER_ID)
+		return;
+
+	if (_alivePlayers.count(id))
+		return;
+
+	_alivePlayerLock.lock();
+	_alivePlayers.insert(id);
+	_alivePlayerLock.unlock();
+}
+
+void ServerFramework::RemoveAlivePlayer(int id)
+{
+	if (!_alivePlayers.count(id))
+		return;
+
+	_alivePlayerLock.lock();
+	_alivePlayers.erase(id);
+	_alivePlayerLock.unlock();
 }
 
 GameObject* ServerFramework::GetGameObject(ObjectType type, int id)

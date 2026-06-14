@@ -11,7 +11,7 @@ public:
 
 public:
 	virtual void Init();
-	virtual void Update() {};
+	virtual void Update();
 
 public:
 	void AddExp(long long exp);
@@ -25,6 +25,8 @@ public:
 
 private:
 	int _damage;
+
+	float _sumTime;
 	//Inventory* _inventory{};
 };
 

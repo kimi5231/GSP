@@ -635,17 +635,6 @@ void ServerNetwork::SendStatusChangePacket(Creature* creature, int clientIndex)
 	_clients[clientIndex]->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
 
-//void ServerNetwork::SendUpdateObjectStatePacket(GameObject* object, Session* client)
-//{
-//	// Packet Data 持失
-//	S_UpdateObjectState_Packet packetData{ sizeof(S_UpdateObjectState_Packet), S_UpdateObjectState, object->GetID(), object->GetObjectType(), object->GetState() };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	client->Send(serializedPacketData);
-//}
-//
 //void ServerNetwork::SendAddItemToInventoryPacket(Item* item, bool isTool, Session* client)
 //{
 //	// Packet Data 持失

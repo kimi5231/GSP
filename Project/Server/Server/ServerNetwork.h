@@ -31,8 +31,7 @@ public:
 	void SendRemoveObjectPacket(GameObject* object, Session* client);
 	void SendMoveObjectPacket(GameObject* object, Session* client);
 	void SendStatusChangePacket(Creature* creature, int clientIndex);
-	/*void SendUpdateObjectStatePacket(GameObject* object, Session* client);
-	void SendAddItemToInventoryPacket(Item* item, bool isTool, Session* client);
+	/*void SendAddItemToInventoryPacket(Item* item, bool isTool, Session* client);
 	void SendRemoveItemFromInventoryPacket(Item* item, bool isTool, Session* client);
 	void SendDropItemPacket(Item* item, int playerID, Vector itemPos, bool isTool, bool isToSellingMachine, Session* client);
 	void SendUpdateCurrentToolPacket(int itemID, int playerID, ItemType type, Session* client);

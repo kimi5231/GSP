@@ -26,6 +26,7 @@ public:
 	void SendLogoutPacket();
 	void SendMovePacket(PlayerRef player);
 	void SendAttackPacket();
+	void SendSkillPacket();
 	void SendDropItemPacket(int itemID);
 	void SendChangeWeaponPacket(int itemID);
 

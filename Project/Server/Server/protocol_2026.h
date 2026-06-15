@@ -34,6 +34,7 @@ enum PACKET_TYPE
 
 	C2S_DROP_ITEM,
 	C2S_CHANGE_WEAPON,
+	C2S_SKILL,
 
 	S2C_LOGIN_RESULT,	//	Server to Client: Login result
 						// 로그인 결과 패킷 (성공 여부와 메시지 포함)
@@ -98,6 +99,11 @@ struct C2S_ChageWeapon {
 	unsigned char size;
 	PACKET_TYPE   type;
 	int id;
+};
+
+struct C2S_Skill {
+	unsigned char size;
+	PACKET_TYPE   type;
 };
 
 struct S2C_LoginResult {

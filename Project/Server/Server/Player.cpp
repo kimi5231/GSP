@@ -66,6 +66,11 @@ bool Player::RemoveItemFromInventory(int id)
 	return _inventory->RemoveItem(id);
 }
 
+bool Player::IsSkillTack(Vector pos)
+{
+	return abs(_pos.x - pos.x) <= SKILL_RANGE * TILE_SIZE && abs(_pos.y - pos.y) <= SKILL_RANGE * TILE_SIZE;
+}
+
 int Player::GetDamage()
 {
 	return _damage;

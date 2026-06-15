@@ -307,6 +307,14 @@ void ServerNetwork::ProcessPacket(std::vector<char>& packet, int clientIndex)
 		ProcessAttackPacket(attackPacket, clientIndex);
 		break;
 	}
+	case C2S_SKILL:
+	{
+		C2S_Skill skillPacket;
+		memcpy(&skillPacket, packet.data(), sizeof(C2S_Skill));
+		packet.erase(packet.begin(), packet.begin() + sizeof(C2S_Skill));
+		ProcessSkillPacket(skillPacket, clientIndex);
+		break;
+	}
 	case C2S_DROP_ITEM:
 	{
 		C2S_DropItem dropItemPacket;
@@ -941,6 +949,50 @@ void ServerNetwork::ProcessAttackPacket(C2S_Attack packet, int clientIndex)
 				monsters[id - MONSTER_ID]->SetTarget(player);
 			monster->TackDamage(player->GetDamage());
 			
+			ExpOver* over = new ExpOver(IOType::MonsterEvent);
+			over->_monsterEventType = MonsterEventType::UpdateStat;
+			PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(id), &over->_over);
+		}
+	}
+}
+
+void ServerNetwork::ProcessSkillPacket(C2S_Skill packet, int clientIndex)
+{
+	const std::array<Player*, MAX_PLAYERS>& players = _framework->GetPlayers();
+	const std::array<Monster*, NUM_NPCS>& monsters = _framework->GetMonsters();
+	Player* player = players[clientIndex];
+
+	Vector sectorIndex{ player->GetPos().x / (SECTOR_SIZE * TILE_SIZE), player->GetPos().y / (SECTOR_SIZE * TILE_SIZE) };
+
+	Vector start{ std::max(0, sectorIndex.x - 1), std::max(0, sectorIndex.y - 1) };
+	Vector end{ std::min(WORLD_WIDTH / SECTOR_SIZE - 1, sectorIndex.x + 1), std::min(WORLD_HEIGHT / SECTOR_SIZE - 1, sectorIndex.y + 1) };
+
+	std::unordered_set<int> nearMonsters;
+	for (int x = start.x; x <= end.x; ++x)
+	{
+		for (int y = start.y; y <= end.y; ++y)
+		{
+			_sectors[x][y].sectorMutex.lock();
+			for (int id : _sectors[x][y].objects)
+			{
+				if (id < MONSTER_ID)
+					continue;
+
+				nearMonsters.insert(id);
+			}
+			_sectors[x][y].sectorMutex.unlock();
+		}
+	}
+
+	for (int id : nearMonsters)
+	{
+		Monster* monster = monsters[id - MONSTER_ID];
+		if (player->IsSkillTack(monster->GetPos()))
+		{
+			if (!monster->GetTarget())
+				monsters[id - MONSTER_ID]->SetTarget(player);
+			monster->TackDamage(player->GetDamage());
+
 			ExpOver* over = new ExpOver(IOType::MonsterEvent);
 			over->_monsterEventType = MonsterEventType::UpdateStat;
 			PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(id), &over->_over);

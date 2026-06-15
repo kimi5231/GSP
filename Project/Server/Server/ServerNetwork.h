@@ -42,14 +42,9 @@ public:
 	void ProcessLogoutPacket(C2S_Logout packet, int clientIndex);
 	void ProcessMovePacket(C2S_Move packet, int clientIndex);
 	void ProcessAttackPacket(C2S_Attack packet, int clientIndex);
+	void ProcessSkillPacket(C2S_Skill packet, int clientIndex);
 	void ProcessDropItemPacket(C2S_DropItem packet, int clientIndex);
 	void ProcessChangeWeaponPacket(C2S_ChageWeapon packet, int clientIndex);
-
-	/*
-	void ProcessChangeToolPacket(C_ChangeTool_Packet packet, int clientIndex);
-	void ProcessUseToolPacket(C_UseTool_Packet packet, int clientIndex);
-	void ProcessSellItemPacket(C_SellItem_Packet packet, int clientIndex);
-	void ProcessBuyItemPacket(C_BuyItem_Packet packet, int clientIndex);*/
 
 public:
 	HANDLE GetIOCP() { return _iocp; }

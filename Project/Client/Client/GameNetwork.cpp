@@ -227,6 +227,21 @@ void GameNetwork::SendAttackPacket()
 	_sendEvents.push_back(event);
 }
 
+void GameNetwork::SendSkillPacket()
+{
+	// Packet Data 持失
+	C2S_Skill packetData{ sizeof(C2S_Skill), C2S_SKILL };
+
+	// Packet Serialize
+	std::vector<char> serializedPacketData = SerializePOD(packetData);
+
+	// SendEvent 持失
+	NetworkEventRef event = std::make_shared<NetworkEvent>();
+	event->packetID = C2S_SKILL;
+	event->serializedPacketData = serializedPacketData;
+	_sendEvents.push_back(event);
+}
+
 void GameNetwork::SendDropItemPacket(int itemID)
 {
 	// Packet Data 持失

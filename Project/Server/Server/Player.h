@@ -21,6 +21,8 @@ public:
 	bool RemoveItemFromInventory(int id);
 	int ExistItem(int id) { return _inventory->ExistItem(id); }
 
+	bool IsSkillTack(Vector pos);
+
 public:
 	int GetDamage();
 	Weapon* GetCurrentWeapon() { return _currentWeapon; }

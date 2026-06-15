@@ -98,7 +98,6 @@ void GameFramework::Update()
             if (_equipment.GetEquipmentSprite().getGlobalBounds().contains(mousePos))
             {
                 _equipment.SetCurrentWeapon(_dragItem);
-               
             }
 
             _dragItem->SetIsClick(false);
@@ -134,8 +133,17 @@ void GameFramework::Update()
             }
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            g_network->SendAttackPacket();
+        if (_avatar->IsCanAttack())
+        {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                g_network->SendAttackPacket();
+        }
+        
+        if (_equipment.GetCurrentWeapon() /*&& _avatar->IsCanSkill()*/)
+        {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                g_network->SendSkillPacket();
+        }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
         {

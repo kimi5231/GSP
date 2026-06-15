@@ -6,6 +6,8 @@
 Player::Player()
 {
     _lastMoveTime = std::chrono::high_resolution_clock::now();
+	_lastAttackTime = std::chrono::high_resolution_clock::now();
+	_lastSkillTime = std::chrono::high_resolution_clock::now();
     _texture.loadFromFile("Resource/BlackPawn.png");
     _sprite.setTexture(_texture);
 }
@@ -34,6 +36,36 @@ bool Player::IsCanMove()
 	if (ms > 500)
 	{
 		_lastMoveTime = std::chrono::high_resolution_clock::now();
+		return true;
+	}
+
+	return false;
+}
+
+bool Player::IsCanAttack()
+{
+	auto duration = std::chrono::high_resolution_clock::now() - _lastAttackTime;
+
+	long long ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+	if (ms > 1000)
+	{
+		_lastAttackTime = std::chrono::high_resolution_clock::now();
+		return true;
+	}
+
+	return false;
+}
+
+bool Player::IsCanSkill()
+{
+	auto duration = std::chrono::high_resolution_clock::now() - _lastSkillTime;
+
+	long long ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+	if (ms > 5000)
+	{
+		_lastSkillTime = std::chrono::high_resolution_clock::now();
 		return true;
 	}
 

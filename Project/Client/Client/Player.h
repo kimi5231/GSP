@@ -13,6 +13,8 @@ public:
 
 public:
 	bool IsCanMove();
+	bool IsCanAttack();
+	bool IsCanSkill();
 
 public:
 	virtual void SetMaxHP(int maxHP);
@@ -22,4 +24,6 @@ public:
 
 private:
 	TimePoint _lastMoveTime;
+	TimePoint _lastAttackTime;
+	TimePoint _lastSkillTime;
 };

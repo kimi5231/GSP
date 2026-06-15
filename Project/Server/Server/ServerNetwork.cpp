@@ -818,7 +818,8 @@ void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 			// Monster
 			if (id >= MONSTER_ID)
 			{
-				SendAddObjectPacket(monsters[id - MONSTER_ID], _clients[clientIndex]);
+				if(monsters[id - MONSTER_ID]->GetObjectState() != ObjectState::DEAD)
+					SendAddObjectPacket(monsters[id - MONSTER_ID], _clients[clientIndex]);
 				continue;
 			}
 

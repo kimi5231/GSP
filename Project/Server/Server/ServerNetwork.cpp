@@ -660,17 +660,6 @@ void ServerNetwork::SendAddItemToInventoryPacket(Item* item, int index, Session*
 	client->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
 
-//void ServerNetwork::SendAddItemToInventoryPacket(Item* item, bool isTool, Session* client)
-//{
-//	// Packet Data 持失
-//	S_AddItemToInventory_Packet packetData{ sizeof(S_AddItemToInventory_Packet), S_AddItemToInventory, item->GetID(), isTool, item->GetItemType(), item->GetWeight() };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	client->Send(serializedPacketData);
-//}
-//
 //void ServerNetwork::SendRemoveItemFromInventoryPacket(Item* item, bool isTool, Session* client)
 //{
 //	// Packet Data 持失

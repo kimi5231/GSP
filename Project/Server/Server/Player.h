@@ -19,7 +19,7 @@ public:
 
 	bool AddItemToInventory(int id);
 	bool RemoveItemFromInventory(int id);
-	bool ExistItem(int id) { return _inventory->ExistItem(id); }
+	int ExistItem(int id) { return _inventory->ExistItem(id); }
 
 public:
 	int GetDamage();

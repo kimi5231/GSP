@@ -26,7 +26,6 @@ public:
 	void SendLogoutPacket();
 	void SendMovePacket(PlayerRef player);
 	void SendAttackPacket();
-	//void SendGetItemPacket(int itemID, bool isTool, int playerID);
 	//void SendDropItemPacket(int itemID, bool isTool, int playerID);
 	//void SendSellItemPacket(int playerID, int sellingMachineID);
 	//void SendBuyItemPacket(int playerID, ItemType itemType, int itemCount);
@@ -38,6 +37,7 @@ public:
 	void ProcessRemoveObjectPacket(S2C_RemoveObject packet);
 	void ProcessMoveObjectPacket(S2C_MoveObject packet);
 	void ProcessStatusChangePacket(S2C_StatusChange packet);
+	void ProcessAddItemPacket(S2C_AddItem packet);
 
 private:
 	fd_set _readSet{};

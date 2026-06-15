@@ -1,10 +1,13 @@
 #include "pch.h"
 #include "Player.h"
 #include "Global.h"
+#include "Weapon.h"
 
 Player::Player()
 {
 	_type = ObjectType::Player;
+
+	_currentWeapon = nullptr;
 
 	// юс╫ц
 	_maxHP = 100;
@@ -12,7 +15,7 @@ Player::Player()
 	_level = 1;
 	_exp = 50;
 	_damage = 10;
-
+	_attackDelay = 1.f;
 	_sumTime = 0.f;
 }
 

@@ -33,6 +33,9 @@
     <Filter Include="소스 파일\Game\Object\Creature\Monster\FSM">
       <UniqueIdentifier>{cc6802d6-b505-47df-b324-cdf96340c062}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Game\System">
+      <UniqueIdentifier>{db6c60b6-4ec3-4c35-b55b-ba295c0965cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -85,6 +88,12 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>소스 파일\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>소스 파일\Game\Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>소스 파일\Game\Object\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +150,12 @@
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>소스 파일\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>소스 파일\Game\Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>소스 파일\Game\Object\Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

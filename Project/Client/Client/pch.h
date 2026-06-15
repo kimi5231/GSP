@@ -36,3 +36,4 @@ using NetworkEventRef = std::shared_ptr<NetworkEvent>;
 using GameObjectRef = std::shared_ptr<class GameObject>;
 using CreatureRef = std::shared_ptr<class Creature>;
 using PlayerRef = std::shared_ptr<class Player>;
+using ItemRef = std::shared_ptr<class Item>;

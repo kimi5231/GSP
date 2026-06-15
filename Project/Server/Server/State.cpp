@@ -128,6 +128,16 @@ void HitState::Tick(Monster* monster)
 //--------------Dead--------------
 void DeadState::Enter(Monster* monster)
 {
+	// 아이템 생성
+	std::discrete_distribution<> isCreate({ 0.5, 0.5 });
+	if (isCreate(gen))
+	{
+		std::uniform_int_distribution<int> selectItem(static_cast<int>(ObjectType::Sword), static_cast<int>(ObjectType::Sword));
+		ObjectType type = static_cast<ObjectType>(selectItem(gen));
+		Item* item = g_framework->AddItem(type, monster->GetPos());
+		g_network->SendAddItemPacket(item, monster->GetTarget()->GetID());
+	}
+
 	// 경험치 지급
 	int monsterLevel = monster->GetLevel();
 	monster->GetTarget()->AddExp(monsterLevel* monsterLevel*2);

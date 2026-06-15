@@ -6,11 +6,13 @@ constexpr int WORLD_HEIGHT = 2000;
 constexpr int TILE_SIZE = 50;
 constexpr int MAX_PLAYERS = 10000;
 constexpr int NUM_NPCS = 200000;
+constexpr int MAX_ITEMS = 100000;
 constexpr int NPC_ID_START = 1000000;
 constexpr int NPC_MOVE_INTERVAL = 1000; // in milliseconds
 constexpr int MAX_NAME_LEN = 20;
 constexpr int MAX_CHAT_MSG_LEN = 200;
-constexpr int MONSTER_ID = 10000;
+constexpr int MONSTER_ID = MAX_PLAYERS;
+constexpr int ITEM_ID = MAX_PLAYERS + NUM_NPCS;
 
 #define BufferSize 10000
 
@@ -37,6 +39,8 @@ enum PACKET_TYPE
 	S2C_MOVE_OBJECT,	//	Server to Client: Move player or NPC
 	S2C_CHAT_MESSAGE,	//	Server to Client: Chat message
 	S2C_STATUS_CHANGE,	//	Server to Client: Update player or NPC status (e.g., health, buffs)	
+
+	S2C_ADD_ITEM,
 };
 
 #pragma pack(push, 1) // Ensure no padding between struct members
@@ -141,6 +145,14 @@ struct S2C_StatusChange {
 	int max_hp;
 	unsigned long long exp;
 	unsigned char level;
+};
+
+struct S2C_AddItem {
+	unsigned char size;
+	PACKET_TYPE   type;
+	int id;
+	ObjectType objectType;
+	Vector pos;
 };
 
 #pragma pack(pop) // Restore default packing

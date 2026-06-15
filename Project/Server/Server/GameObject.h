@@ -16,7 +16,7 @@ public:
 	int GetID() { return _id; }
 	void SetID(int id) { _id = id; }
 	ObjectType GetObjectType() { return _type; }
-	void SetObjectType(ObjectType type) { _type = type; }
+	virtual void SetObjectType(ObjectType type) { _type = type; }
 	Vector GetPos() { return _pos; }
 	void SetPos(Vector pos) { _pos = pos; };
 	ObjectState GetObjectState() { return _state; }

@@ -19,6 +19,7 @@ public:
 public:
 	void CreateAvatar(int id, int visualID, short x, short y, int hp, int maxHp, long long exp, int level);
 	void AddCreature(int id, int visualID, const char* name, short x, short y, int hp, int maxHp, long long exp, int level);
+	void AddItem(int id, ObjectType type, Vector pos);
 	void RemoveObject(int id);
 
 public:

@@ -1,7 +1,7 @@
 #pragma once
 #include "Creature.h"
 
-class Session;
+class Weapon;
 
 class Player : public Creature
 {
@@ -24,9 +24,13 @@ public:
 	int GetDamage();
 
 private:
-	int _damage;
-
-	float _sumTime;
+	Weapon* _currentWeapon;
 	//Inventory* _inventory{};
+
+
+
+	int _damage;
+	float _attackDelay;
+	float _sumTime;
 };
 

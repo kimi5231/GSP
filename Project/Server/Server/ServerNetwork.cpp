@@ -6,6 +6,7 @@
 #include "Global.h"
 #include "Player.h"
 #include "Monster.h"
+#include "Item.h"
 
 ServerNetwork::ServerNetwork(ServerFramework* framework)
 {
@@ -635,6 +636,14 @@ void ServerNetwork::SendStatusChangePacket(Creature* creature, int clientIndex)
 	_clients[clientIndex]->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
 
+void ServerNetwork::SendAddItemPacket(Item* item, int clientIndex)
+{
+	// Packet Data 持失
+	S2C_AddItem packet{ sizeof(S2C_AddItem), S2C_ADD_ITEM, item->GetID(), item->GetObjectType(), item->GetPos() };
+
+	_clients[clientIndex]->Send(packet.size, reinterpret_cast<char*>(&packet));
+}
+
 //void ServerNetwork::SendAddItemToInventoryPacket(Item* item, bool isTool, Session* client)
 //{
 //	// Packet Data 持失
@@ -1028,11 +1037,13 @@ void ServerNetwork::ProcessAttackPacket(C2S_Attack packet, int clientIndex)
 
 	for (int id : nearMonsters)
 	{
-		Vector pos = monsters[id - MONSTER_ID]->GetPos();
-		if (player->IsNear(pos))
+		Monster* monster = monsters[id - MONSTER_ID];
+		if (player->IsNear(monster->GetPos()))
 		{
-			monsters[id - MONSTER_ID]->TackDamage(player->GetDamage());
-			monsters[id - MONSTER_ID]->SetTarget(player);
+			if(!monster->GetTarget())
+				monsters[id - MONSTER_ID]->SetTarget(player);
+			monster->TackDamage(player->GetDamage());
+			
 			ExpOver* over = new ExpOver(IOType::MonsterEvent);
 			over->_monsterEventType = MonsterEventType::UpdateStat;
 			PostQueuedCompletionStatus(g_network->GetIOCP(), 0, static_cast<ULONG_PTR>(id), &over->_over);

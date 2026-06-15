@@ -131,6 +131,13 @@ void GameNetwork::ProcessRecv()
 		ProcessStatusChangePacket(statusChangePacket);
 		break;
 	}
+	case S2C_ADD_ITEM:
+	{
+		S2C_AddItem addItemPacket;
+		memcpy(&addItemPacket, packet.data(), sizeof(S2C_AddItem));
+		ProcessAddItemPacket(addItemPacket);
+		break;
+	}
 	}
 }
 
@@ -316,4 +323,9 @@ void GameNetwork::ProcessStatusChangePacket(S2C_StatusChange packet)
 	creature->SetMaxHP(packet.max_hp);
 	creature->SetExp(packet.exp);
 	creature->SetLevel(packet.level);
+}
+
+void GameNetwork::ProcessAddItemPacket(S2C_AddItem packet)
+{
+	g_framework->AddItem(packet.id, packet.objectType, packet.pos);
 }

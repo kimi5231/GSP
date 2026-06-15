@@ -3,6 +3,7 @@
 #include "Global.h"
 #include "Player.h"
 #include "Monster.h"
+#include "Item.h"
 #include "Bar.h"
 
 GameFramework::GameFramework(sf::RenderWindow* window)
@@ -186,6 +187,23 @@ void GameFramework::AddCreature(int id, int visualID, const char* name, short x,
     creture->SetName(name);
 
     _objects[id] = creture;
+}
+
+void GameFramework::AddItem(int id, ObjectType type, Vector pos)
+{
+    ItemRef item;
+
+    switch (type)
+    {
+    case ObjectType::Sword:
+        item = std::make_shared<Item>(type);
+        break;
+    }
+
+    item->SetID(id);
+    item->SetPos(pos);
+
+    _objects[id] = item;
 }
 
 void GameFramework::RemoveObject(int id)

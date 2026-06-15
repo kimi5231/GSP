@@ -36,7 +36,8 @@ enum class ObjectType : char
 	Player,
 	Peace,
 	Agro,
-	Item,
+	Sword,
+	Wand,
 };
 
 enum ObjectState : char

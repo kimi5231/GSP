@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Agro.h"
 #include "Peace.h"
+#include "Weapon.h"
 
 ServerFramework::ServerFramework()
 {
@@ -28,6 +29,20 @@ ServerFramework::ServerFramework()
 		_monsters[i] = new Peace();
 		_monsters[i]->SetID(i + MONSTER_ID);
 		_monsters[i]->SetObjectPoolState(ObjectPoolState::InWorld);
+	}
+
+	for (int i = 0; i < MAX_ITEMS / 2; ++i)
+	{
+		_items[i] = new Item();
+		_items[i]->SetID(i + ITEM_ID);
+		_items[i]->SetObjectPoolState(ObjectPoolState::Reusable);
+	}
+
+	for (int i = MAX_ITEMS / 2; i < MAX_ITEMS; ++i)
+	{
+		_items[i] = new Weapon();
+		_items[i]->SetID(i + ITEM_ID);
+		_items[i]->SetObjectPoolState(ObjectPoolState::Reusable);
 	}
 
 	_sumTime = 0.f;
@@ -70,8 +85,19 @@ Player* ServerFramework::AddPlayer(int clientIndex)
 	return nullptr;
 }
 
-Monster* ServerFramework::AddMonster(Vector pos)
+Item* ServerFramework::AddItem(ObjectType type, Vector pos)
 {
+	for (int i = 0; i < MAX_ITEMS; ++i)
+	{
+		if (_items[i]->GetObjectPoolState() == ObjectPoolState::Reusable)
+		{
+			_items[i]->SetObjectPoolState(ObjectPoolState::InWorld);
+			_items[i]->SetObjectType(type);
+			_items[i]->SetPos(pos);
+			return _items[i];
+		}
+	}
+
 	return nullptr;
 }
 
@@ -82,6 +108,9 @@ void ServerFramework::RemoveObject(ObjectType type, int id)
 	case ObjectType::Player:
 		_players[id]->SetObjectPoolState(ObjectPoolState::Reusable);
 		RemoveAlivePlayer(id);
+		break;
+	case ObjectType::Sword:
+		_items[id - ITEM_ID]->SetObjectPoolState(ObjectPoolState::Reusable);
 		break;
 	}
 }
@@ -168,5 +197,10 @@ GameObject* ServerFramework::GetGameObject(ObjectType type, int id)
 	{
 	case ObjectType::Player:
 		return _players[id];
+	case ObjectType::Agro:
+	case ObjectType::Peace:
+		return _monsters[id - MONSTER_ID];
+	case ObjectType::Sword:
+		return _items[id - ITEM_ID];
 	}
 }

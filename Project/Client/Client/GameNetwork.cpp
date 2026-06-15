@@ -242,6 +242,21 @@ void GameNetwork::SendDropItemPacket(int itemID)
 	_sendEvents.push_back(event);
 }
 
+void GameNetwork::SendChangeWeaponPacket(int itemID)
+{
+	// Packet Data 持失
+	C2S_ChageWeapon packetData{ sizeof(C2S_ChageWeapon), C2S_CHANGE_WEAPON, itemID };
+
+	// Packet Serialize
+	std::vector<char> serializedPacketData = SerializePOD(packetData);
+
+	// SendEvent 持失
+	NetworkEventRef event = std::make_shared<NetworkEvent>();
+	event->packetID = C2S_CHANGE_WEAPON;
+	event->serializedPacketData = serializedPacketData;
+	_sendEvents.push_back(event);
+}
+
 void GameNetwork::ProcessLoginResultPacket(S2C_LoginResult packet)
 {
 	if(packet.success)

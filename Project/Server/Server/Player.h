@@ -23,6 +23,8 @@ public:
 
 public:
 	int GetDamage();
+	Weapon* GetCurrentWeapon() { return _currentWeapon; }
+	void SetCurrentWeapon(Weapon* weapon) { _currentWeapon = weapon; }
 
 private:
 	Weapon* _currentWeapon;

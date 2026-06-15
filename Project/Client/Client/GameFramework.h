@@ -1,5 +1,6 @@
 #pragma once
 #include "Inventory.h"
+#include "Equipment.h"
 
 class GameObject;
 class Player;
@@ -34,6 +35,7 @@ public:
 	Bar* GetHpBar() { return _hpBar; }
 	Bar* GetExpBar() { return _expBar; }
 	Inventory& GetInventory() { return _inventory; }
+	Equipment& GetEquipment() { return _equipment; }
 
 private:
 	sf::RenderWindow* _window;
@@ -46,6 +48,7 @@ private:
 private:
 	bool _isInGame;
 	bool _isOpenInventory;
+	bool _isOpenEquipment;
 
 	ItemRef _dragItem;
 
@@ -58,5 +61,6 @@ private:
 	char _userName[MAX_NAME_LEN];
 	PlayerRef _avatar;
 	Inventory _inventory;
+	Equipment _equipment;
 	std::unordered_map<int, GameObjectRef> _objects;
 };

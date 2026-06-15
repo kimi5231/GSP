@@ -33,6 +33,7 @@ enum PACKET_TYPE
 	C2S_LOGOUT,			// Client to Server: Logout request
 
 	C2S_DROP_ITEM,
+	C2S_CHANGE_WEAPON,
 
 	S2C_LOGIN_RESULT,	//	Server to Client: Login result
 						// 로그인 결과 패킷 (성공 여부와 메시지 포함)
@@ -88,6 +89,12 @@ struct C2S_Logout {
 };
 
 struct C2S_DropItem {
+	unsigned char size;
+	PACKET_TYPE   type;
+	int id;
+};
+
+struct C2S_ChageWeapon {
 	unsigned char size;
 	PACKET_TYPE   type;
 	int id;
@@ -186,5 +193,4 @@ struct S2C_RemoveItemFromInventory {
 	PACKET_TYPE   type;
 	int index;
 };
-
 #pragma pack(pop) // Restore default packing

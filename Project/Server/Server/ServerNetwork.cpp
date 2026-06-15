@@ -6,7 +6,7 @@
 #include "Global.h"
 #include "Player.h"
 #include "Monster.h"
-#include "Item.h"
+#include "Weapon.h"
 
 ServerNetwork::ServerNetwork(ServerFramework* framework)
 {
@@ -315,40 +315,14 @@ void ServerNetwork::ProcessPacket(std::vector<char>& packet, int clientIndex)
 		ProcessDropItemPacket(dropItemPacket, clientIndex);
 		break;
 	}
-	/*
-	
-	case C_ChangeTool:
+	case C2S_CHANGE_WEAPON:
 	{
-		C_ChangeTool_Packet changeToolPacket;
-		memcpy(&changeToolPacket, packet.data(), sizeof(C_ChangeTool_Packet));
-		packet.erase(packet.begin(), packet.begin() + sizeof(C_ChangeTool_Packet));
-		ProcessChangeToolPacket(changeToolPacket, clientIndex);
+		C2S_ChageWeapon changeWeaponPacket;
+		memcpy(&changeWeaponPacket, packet.data(), sizeof(C2S_ChageWeapon));
+		packet.erase(packet.begin(), packet.begin() + sizeof(C2S_ChageWeapon));
+		ProcessChangeWeaponPacket(changeWeaponPacket, clientIndex);
 		break;
 	}
-	case C_UseTool:
-	{
-		C_UseTool_Packet useToolPacket;
-		memcpy(&useToolPacket, packet.data(), sizeof(C_UseTool_Packet));
-		packet.erase(packet.begin(), packet.begin() + sizeof(C_UseTool_Packet));
-		ProcessUseToolPacket(useToolPacket, clientIndex);
-		break;
-	}
-	case C_SellItem:
-	{
-		C_SellItem_Packet sellItemPacket;
-		memcpy(&sellItemPacket, packet.data(), sizeof(C_SellItem_Packet));
-		packet.erase(packet.begin(), packet.begin() + sizeof(C_SellItem_Packet));
-		ProcessSellItemPacket(sellItemPacket, clientIndex);
-		break;
-	}
-	case C_BuyItem:
-	{
-		C_BuyItem_Packet buyItemPacket;
-		memcpy(&buyItemPacket, packet.data(), sizeof(C_BuyItem_Packet));
-		packet.erase(packet.begin(), packet.begin() + sizeof(C_BuyItem_Packet));
-		ProcessBuyItemPacket(buyItemPacket, clientIndex);
-		break;
-	}*/
 	}
 }
 
@@ -652,100 +626,6 @@ void ServerNetwork::SendRemoveItemFromInventoryPacket(int index, Session* client
 
 	client->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
-
-//void ServerNetwork::SendRemoveItemFromInventoryPacket(Item* item, bool isTool, Session* client)
-//{
-//	// Packet Data 생성
-//	S_RemoveItemFromInventory_Packet packetData{ sizeof(S_RemoveItemFromInventory_Packet), S_RemoveItemFromInventory, item->GetID(), isTool, item->GetItemType() };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	client->Send(serializedPacketData);
-//}
-//
-//void ServerNetwork::SendDropItemPacket(Item* item, int playerID, Vector itemPos, bool isTool, bool isToSellingMachine, Session* client)
-//{
-//	// Packet Data 생성
-//	S_DropItem_Packet packetData{ sizeof(S_DropItem_Packet), S_DropItem, item->GetID(), playerID, isTool, isToSellingMachine, item->GetItemType(), itemPos, item->GetCost(), 0};
-//
-//	// 아이템이 랜턴이라면 배터리 추가
-//	if (item->GetItemType() == ItemType::LANTERN)
-//	{
-//		Lantern* lantern = dynamic_cast<Lantern*>(item);
-//		packetData.laternBattery = lantern->GetCurrentBattery();
-//	}
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	client->Send(serializedPacketData);
-//}
-//
-//void ServerNetwork::SendUpdateCurrentToolPacket(int itemID, int playerID, ItemType type, Session* client)
-//{
-//	// Packet Data 생성
-//	S_UpdateCurrentTool_Packet packetData{ sizeof(S_UpdateCurrentTool_Packet), S_UpdateCurrentTool, itemID, playerID, type };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	client->Send(serializedPacketData);
-//}
-//
-//void ServerNetwork::SendUseToolPacket(int playerID, ItemType type, Session* client)
-//{
-//	// Packet Data 생성
-//	S_UseTool_Packet packetData{ sizeof(S_UseTool_Packet), S_UseTool, playerID, type };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	client->Send(serializedPacketData);
-//}
-//
-//void ServerNetwork::SendSellItemResultPacket(char playerID, char sellingMachineID, ObjectState sellingMachineState, short remainCredit, short collectCredit, short currentCredit, std::vector<int>& sellItems, Session* client)
-//{
-//	// Packet Serialize
-//	PacketID packetID = S_SellItemResult;
-//	std::vector<char> itemIDs = SerializeVector(sellItems);
-//	unsigned short packetSize = sizeof(unsigned short) + sizeof(PacketID) + sizeof(char) + sizeof(char) + sizeof(ObjectState) + sizeof(short) + sizeof(short) + sizeof(short) + itemIDs.size();
-//	std::vector<char> serializedPacketData(packetSize - itemIDs.size());
-//
-//	memcpy(serializedPacketData.data(), &packetSize, sizeof(unsigned short));
-//	memcpy(serializedPacketData.data() + sizeof(unsigned short), &packetID, sizeof(unsigned char));
-//	memcpy(serializedPacketData.data() + sizeof(unsigned short) + sizeof(PacketID), &sellingMachineID, sizeof(unsigned char));
-//	memcpy(serializedPacketData.data() + sizeof(unsigned short) + sizeof(PacketID) + sizeof(unsigned char), &playerID, sizeof(unsigned char));
-//	memcpy(serializedPacketData.data() + sizeof(unsigned short) + sizeof(PacketID) + sizeof(unsigned char) + sizeof(unsigned char), &remainCredit, sizeof(unsigned short));
-//	memcpy(serializedPacketData.data() + sizeof(unsigned short) + sizeof(PacketID) + sizeof(unsigned char) + sizeof(unsigned char) + sizeof(unsigned short), &collectCredit, sizeof(unsigned short));
-//	memcpy(serializedPacketData.data() + sizeof(unsigned short) + sizeof(PacketID) + sizeof(unsigned char) + sizeof(unsigned char) + sizeof(unsigned short) + sizeof(unsigned short), &currentCredit, sizeof(unsigned short));
-//	memcpy(serializedPacketData.data() + sizeof(unsigned short) + sizeof(PacketID) + sizeof(unsigned char) + sizeof(unsigned char) + sizeof(unsigned short) + sizeof(unsigned short) + sizeof(unsigned short), &sellingMachineState, sizeof(ObjectState));
-//	serializedPacketData.insert(serializedPacketData.end(), itemIDs.begin(), itemIDs.end());
-//
-//	client->Send(serializedPacketData);
-//}
-//
-//void ServerNetwork::SendBuyItemResultPacket(short currentCredit, Session* client)
-//{
-//	// Packet Data 생성
-//	S_BuyItemResult_Packet packetData{ sizeof(S_BuyItemResult_Packet), S_BuyItemResult, currentCredit };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	client->Send(serializedPacketData);
-//}
-//
-//void ServerNetwork::SendUpdateHpPacket(int playerID, int hp, Session* client)
-//{
-//	// Packet Data 생성
-//	S_UpdateHp_Packet packetData{ sizeof(S_UpdateHp_Packet), S_UpdateHp, playerID, hp };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	client->Send(serializedPacketData);
-//}
 
 void ServerNetwork::ProcessLoginPacket(C2S_Login packet, int clientIndex)
 {
@@ -1086,122 +966,15 @@ void ServerNetwork::ProcessDropItemPacket(C2S_DropItem packet, int clientIndex)
 	}
 }
 
-//void ServerNetwork::ProcessChangeToolPacket(C_ChangeTool_Packet packet, int clientIndex)
-//{
-//	Player* player = dynamic_cast<Player*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Player, packet.playerID));
-//
-//	// toolID가 0이면 도구를 들지 않는 것
-//	if(packet.toolID == 0)
-//	{
-//		player->SetCurrentTool(0);
-//
-//		// Broadcast
-//		for (auto& p : _clients[clientIndex]->_room->GetPlayers())
-//		{
-//			if (!p->GetClient())
-//				continue;
-//
-//			SendUpdateCurrentToolPacket(packet.toolID, packet.playerID, ItemType::None, p->GetClient());
-//		}
-//		return;
-//	}
-//
-//	// Player 인벤토리에 해당 도구가 존재하는지 확인
-//	if (player->ExistItem(true, packet.toolID))
-//	{
-//		// 도구가 존재하면 해당 도구를 들도록 설정
-//		player->SetCurrentTool(packet.toolID);
-//		Item* item = dynamic_cast<Item*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Item, packet.toolID));
-//		
-//		// Broadcast
-//		for (auto& p : _clients[clientIndex]->_room->GetPlayers())
-//		{
-//			if (!p->GetClient())
-//				continue;
-//
-//			SendUpdateCurrentToolPacket(packet.toolID, packet.playerID, item->GetItemType(), p->GetClient());
-//		}
-//	}
-//}
-//
-//void ServerNetwork::ProcessUseToolPacket(C_UseTool_Packet packet, int clientIndex)
-//{
-//	// 요청된 도구가 Player가 들고 있는 도구가 맞는지 확인
-//	Player* player = dynamic_cast<Player*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Player, packet.playerID));
-//	if (player->GetCurrentTool() == packet.toolID)
-//	{
-//		// 도구 사용 처리
-//		player->SetRotation(packet.playerRotation);
-//		player->Attack(_clients[clientIndex]->_room);
-//
-//		// 도구 사용 알리기
-//		Tool* tool = dynamic_cast<Tool*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Item, packet.toolID));
-//		
-//		// Broadcast
-//		for (auto& p : _clients[clientIndex]->_room->GetPlayers())
-//		{
-//			if (!p->GetClient())
-//				continue;
-//
-//			SendUseToolPacket(packet.playerID, tool->GetItemType(), p->GetClient());
-//		}
-//	}
-//}
-//
-//void ServerNetwork::ProcessSellItemPacket(C_SellItem_Packet packet, int clientIndex)
-//{
-//	// 요청한 Player가 판매기와 거리가 되는지 확인 
-//	Player* player = dynamic_cast<Player*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Player, packet.playerID));
-//	SellingMachine* sellingMachine = dynamic_cast<SellingMachine*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::SellingMachine, packet.sellingMachineID));
-//
-//	// 판매기가 활성화 상태인지 확인
-//	if (sellingMachine->GetState() == ObjectState::CLOSE)
-//		return;
-//
-//	// 아이템 판매 및 아이템 제거
-//	int remainCredit = sellingMachine->SellItem(_clients[clientIndex]->_room);
-//	std::vector<int>& sellItems = sellingMachine->GetSellItems();
-//	for (auto& itemID : sellItems)
-//		_clients[clientIndex]->_room->RemoveObject(ObjectType::Item, itemID, false);
-//		
-//	// Broadcast
-//	for (auto& p : _clients[clientIndex]->_room->GetPlayers())
-//	{
-//		if (!p->GetClient())
-//			continue;
-//
-//		SendSellItemResultPacket(player->GetID(), sellingMachine->GetID(), sellingMachine->GetState(), remainCredit, _clients[clientIndex]->_room->GetCollectCredit(), _clients[clientIndex]->_room->GetCurrentCredit(), sellItems, p->GetClient());
-//	}
-//
-//	// 데이터 사용을 위해 나중에 초기화
-//	sellingMachine->ClearSellItems();
-//}
-//
-//void ServerNetwork::ProcessBuyItemPacket(C_BuyItem_Packet packet, int clientIndex)
-//{
-//	// 요청한 Player가 아이템을 구매할 수 있는 상태인지 확인
-//	Player* player = dynamic_cast<Player*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Player, packet.playerID));
-//
-//	// 구매가 가능한 상태라면 크레딧이 충분한지 확인
-//	ItemInfo info = g_dataManager->GetItemInfo(packet.itemType);
-//	int needCredit = info.cost * packet.itemCount;
-//
-//	// 크레딧이 충분하다면 구매 완료 및 Base에 아이템 생성
-//	if (_clients[clientIndex]->_room->GetCurrentCredit() >= needCredit)
-//	{
-//		for (int i = 0; i < packet.itemCount; ++i)
-//			_clients[clientIndex]->_room->AddItem(true, packet.itemType, {0, 0, 0});
-//		
-//		// 아이템 가격만큼 크레딧 마이너스
-//		_clients[clientIndex]->_room->MinusCredit(needCredit);
-//	}
-//
-//	// 아이템 구매 결과 전송
-//	for (auto& p : _clients[clientIndex]->_room->GetPlayers())
-//	{
-//		if (!p->GetClient())
-//			continue;
-//
-//		SendBuyItemResultPacket(_clients[clientIndex]->_room->GetCurrentCredit(), p->GetClient());
-//	}
-//}
+void ServerNetwork::ProcessChangeWeaponPacket(C2S_ChageWeapon packet, int clientIndex)
+{
+	Player* player = dynamic_cast<Player*>(_framework->GetGameObject(ObjectType::Player, clientIndex));
+	if (packet.id == -1)
+	{
+		player->SetCurrentWeapon(nullptr);
+		return;
+	}
+	
+	Weapon* item = dynamic_cast<Weapon*>(_framework->GetGameObject(ObjectType::Sword, packet.id));
+	player->SetCurrentWeapon(item);
+}

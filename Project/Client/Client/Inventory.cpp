@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Inventory.h"
 #include "Item.h"
+#include "Equipment.h"
 
 Inventory::Inventory()
 {

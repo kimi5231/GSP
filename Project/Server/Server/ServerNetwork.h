@@ -35,8 +35,6 @@ public:
 	void SendRemoveItemPacket(Item* item, int clientIndex);
 	void SendAddItemToInventoryPacket(Item* item, int index, Session* client);
 	void SendRemoveItemFromInventoryPacket(int index, Session* client);
-	/*void SendUpdateCurrentToolPacket(int itemID, int playerID, ItemType type, Session* client);
-	void SendUseToolPacket(int playerID, ItemType type, Session* client);*/
 	
 public:
 	// Recv
@@ -45,6 +43,7 @@ public:
 	void ProcessMovePacket(C2S_Move packet, int clientIndex);
 	void ProcessAttackPacket(C2S_Attack packet, int clientIndex);
 	void ProcessDropItemPacket(C2S_DropItem packet, int clientIndex);
+	void ProcessChangeWeaponPacket(C2S_ChageWeapon packet, int clientIndex);
 
 	/*
 	void ProcessChangeToolPacket(C_ChangeTool_Packet packet, int clientIndex);

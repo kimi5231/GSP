@@ -27,6 +27,7 @@ public:
 	void SendMovePacket(PlayerRef player);
 	void SendAttackPacket();
 	void SendDropItemPacket(int itemID);
+	void SendChangeWeaponPacket(int itemID);
 
 public:
 	void ProcessLoginResultPacket(S2C_LoginResult packet);

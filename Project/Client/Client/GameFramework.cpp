@@ -13,6 +13,7 @@ GameFramework::GameFramework(sf::RenderWindow* window)
 
     _isInGame = false;
     _isOpenInventory = false;
+    _isOpenEquipment = false;
     _dragItem = nullptr;
     _avatar = nullptr;
 
@@ -59,6 +60,12 @@ void GameFramework::Update()
                     break;
                 }
             }
+
+            if (_equipment.GetCurrentWeapon() && _equipment.GetEquipmentSprite().getGlobalBounds().contains(mousePos))
+            {
+                _dragItem = _equipment.GetCurrentWeapon();
+                _dragItem->SetIsClick(true);
+            }
         }
     }
 
@@ -78,8 +85,21 @@ void GameFramework::Update()
         {
             sf::Vector2f mousePos(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
 
-            if (!_inventory.GetInventorySprite().getGlobalBounds().contains(mousePos))
+            if (!_inventory.GetInventorySprite().getGlobalBounds().contains(mousePos) && !_equipment.GetEquipmentSprite().getGlobalBounds().contains(mousePos))
+            {
                 g_network->SendDropItemPacket(_dragItem->GetID());
+                if (_dragItem == _equipment.GetCurrentWeapon())
+                {
+                    _equipment.SetCurrentWeapon(nullptr);
+                    g_network->SendChangeWeaponPacket(-1);
+                }
+            }
+
+            if (_equipment.GetEquipmentSprite().getGlobalBounds().contains(mousePos))
+            {
+                _equipment.SetCurrentWeapon(_dragItem);
+               
+            }
 
             _dragItem->SetIsClick(false);
             _dragItem = nullptr;
@@ -123,6 +143,14 @@ void GameFramework::Update()
                 _isOpenInventory = false;
             else
                 _isOpenInventory = true;
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+        {
+            if (_isOpenEquipment)
+                _isOpenEquipment = false;
+            else
+                _isOpenEquipment = true;
         }
     }
 
@@ -185,6 +213,9 @@ void GameFramework::Render()
 
         if (_isOpenInventory)
             _inventory.Render(_window);
+
+        if (_isOpenEquipment)
+            _equipment.Render(_window);
     }
     else
     {

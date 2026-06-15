@@ -191,6 +191,29 @@ void ServerFramework::RemoveAlivePlayer(int id)
 	_alivePlayerLock.unlock();
 }
 
+void ServerFramework::AddCanGetItem(int ownerID, int id)
+{
+	if (ownerID >= MONSTER_ID || id < ITEM_ID)
+		return;
+
+	if (_canGetItems.count(id))
+		return;
+
+	_canGetItemLock.lock();
+	_canGetItems[id] = ownerID;
+	_canGetItemLock.unlock();
+}
+
+void ServerFramework::RemoveCanGetItem(int ownerID, int id)
+{
+	if (!_canGetItems.count(id))
+		return;
+
+	_canGetItemLock.lock();
+	_canGetItems.erase(id);
+	_canGetItemLock.unlock();
+}
+
 GameObject* ServerFramework::GetGameObject(ObjectType type, int id)
 {
 	switch (type)
@@ -203,4 +226,19 @@ GameObject* ServerFramework::GetGameObject(ObjectType type, int id)
 	case ObjectType::Sword:
 		return _items[id - ITEM_ID];
 	}
+}
+
+std::unordered_set<int> ServerFramework::GetCanGetItems(int ownerID)
+{
+	std::unordered_set<int> canGetItems;
+
+	_canGetItemLock.lock();
+	for (auto& [ItemID, playerID] : _canGetItems)
+	{
+		if (playerID == ownerID)
+			canGetItems.insert(ItemID);
+	}
+	_canGetItemLock.unlock();
+
+	return canGetItems;
 }

@@ -138,6 +138,13 @@ void GameNetwork::ProcessRecv()
 		ProcessAddItemPacket(addItemPacket);
 		break;
 	}
+	case S2C_REMOVE_ITEM:
+	{
+		S2C_RemoveItem removeItemPacket;
+		memcpy(&removeItemPacket, packet.data(), sizeof(S2C_RemoveItem));
+		ProcessRemoveItemPacket(removeItemPacket);
+		break;
+	}
 	}
 }
 
@@ -328,4 +335,9 @@ void GameNetwork::ProcessStatusChangePacket(S2C_StatusChange packet)
 void GameNetwork::ProcessAddItemPacket(S2C_AddItem packet)
 {
 	g_framework->AddItem(packet.id, packet.objectType, packet.pos);
+}
+
+void GameNetwork::ProcessRemoveItemPacket(S2C_RemoveItem packet)
+{
+	g_framework->RemoveObject(packet.id);
 }

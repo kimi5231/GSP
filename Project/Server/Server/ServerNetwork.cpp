@@ -644,6 +644,22 @@ void ServerNetwork::SendAddItemPacket(Item* item, int clientIndex)
 	_clients[clientIndex]->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
 
+void ServerNetwork::SendRemoveItemPacket(Item* item, int clientIndex)
+{
+	// Packet Data 생성
+	S2C_RemoveItem packet{ sizeof(S2C_RemoveItem), S2C_REMOVE_ITEM, item->GetID() };
+
+	_clients[clientIndex]->Send(packet.size, reinterpret_cast<char*>(&packet));
+}
+
+void ServerNetwork::SendAddItemToInventoryPacket(Item* item, int index, Session* client)
+{
+	// Packet Data 생성
+	S2C_AddItemToInventory packet{ sizeof(S2C_AddItemToInventory), S2C_ADD_ITEM_TO_INVENTORY, item->GetID(), item->GetObjectType(), index };
+
+	client->Send(packet.size, reinterpret_cast<char*>(&packet));
+}
+
 //void ServerNetwork::SendAddItemToInventoryPacket(Item* item, bool isTool, Session* client)
 //{
 //	// Packet Data 생성
@@ -908,6 +924,24 @@ void ServerNetwork::ProcessMovePacket(C2S_Move packet, int clientIndex)
 	}
 		
 	player->SetPos({packet.x, packet.y});
+
+	// 획득할 수 있는 Item이 있는지 확인
+	const std::array<Item*, MAX_ITEMS>& items = _framework->GetItems();
+	for (auto& id : _framework->GetCanGetItems(clientIndex))
+	{
+		if (items[id - ITEM_ID]->GetPos() == player->GetPos())
+		{
+			player->AddItemToInventory(id);
+			int index = player->ExistItem(id);
+			if (index != -1)
+			{
+				SendAddItemToInventoryPacket(items[id - ITEM_ID], index, _clients[clientIndex]);
+				SendRemoveItemPacket(items[id - ITEM_ID], clientIndex);
+				_framework->RemoveCanGetItem(player->GetID(), id);
+			}
+				
+		}
+	}
 
 	// 시야처리
 	{

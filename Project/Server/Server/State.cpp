@@ -3,6 +3,7 @@
 #include "Global.h"
 #include "Agro.h"
 #include "Peace.h"
+#include "Item.h"
 
 void State::Tick(Monster* monster)
 {
@@ -135,6 +136,7 @@ void DeadState::Enter(Monster* monster)
 		std::uniform_int_distribution<int> selectItem(static_cast<int>(ObjectType::Sword), static_cast<int>(ObjectType::Sword));
 		ObjectType type = static_cast<ObjectType>(selectItem(gen));
 		Item* item = g_framework->AddItem(type, monster->GetPos());
+		g_framework->AddCanGetItem(monster->GetTarget()->GetID(), item->GetID());
 		g_network->SendAddItemPacket(item, monster->GetTarget()->GetID());
 	}
 

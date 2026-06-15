@@ -32,8 +32,9 @@ public:
 	void SendMoveObjectPacket(GameObject* object, Session* client);
 	void SendStatusChangePacket(Creature* creature, int clientIndex);
 	void SendAddItemPacket(Item* item, int clientIndex);
-	/*void SendAddItemToInventoryPacket(Item* item, bool isTool, Session* client);
-	void SendRemoveItemFromInventoryPacket(Item* item, bool isTool, Session* client);
+	void SendRemoveItemPacket(Item* item, int clientIndex);
+	void SendAddItemToInventoryPacket(Item* item, int index, Session* client);
+	/*void SendRemoveItemFromInventoryPacket(Item* item, bool isTool, Session* client);
 	void SendDropItemPacket(Item* item, int playerID, Vector itemPos, bool isTool, bool isToSellingMachine, Session* client);
 	void SendUpdateCurrentToolPacket(int itemID, int playerID, ItemType type, Session* client);
 	void SendUseToolPacket(int playerID, ItemType type, Session* client);
@@ -48,7 +49,7 @@ public:
 	void ProcessMovePacket(C2S_Move packet, int clientIndex);
 	void ProcessAttackPacket(C2S_Attack packet, int clientIndex);
 
-	/*void ProcessGetItemPacket(C_GetItem_Packet packet, int clientIndex);
+	/*
 	void ProcessDropItemPacket(C_DropItem_Packet packet, int clientIndex);
 	void ProcessChangeToolPacket(C_ChangeTool_Packet packet, int clientIndex);
 	void ProcessUseToolPacket(C_UseTool_Packet packet, int clientIndex);

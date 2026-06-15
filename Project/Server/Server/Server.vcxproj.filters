@@ -36,6 +36,9 @@
     <Filter Include="소스 파일\Game\System">
       <UniqueIdentifier>{db6c60b6-4ec3-4c35-b55b-ba295c0965cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Main\Manager">
+      <UniqueIdentifier>{6524d378-948c-4c60-bb68-c0804b5c1473}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -48,9 +51,6 @@
       <Filter>소스 파일\Main</Filter>
     </ClCompile>
     <ClCompile Include="Global.cpp">
-      <Filter>소스 파일\Main</Filter>
-    </ClCompile>
-    <ClCompile Include="DataManager.cpp">
       <Filter>소스 파일\Main</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
@@ -86,14 +86,20 @@
     <ClCompile Include="State.cpp">
       <Filter>소스 파일\Game\Object\Creature\Monster\FSM</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>소스 파일\Main</Filter>
-    </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>소스 파일\Game\Object\Item</Filter>
     </ClCompile>
     <ClCompile Include="Weapon.cpp">
       <Filter>소스 파일\Game\Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>소스 파일\Main\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>소스 파일\Main\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>소스 파일\Game\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,9 +110,6 @@
       <Filter>소스 파일\Main</Filter>
     </ClInclude>
     <ClInclude Include="Global.h">
-      <Filter>소스 파일\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="DataManager.h">
       <Filter>소스 파일\Main</Filter>
     </ClInclude>
     <ClInclude Include="Types.h">
@@ -148,14 +151,20 @@
     <ClInclude Include="State.h">
       <Filter>소스 파일\Game\Object\Creature\Monster\FSM</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>소스 파일\Main</Filter>
-    </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>소스 파일\Game\Object\Item</Filter>
     </ClInclude>
     <ClInclude Include="Weapon.h">
       <Filter>소스 파일\Game\Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="DataManager.h">
+      <Filter>소스 파일\Main\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>소스 파일\Main\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>소스 파일\Game\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

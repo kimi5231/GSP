@@ -26,12 +26,15 @@ public:
 	void RemoveAliveMonster(int id);
 	void AddAlivePlayer(int id);
 	void RemoveAlivePlayer(int id);
+	void AddCanGetItem(int ownerID, int id);
+	void RemoveCanGetItem(int ownerID, int id);
 
 public:
 	GameObject* GetGameObject(ObjectType type, int id);
 	const std::array<Player*, MAX_PLAYERS>& GetPlayers() { return _players; }
 	const std::array<Monster*, NUM_NPCS>& GetMonsters() { return _monsters; }
 	const std::array<Item*, MAX_ITEMS>& GetItems() { return _items; }
+	std::unordered_set<int> GetCanGetItems(int ownerID);
 
 private:
 	std::vector<std::vector<short>> _map;
@@ -41,8 +44,10 @@ private:
 
 	std::unordered_set<int> _alivePlayers;
 	std::unordered_map<int, int> _aliveMonsters;
+	std::unordered_map<int, int> _canGetItems;
 	std::mutex _alivePlayerLock;
 	std::mutex _aliveMonsterLock;
+	std::mutex _canGetItemLock;
 
 	float _sumTime;
 };

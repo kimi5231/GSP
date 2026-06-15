@@ -13,6 +13,7 @@ constexpr int MAX_NAME_LEN = 20;
 constexpr int MAX_CHAT_MSG_LEN = 200;
 constexpr int MONSTER_ID = MAX_PLAYERS;
 constexpr int ITEM_ID = MAX_PLAYERS + NUM_NPCS;
+constexpr int MAX_INVENTORY = 15;
 
 #define BufferSize 10000
 
@@ -41,6 +42,8 @@ enum PACKET_TYPE
 	S2C_STATUS_CHANGE,	//	Server to Client: Update player or NPC status (e.g., health, buffs)	
 
 	S2C_ADD_ITEM,
+	S2C_REMOVE_ITEM,
+	S2C_ADD_ITEM_TO_INVENTORY,
 };
 
 #pragma pack(push, 1) // Ensure no padding between struct members
@@ -153,6 +156,20 @@ struct S2C_AddItem {
 	int id;
 	ObjectType objectType;
 	Vector pos;
+};
+
+struct S2C_RemoveItem {
+	unsigned char size;
+	PACKET_TYPE   type;
+	int id;
+};
+
+struct S2C_AddItemToInventory {
+	unsigned char size;
+	PACKET_TYPE   type;
+	int id;
+	ObjectType objectType;
+	int index;
 };
 
 #pragma pack(pop) // Restore default packing

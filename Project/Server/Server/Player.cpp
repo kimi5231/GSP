@@ -2,12 +2,14 @@
 #include "Player.h"
 #include "Global.h"
 #include "Weapon.h"
+#include "Inventory.h"
 
 Player::Player()
 {
 	_type = ObjectType::Player;
 
 	_currentWeapon = nullptr;
+	_inventory = new Inventory();
 
 	// юс╫ц
 	_maxHP = 100;
@@ -52,6 +54,16 @@ void Player::AddExp(long long exp)
 		_exp -= maxExp;
 		g_network->SendStatusChangePacket(this, _id);
 	}
+}
+
+bool Player::AddItemToInventory(int id)
+{
+	return _inventory->AddItem(id);
+}
+
+bool Player::RemoveItemFromInventory(int id)
+{
+	return _inventory->RemoveItem(id);
 }
 
 int Player::GetDamage()

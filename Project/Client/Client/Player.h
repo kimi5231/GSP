@@ -21,8 +21,14 @@ public:
 	virtual void SetHP(int hp);
 	virtual void SetExp(long long exp);
 	virtual void SetLevel(int level);
+	void SetIsSkill(bool isSkill) { _isSkill = isSkill; }
 
 private:
+	sf::Texture _skillTexture;
+	sf::Sprite _skillSprite;
+
+	bool _isSkill;
+
 	TimePoint _lastMoveTime;
 	TimePoint _lastAttackTime;
 	TimePoint _lastSkillTime;

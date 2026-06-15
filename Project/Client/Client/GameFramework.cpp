@@ -139,10 +139,13 @@ void GameFramework::Update()
                 g_network->SendAttackPacket();
         }
         
-        if (_equipment.GetCurrentWeapon() /*&& _avatar->IsCanSkill()*/)
+        if (_equipment.GetCurrentWeapon() && _avatar->IsCanSkill())
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            {
                 g_network->SendSkillPacket();
+                _avatar->SetIsSkill(true);
+            }
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))

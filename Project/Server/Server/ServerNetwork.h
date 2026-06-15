@@ -45,6 +45,7 @@ public:
 	void ProcessSkillPacket(C2S_Skill packet, int clientIndex);
 	void ProcessDropItemPacket(C2S_DropItem packet, int clientIndex);
 	void ProcessChangeWeaponPacket(C2S_ChageWeapon packet, int clientIndex);
+	void ProcessTeleportPacket(C2S_Teleport packet, int clientIndex);
 
 public:
 	HANDLE GetIOCP() { return _iocp; }

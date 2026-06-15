@@ -8,12 +8,24 @@ Player::Player()
     _lastMoveTime = std::chrono::high_resolution_clock::now();
 	_lastAttackTime = std::chrono::high_resolution_clock::now();
 	_lastSkillTime = std::chrono::high_resolution_clock::now();
+
+	_isSkill = false;
+
     _texture.loadFromFile("Resource/BlackPawn.png");
-    _sprite.setTexture(_texture);
+	_sprite.setTexture(_texture);
+	_skillTexture.loadFromFile("Resource/SkillEffect.png");
+	_skillSprite.setTexture(_skillTexture);
 }
 
 void Player::Render(sf::RenderWindow* window)
 {
+	if (_isSkill)
+	{
+		_skillSprite.setPosition(_pos.x - 100, _pos.y - 100);
+		window->draw(_skillSprite);
+		_isSkill = false;
+	}
+
     window->draw(_sprite);
 
 	sf::Text text;

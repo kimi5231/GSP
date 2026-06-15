@@ -331,6 +331,14 @@ void ServerNetwork::ProcessPacket(std::vector<char>& packet, int clientIndex)
 		ProcessChangeWeaponPacket(changeWeaponPacket, clientIndex);
 		break;
 	}
+	case C2S_TELEPORT:
+	{
+		C2S_Teleport teleportPacket;
+		memcpy(&teleportPacket, packet.data(), sizeof(C2S_Teleport));
+		packet.erase(packet.begin(), packet.begin() + sizeof(C2S_Teleport));
+		ProcessTeleportPacket(teleportPacket, clientIndex);
+		break;
+	}
 	}
 }
 
@@ -1029,4 +1037,10 @@ void ServerNetwork::ProcessChangeWeaponPacket(C2S_ChageWeapon packet, int client
 	
 	Weapon* item = dynamic_cast<Weapon*>(_framework->GetGameObject(ObjectType::Sword, packet.id));
 	player->SetCurrentWeapon(item);
+}
+
+void ServerNetwork::ProcessTeleportPacket(C2S_Teleport packet, int clientIndex)
+{
+	GameObject* object = _framework->GetGameObject(ObjectType::Player, clientIndex);
+	object->SetPos({ packet.x, packet.y });
 }

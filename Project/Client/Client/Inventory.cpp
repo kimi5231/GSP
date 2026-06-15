@@ -26,8 +26,9 @@ void Inventory::Render(sf::RenderWindow* window)
 	{
 		if (_items[i])
 		{
-			sf::Sprite sprite = _items[i]->GetInInventoryTexture();
-			sprite.setPosition(_pos.x + (i%3) * InventoryTileSize, _pos.y + (i / 3) * InventoryTileSize);
+			sf::Sprite& sprite = _items[i]->GetInInventorySprite();
+			if (!_items[i]->GetIsClick())
+				sprite.setPosition(_pos.x + (i % 3) * InventoryTileSize, _pos.y + (i / 3) * InventoryTileSize);
 			window->draw(sprite);
 		}
 	}

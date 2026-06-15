@@ -26,9 +26,7 @@ public:
 	void SendLogoutPacket();
 	void SendMovePacket(PlayerRef player);
 	void SendAttackPacket();
-	//void SendDropItemPacket(int itemID, bool isTool, int playerID);
-	//void SendSellItemPacket(int playerID, int sellingMachineID);
-	//void SendBuyItemPacket(int playerID, ItemType itemType, int itemCount);
+	void SendDropItemPacket(int itemID);
 
 public:
 	void ProcessLoginResultPacket(S2C_LoginResult packet);
@@ -40,6 +38,7 @@ public:
 	void ProcessAddItemPacket(S2C_AddItem packet);
 	void ProcessRemoveItemPacket(S2C_RemoveItem packet);
 	void ProcessAddItemToInventoryPacket(S2C_AddItemToInventory packet);
+	void ProcessRemoveItemFromInventoryPacket(S2C_RemoveItemFromInventory packet);
 
 private:
 	fd_set _readSet{};

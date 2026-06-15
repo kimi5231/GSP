@@ -13,6 +13,8 @@ Item::Item(ObjectType type)
 
 	_sprite.setTexture(_texture);
 	_spriteInventory.setTexture(_textureInventory);
+
+	_isClick = false;
 }
 
 void Item::Render(sf::RenderWindow* window)

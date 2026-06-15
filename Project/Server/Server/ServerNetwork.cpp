@@ -307,31 +307,16 @@ void ServerNetwork::ProcessPacket(std::vector<char>& packet, int clientIndex)
 		ProcessAttackPacket(attackPacket, clientIndex);
 		break;
 	}
-	
-	/*case C_UpdateObjectState:
+	case C2S_DROP_ITEM:
 	{
-		C_UpdateObjectState_Packet updateObjectPacket;
-		memcpy(&updateObjectPacket, packet.data(), sizeof(C_UpdateObjectState_Packet));
-		packet.erase(packet.begin(), packet.begin() + sizeof(C_UpdateObjectState_Packet));
-		ProcessUpdateObjectStatePacket(updateObjectPacket, clientIndex);
-		break;
-	}
-	case C_GetItem:
-	{
-		C_GetItem_Packet getItemPacket;
-		memcpy(&getItemPacket, packet.data(), sizeof(C_GetItem_Packet));
-		packet.erase(packet.begin(), packet.begin() + sizeof(C_GetItem_Packet));
-		ProcessGetItemPacket(getItemPacket, clientIndex);
-		break;
-	}
-	case C_DropItem:
-	{
-		C_DropItem_Packet dropItemPacket;
-		memcpy(&dropItemPacket, packet.data(), sizeof(C_DropItem_Packet));
-		packet.erase(packet.begin(), packet.begin() + sizeof(C_DropItem_Packet));
+		C2S_DropItem dropItemPacket;
+		memcpy(&dropItemPacket, packet.data(), sizeof(C2S_DropItem));
+		packet.erase(packet.begin(), packet.begin() + sizeof(C2S_DropItem));
 		ProcessDropItemPacket(dropItemPacket, clientIndex);
 		break;
 	}
+	/*
+	
 	case C_ChangeTool:
 	{
 		C_ChangeTool_Packet changeToolPacket;
@@ -656,6 +641,14 @@ void ServerNetwork::SendAddItemToInventoryPacket(Item* item, int index, Session*
 {
 	// Packet Data 생성
 	S2C_AddItemToInventory packet{ sizeof(S2C_AddItemToInventory), S2C_ADD_ITEM_TO_INVENTORY, item->GetID(), item->GetObjectType(), index };
+
+	client->Send(packet.size, reinterpret_cast<char*>(&packet));
+}
+
+void ServerNetwork::SendRemoveItemFromInventoryPacket(int index, Session* client)
+{
+	// Packet Data 생성
+	S2C_RemoveItemFromInventory packet{ sizeof(S2C_RemoveItemFromInventory), S2C_REMOVE_ITEM_FROM_INVENTORY, index };
 
 	client->Send(packet.size, reinterpret_cast<char*>(&packet));
 }
@@ -1075,79 +1068,24 @@ void ServerNetwork::ProcessAttackPacket(C2S_Attack packet, int clientIndex)
 	}
 }
 
-//void ServerNetwork::ProcessGetItemPacket(C_GetItem_Packet packet, int clientIndex)
-//{
-//	// Player가 요청한 아이템이 얻을 수 있는 것인지 확인
-//	Item* item = dynamic_cast<Item*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Item, packet.itemID));
-//	if (item->GetObjectPoolState() != ObjectPoolState::InWorld)
-//		return;
-//
-//	// 아이템을 얻을 수 있는 조건인지 확인(거리)
-//	
-//	// 아이템이 판매기 안에 있던 거라면 판매기에서 제외
-//	const std::vector<SellingMachine*>& sellingMachines = _clients[clientIndex]->_room->GetSellingMachine();
-//	for (auto sellingMachine : sellingMachines)
-//	{
-//		if (sellingMachine->ExistItem(packet.itemID))
-//		{
-//			sellingMachine->RemoveItem(packet.itemID);
-//			break;
-//		}
-//	}
-//
-//	// 얻을 수 있는 아이템이라면 Player 인벤토리에 추가
-//	Player* player = dynamic_cast<Player*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Player, packet.playerID));
-//	// 아이템이 제대로 추가되었다면
-//	if (player->AddItemToInventory(packet.isTool, packet.itemID))
-//	{
-//		// 획득한 아이템 ObjectPoolState 변경
-//		item->SetObjectPoolState(ObjectPoolState::InInventory);
-//		// ownerID 설정
-//		item->SetOwnerID(player->GetID());
-//
-//		// 아이템을 획득한 Player에게 인벤토리에 아이템 추가 알림
-//		SendAddItemToInventoryPacket(item, packet.isTool, player->GetClient());
-//
-//		// Broadcast
-//		for (auto& p : _clients[clientIndex]->_room->GetPlayers())
-//		{
-//			if (!p->GetClient())
-//				continue;
-//
-//			// 자기 자신 제외
-//			if (p == player)
-//				continue;
-//
-//			SendItemPickupNotifyPacket(item, player->GetID(), packet.isTool, p->GetClient());
-//		}
-//	}
-//}
-//
-//void ServerNetwork::ProcessDropItemPacket(C_DropItem_Packet packet, int clientIndex)
-//{
-//	// Player 인벤토리에서 아이템 제거
-//	Player* player = dynamic_cast<Player*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Player, packet.playerID));
-//	// 아이템이 제대로 제거되었다면
-//	if (player->RemoveItemFromInventory(packet.isTool, packet.itemID))
-//	{
-//		// 떨어뜨린 아이템 정보 수정
-//		Item* item = dynamic_cast<Item*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Item, packet.itemID));
-//		item->SetPos(player->GetPos());
-//		item->SetObjectPoolState(ObjectPoolState::InWorld);
-//		// ownerID 초기화
-//		item->SetOwnerID(-1);
-//
-//		// Broadcast
-//		for (auto& p : _clients[clientIndex]->_room->GetPlayers())
-//		{
-//			if (!p->GetClient())
-//				continue;
-//
-//			SendDropItemPacket(item, player->GetID(), item->GetPos(), packet.isTool, false,  p->GetClient());
-//		}
-//	}
-//}
-//
+void ServerNetwork::ProcessDropItemPacket(C2S_DropItem packet, int clientIndex)
+{
+	// Player 인벤토리에 진짜로 아이템이 존하는지 확인
+	Player* player = dynamic_cast<Player*>(_framework->GetGameObject(ObjectType::Player, clientIndex));
+	int index = player->ExistItem(packet.id);
+
+	// 진짜로 존재하면 아이템 삭제 및 알림
+	if (index != -1)
+	{
+		player->RemoveItemFromInventory(packet.id);
+
+		Item* item = dynamic_cast<Item*>(_framework->GetGameObject(ObjectType::Sword, packet.id));
+		item->SetObjectPoolState(ObjectPoolState::Reusable);
+	
+		SendRemoveItemFromInventoryPacket(index, _clients[clientIndex]);
+	}
+}
+
 //void ServerNetwork::ProcessChangeToolPacket(C_ChangeTool_Packet packet, int clientIndex)
 //{
 //	Player* player = dynamic_cast<Player*>(_clients[clientIndex]->_room->GetGameObject(ObjectType::Player, packet.playerID));

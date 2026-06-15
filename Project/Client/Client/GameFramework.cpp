@@ -13,6 +13,7 @@ GameFramework::GameFramework(sf::RenderWindow* window)
 
     _isInGame = false;
     _isOpenInventory = false;
+    _dragItem = nullptr;
     _avatar = nullptr;
 
     // UI
@@ -40,6 +41,49 @@ void GameFramework::Update()
         // 창 닫기 버튼 누르면 종료
         if (event.type == sf::Event::Closed)
             _window->close();
+    }
+
+    // 처음 클릭했을 때
+    if (event.type == sf::Event::MouseButtonPressed)
+    {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _isOpenInventory)
+        {
+            sf::Vector2f mousePos(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
+
+            for (auto& item : _inventory.GetItems())
+            {
+                if (item && item->GetInInventorySprite().getGlobalBounds().contains(mousePos))
+                {
+                    _dragItem = item;
+                    _dragItem->SetIsClick(true);
+                    break;
+                }
+            }
+        }
+    }
+
+    // 클릭중
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _dragItem)
+    {
+        sf::Vector2i currentMousePos = sf::Mouse::getPosition(*_window);
+        sf::Vector2f mousePos(static_cast<float>(currentMousePos.x), static_cast<float>(currentMousePos.y));
+
+        _dragItem->SetInInventorySpritePos(mousePos);
+    }
+
+    // 클릭을 그만뒀을 때
+    if (event.type == sf::Event::MouseButtonReleased)
+    {
+        if (event.mouseButton.button == sf::Mouse::Left && _isOpenInventory && _dragItem)
+        {
+            sf::Vector2f mousePos(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y));
+
+            if (!_inventory.GetInventorySprite().getGlobalBounds().contains(mousePos))
+                g_network->SendDropItemPacket(_dragItem->GetID());
+
+            _dragItem->SetIsClick(false);
+            _dragItem = nullptr;
+        }
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && !_avatar)

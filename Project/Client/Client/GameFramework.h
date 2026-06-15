@@ -47,6 +47,8 @@ private:
 	bool _isInGame;
 	bool _isOpenInventory;
 
+	ItemRef _dragItem;
+
 	sf::RectangleShape _barBackground;
 	Bar* _hpBar;
 	Bar* _expBar;

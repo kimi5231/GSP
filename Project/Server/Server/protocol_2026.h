@@ -32,6 +32,8 @@ enum PACKET_TYPE
 						// STRESS TEST용으로 추가한 패킷입니다. 시작 마을에 몰리는 것을 방지.
 	C2S_LOGOUT,			// Client to Server: Logout request
 
+	C2S_DROP_ITEM,
+
 	S2C_LOGIN_RESULT,	//	Server to Client: Login result
 						// 로그인 결과 패킷 (성공 여부와 메시지 포함)
 	S2C_AVATAR_INFO,	//	Server to Client: Avatar information
@@ -44,6 +46,7 @@ enum PACKET_TYPE
 	S2C_ADD_ITEM,
 	S2C_REMOVE_ITEM,
 	S2C_ADD_ITEM_TO_INVENTORY,
+	S2C_REMOVE_ITEM_FROM_INVENTORY,
 };
 
 #pragma pack(push, 1) // Ensure no padding between struct members
@@ -82,6 +85,12 @@ struct C2S_Teleport {
 struct C2S_Logout {
 	unsigned char size;
 	PACKET_TYPE   type;
+};
+
+struct C2S_DropItem {
+	unsigned char size;
+	PACKET_TYPE   type;
+	int id;
 };
 
 struct S2C_LoginResult {
@@ -169,6 +178,12 @@ struct S2C_AddItemToInventory {
 	PACKET_TYPE   type;
 	int id;
 	ObjectType objectType;
+	int index;
+};
+
+struct S2C_RemoveItemFromInventory {
+	unsigned char size;
+	PACKET_TYPE   type;
 	int index;
 };
 

@@ -12,6 +12,10 @@ public:
 	void AddItem(int index, ItemRef item);
 	void RemoveItem(int index);
 
+public:
+	std::array<ItemRef, MAX_INVENTORY>& GetItems() { return _items; }
+	sf::Sprite& GetInventorySprite() { return _sprite; }
+
 private:
 	sf::Texture _texture;
 	sf::Sprite _sprite;

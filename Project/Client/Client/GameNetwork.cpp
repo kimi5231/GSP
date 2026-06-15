@@ -154,6 +154,13 @@ void GameNetwork::ProcessRecv()
 		ProcessAddItemToInventoryPacket(addItemToInventoryPacket);
 		break;
 	}
+	case S2C_REMOVE_ITEM_FROM_INVENTORY:
+	{
+		S2C_RemoveItemFromInventory removeItemFromInventoryPacket;
+		memcpy(&removeItemFromInventoryPacket, packet.data(), sizeof(S2C_RemoveItemFromInventory));
+		ProcessRemoveItemFromInventoryPacket(removeItemFromInventoryPacket);
+		break;
+	}
 	}
 }
 
@@ -220,69 +227,20 @@ void GameNetwork::SendAttackPacket()
 	_sendEvents.push_back(event);
 }
 
-//void GameNetwork::SendGetItemPacket(int itemID, bool isTool, int playerID)
-//{
-//	// Packet Data 持失
-//	C_GetItem_Packet packetData{ sizeof(C_GetItem_Packet), C_GetItem, itemID, playerID, isTool };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	// SendEvent 持失
-//	NetworkEventRef event = std::make_shared<NetworkEvent>();
-//	event->packetID = C_GetItem;
-//	event->serializedPacketData = serializedPacketData;
-//	std::lock_guard<std::mutex> lock(_sendMutex);
-//	_sendEvents.push_back(event);
-//}
-//
-//void GameNetwork::SendDropItemPacket(int itemID, bool isTool, int playerID)
-//{
-//	// Packet Data 持失
-//	C_DropItem_Packet packetData{ sizeof(C_DropItem_Packet), C_DropItem, itemID, playerID, isTool };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	// SendEvent 持失
-//	NetworkEventRef event = std::make_shared<NetworkEvent>();
-//	event->packetID = C_DropItem;
-//	event->serializedPacketData = serializedPacketData;
-//	std::lock_guard<std::mutex> lock(_sendMutex);
-//	_sendEvents.push_back(event);
-//}
-//
-//void GameNetwork::SendSellItemPacket(int playerID, int sellingMachineID)
-//{
-//	// Packet Data 持失
-//	C_SellItem_Packet packetData{ sizeof(C_SellItem_Packet), C_SellItem, sellingMachineID, playerID };
-//
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//
-//	// SendEvent 持失
-//	NetworkEventRef event = std::make_shared<NetworkEvent>();
-//	event->packetID = C_SellItem;
-//	event->serializedPacketData = serializedPacketData;
-//	std::lock_guard<std::mutex> lock(_sendMutex);
-//	_sendEvents.push_back(event);
-//}
-//
-//void GameNetwork::SendBuyItemPacket(int playerID, ItemType itemType, int itemCount)
-//{
-//	// Packet Data 持失
-//	C_BuyItem_Packet packetData{ sizeof(C_BuyItem_Packet), C_BuyItem, playerID, itemType, itemCount };
-//	
-//	// Packet Serialize
-//	std::vector<char> serializedPacketData = SerializePOD(packetData);
-//	
-//	// SendEvent 持失
-//	NetworkEventRef event = std::make_shared<NetworkEvent>();
-//	event->packetID = C_BuyItem;
-//	event->serializedPacketData = serializedPacketData;
-//	std::lock_guard<std::mutex> lock(_sendMutex);
-//	_sendEvents.push_back(event);
-//}
+void GameNetwork::SendDropItemPacket(int itemID)
+{
+	// Packet Data 持失
+	C2S_DropItem packetData{ sizeof(C2S_DropItem), C2S_DROP_ITEM, itemID };
+
+	// Packet Serialize
+	std::vector<char> serializedPacketData = SerializePOD(packetData);
+
+	// SendEvent 持失
+	NetworkEventRef event = std::make_shared<NetworkEvent>();
+	event->packetID = C2S_DROP_ITEM;
+	event->serializedPacketData = serializedPacketData;
+	_sendEvents.push_back(event);
+}
 
 void GameNetwork::ProcessLoginResultPacket(S2C_LoginResult packet)
 {
@@ -354,4 +312,9 @@ void GameNetwork::ProcessRemoveItemPacket(S2C_RemoveItem packet)
 void GameNetwork::ProcessAddItemToInventoryPacket(S2C_AddItemToInventory packet)
 {
 	g_framework->GetInventory().AddItem(packet.index, dynamic_pointer_cast<Item>(g_framework->GetGameObject(packet.id)));
+}
+
+void GameNetwork::ProcessRemoveItemFromInventoryPacket(S2C_RemoveItemFromInventory packet)
+{
+	g_framework->GetInventory().RemoveItem(packet.index);
 }

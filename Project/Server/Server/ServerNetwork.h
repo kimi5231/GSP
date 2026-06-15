@@ -34,13 +34,9 @@ public:
 	void SendAddItemPacket(Item* item, int clientIndex);
 	void SendRemoveItemPacket(Item* item, int clientIndex);
 	void SendAddItemToInventoryPacket(Item* item, int index, Session* client);
-	/*void SendRemoveItemFromInventoryPacket(Item* item, bool isTool, Session* client);
-	void SendDropItemPacket(Item* item, int playerID, Vector itemPos, bool isTool, bool isToSellingMachine, Session* client);
-	void SendUpdateCurrentToolPacket(int itemID, int playerID, ItemType type, Session* client);
-	void SendUseToolPacket(int playerID, ItemType type, Session* client);
-	void SendSellItemResultPacket(char playerID, char sellingMachineID, ObjectState sellingMachineState, short remainCredit, short collectCredit, short currentCredit, std::vector<int>& itemIDs, Session* client);
-	void SendBuyItemResultPacket(short currentCredit, Session* client);
-	void SendUpdateHpPacket(int playerID, int hp, Session* client);*/
+	void SendRemoveItemFromInventoryPacket(int index, Session* client);
+	/*void SendUpdateCurrentToolPacket(int itemID, int playerID, ItemType type, Session* client);
+	void SendUseToolPacket(int playerID, ItemType type, Session* client);*/
 	
 public:
 	// Recv
@@ -48,9 +44,9 @@ public:
 	void ProcessLogoutPacket(C2S_Logout packet, int clientIndex);
 	void ProcessMovePacket(C2S_Move packet, int clientIndex);
 	void ProcessAttackPacket(C2S_Attack packet, int clientIndex);
+	void ProcessDropItemPacket(C2S_DropItem packet, int clientIndex);
 
 	/*
-	void ProcessDropItemPacket(C_DropItem_Packet packet, int clientIndex);
 	void ProcessChangeToolPacket(C_ChangeTool_Packet packet, int clientIndex);
 	void ProcessUseToolPacket(C_UseTool_Packet packet, int clientIndex);
 	void ProcessSellItemPacket(C_SellItem_Packet packet, int clientIndex);

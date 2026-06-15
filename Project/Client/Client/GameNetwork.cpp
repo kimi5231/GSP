@@ -2,6 +2,8 @@
 #include "GameNetwork.h"
 #include "Global.h"
 #include "Player.h"
+#include "Item.h"
+#include "Inventory.h"
 
 GameNetwork::GameNetwork()
 {
@@ -143,6 +145,13 @@ void GameNetwork::ProcessRecv()
 		S2C_RemoveItem removeItemPacket;
 		memcpy(&removeItemPacket, packet.data(), sizeof(S2C_RemoveItem));
 		ProcessRemoveItemPacket(removeItemPacket);
+		break;
+	}
+	case S2C_ADD_ITEM_TO_INVENTORY:
+	{
+		S2C_AddItemToInventory addItemToInventoryPacket;
+		memcpy(&addItemToInventoryPacket, packet.data(), sizeof(S2C_AddItemToInventory));
+		ProcessAddItemToInventoryPacket(addItemToInventoryPacket);
 		break;
 	}
 	}
@@ -340,4 +349,9 @@ void GameNetwork::ProcessAddItemPacket(S2C_AddItem packet)
 void GameNetwork::ProcessRemoveItemPacket(S2C_RemoveItem packet)
 {
 	g_framework->RemoveObject(packet.id);
+}
+
+void GameNetwork::ProcessAddItemToInventoryPacket(S2C_AddItemToInventory packet)
+{
+	g_framework->GetInventory().AddItem(packet.index, dynamic_pointer_cast<Item>(g_framework->GetGameObject(packet.id)));
 }

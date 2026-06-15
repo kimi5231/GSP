@@ -9,4 +9,13 @@ public:
 
 public:
 	virtual void Render(sf::RenderWindow* window);
+
+public:
+	sf::Sprite& GetInInventoryTexture() { return _spriteInventory; }
+
+private:
+	sf::Texture _textureInventory;
+	sf::Sprite _spriteInventory;
+
+	bool _isInInventoryOpen;
 };

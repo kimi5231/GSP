@@ -39,6 +39,7 @@ public:
 	void ProcessStatusChangePacket(S2C_StatusChange packet);
 	void ProcessAddItemPacket(S2C_AddItem packet);
 	void ProcessRemoveItemPacket(S2C_RemoveItem packet);
+	void ProcessAddItemToInventoryPacket(S2C_AddItemToInventory packet);
 
 private:
 	fd_set _readSet{};

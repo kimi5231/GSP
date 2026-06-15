@@ -5,6 +5,7 @@
 #include <ws2tcpip.h>
 #include <iostream>
 #include <vector>
+#include <array>
 #include <chrono>
 #include <filesystem>
 #include <unordered_map>
@@ -18,6 +19,7 @@
 
 constexpr int WINDOW_WIDTH = 1000;
 constexpr int WINDOW_HEIGHT = 1000;
+constexpr int InventoryTileSize = 30;
 
 enum class UIType
 {

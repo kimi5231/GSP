@@ -68,6 +68,9 @@
     <ClCompile Include="Item.cpp">
       <Filter>소스 파일\Game\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>소스 파일\Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
@@ -116,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>소스 파일\Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>소스 파일\Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

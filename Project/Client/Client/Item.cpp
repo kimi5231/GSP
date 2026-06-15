@@ -7,10 +7,12 @@ Item::Item(ObjectType type)
 	{
 	case ObjectType::Sword:
 		_texture.loadFromFile("Resource/Sword.png");
+		_textureInventory.loadFromFile("Resource/SwordInventory.png");
 		break;
 	}
 
 	_sprite.setTexture(_texture);
+	_spriteInventory.setTexture(_textureInventory);
 }
 
 void Item::Render(sf::RenderWindow* window)

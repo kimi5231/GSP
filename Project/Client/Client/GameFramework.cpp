@@ -12,6 +12,7 @@ GameFramework::GameFramework(sf::RenderWindow* window)
 	_window = window;
 
     _isInGame = false;
+    _isOpenInventory = false;
     _avatar = nullptr;
 
     // UI
@@ -71,6 +72,14 @@ void GameFramework::Update()
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             g_network->SendAttackPacket();
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
+        {
+            if (_isOpenInventory)
+                _isOpenInventory = false;
+            else
+                _isOpenInventory = true;
+        }
     }
 
     if (_avatar)
@@ -129,6 +138,9 @@ void GameFramework::Render()
             text.setPosition(475, 870);
             _window->draw(text);
         }  
+
+        if (_isOpenInventory)
+            _inventory.Render(_window);
     }
     else
     {

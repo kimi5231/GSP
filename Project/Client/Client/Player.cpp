@@ -21,7 +21,7 @@ void Player::Render(sf::RenderWindow* window)
 {
 	if (_isSkill)
 	{
-		_skillSprite.setPosition(_pos.x - 100, _pos.y - 100);
+		_skillSprite.setPosition(_pos.x - 150, _pos.y - 150);
 		window->draw(_skillSprite);
 		_isSkill = false;
 	}

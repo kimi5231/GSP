@@ -76,8 +76,7 @@ Player* ServerFramework::AddPlayer(int clientIndex)
 	// 해당 ID의 Player가 재사용 가능한지 확인
 	if (_players[clientIndex]->GetObjectPoolState() == ObjectPoolState::Reusable)
 	{
-		// 초기화
-		_players[clientIndex]->Init();
+		_players[clientIndex]->SetObjectPoolState(ObjectPoolState::InWorld);
 		AddAlivePlayer(clientIndex);
 		return _players[clientIndex];
 	}
@@ -107,6 +106,7 @@ void ServerFramework::RemoveObject(ObjectType type, int id)
 	{
 	case ObjectType::Player:
 		_players[id]->SetObjectPoolState(ObjectPoolState::Reusable);
+		_players[id]->Init();
 		RemoveAlivePlayer(id);
 		break;
 	case ObjectType::Sword:

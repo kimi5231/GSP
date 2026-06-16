@@ -3,12 +3,17 @@
 
 Inventory::Inventory()
 {
-	for (int i = 0; i < MAX_INVENTORY; ++i)
-		_items[i] = -1;
+	Init();
 }
 
 Inventory::~Inventory()
 {
+}
+
+void Inventory::Init()
+{
+	for (int i = 0; i < MAX_INVENTORY; ++i)
+		_items[i] = -1;
 }
 
 bool Inventory::AddItem(int id)

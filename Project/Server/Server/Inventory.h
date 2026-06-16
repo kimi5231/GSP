@@ -6,6 +6,7 @@ public:
 	~Inventory();
 
 public:
+	void Init();
 	bool AddItem(int id);
 	bool RemoveItem(int id);
 	int ExistItem(int id);

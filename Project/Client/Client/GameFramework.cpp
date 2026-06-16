@@ -133,13 +133,13 @@ void GameFramework::Update()
             }
         }
 
-        if (_avatar->IsCanAttack())
+        //if (_avatar->IsCanAttack())
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
                 g_network->SendAttackPacket();
         }
         
-        if (_equipment.GetCurrentWeapon() && _avatar->IsCanSkill())
+        if (_equipment.GetCurrentWeapon()/* && _avatar->IsCanSkill()*/)
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
@@ -212,7 +212,7 @@ void GameFramework::Render()
             _hpBar->Render(_window);
             _expBar->Render(_window);
 
-            std::string uiText = "Lv " + std::to_string(_avatar->GetLevel()) + "   " + _userName;
+            std::string uiText = "Lv " + std::to_string(_avatar->GetLevel()) + " " + _userName;
             sf::Text text;
             text.setFont(g_dataManager->GetFont());
             text.setString(uiText);

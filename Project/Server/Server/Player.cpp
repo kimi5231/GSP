@@ -27,7 +27,10 @@ Player::~Player()
 
 void Player::Init()
 {
-	_objectPoolState = ObjectPoolState::InWorld;
+	_objectPoolState = ObjectPoolState::Reusable;
+	_pos = { 50, 50 };
+	_hp = _maxHP;
+	_inventory->Init();
 }
 
 void Player::Update()
